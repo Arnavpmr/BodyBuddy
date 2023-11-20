@@ -1,0 +1,12 @@
+{
+  "name": "final-project-546",
+  "version": "1.0.0",
+  "description": "A simple web app to help people track their fitness goals",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Arnav Marchareddy, Aidan Giordano, Robert Romero, Joshua Bernstein and Rishi Raj",
+  "license": "ISC"
+}
