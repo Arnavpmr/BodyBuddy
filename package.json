@@ -8,5 +8,8 @@
     "start": "node app.js"
   },
   "author": "Arnav Marchareddy, Aidan Giordano, Robert Romero, Joshua Bernstein and Rishi Raj",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^6.2.0"
+  }
 }

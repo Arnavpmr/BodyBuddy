@@ -1,10 +1,10 @@
-import { MongoClient } from 'mongodb';
-import { mongoConfig } from './settings.js';
+import {MongoClient} from 'mongodb';
+import {mongoConfig} from './settings.js';
 
 let _connection = undefined;
 let _db = undefined;
 
-const dbConnection = async () => {
+export const dbConnection = async () => {
   if (!_connection) {
     _connection = await MongoClient.connect(mongoConfig.serverUrl);
     _db = _connection.db(mongoConfig.database);
@@ -13,8 +13,6 @@ const dbConnection = async () => {
   return _db;
 };
 
-const closeConnection = async () => {
+export const closeConnection = async () => {
   await _connection.close();
 };
-
-export { dbConnection, closeConnection };
