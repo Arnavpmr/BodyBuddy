@@ -1,16 +1,16 @@
-import { inputValidator, idValidator } from "../helpers.js"
-import { exercises } from '../configurations/mongoCollections.js'
+import helper from "../helpers.js"
+import { exercises } from '../../../configurations/mongoCollections.js'
 import {ObjectId} from 'mongodb';
 
 
 let exerciseDataFunctions = {
     async createExercise(exerciseName, targetMuscle, exerciseDescription, instructions, equipment, difficulty,image){
         try{
-            exerciseName = inputValidator(exerciseName, 'exerciseName');
-            exerciseDescription = inputValidator(exerciseDescription, 'exerciseDescription');
-            instructions = inputValidator(instructions, 'instructions');
-            difficulty = inputValidator(difficulty, 'difficulty');
-            image = inputValidator(image, 'image');
+            exerciseName = helper.inputValidator(exerciseName, 'exerciseName');
+            exerciseDescription = helper.inputValidator(exerciseDescription, 'exerciseDescription');
+            instructions = helper.inputValidator(instructions, 'instructions');
+            difficulty = helper.inputValidator(difficulty, 'difficulty');
+            image = helper.inputValidator(image, 'image');
         }
         catch (e){
             throw `Error in createExercise: ${e}`;
@@ -44,7 +44,7 @@ let exerciseDataFunctions = {
 
     async getExerciseById(exerciseId){
         try{
-            idValidator(exerciseId);
+            helper.idValidator(exerciseId);
         }
         catch(e){
             throw `Error in getExerciseById: ${exerciseId} not valid`;
@@ -60,7 +60,7 @@ let exerciseDataFunctions = {
 
     async getAllExercisesByTarget(muscle){
         try{
-            muscle = inputValidator(muscle, 'Muscle');
+            muscle = helper.inputValidator(muscle, 'Muscle');
         }catch (e){
             throw `Error in getAllExercisesByTarget: ${e}`
         }
@@ -77,7 +77,7 @@ let exerciseDataFunctions = {
 
     async removeExercise(exerciseId){
         try{
-            idValidator(exerciseId);
+            helper.idValidator(exerciseId);
         }
         catch(e){
             throw `Error in removeExercise: ${exerciseId} not valid.`;
@@ -96,7 +96,7 @@ let exerciseDataFunctions = {
         let exercise = null;
         const exerciseCollections = await exercises();
         try{
-            idValidator(exerciseId);
+            helper.idValidator(exerciseId);
         } catch (e) {
             throw `Error in updateExercise: ${exerciseId} not valid.`;
         }
@@ -106,10 +106,10 @@ let exerciseDataFunctions = {
         }
 
 
-        exerciseName = inputValidator(exerciseName, 'exerciseName');
-        exerciseDescription = inputValidator(exerciseDescription, 'exerciseDescription');
-        instructions = inputValidator(instructions, 'instructions');
-        difficulty = inputValidator(difficulty, 'difficulty');
+        exerciseName = helper.inputValidator(exerciseName, 'exerciseName');
+        exerciseDescription = helper.inputValidator(exerciseDescription, 'exerciseDescription');
+        instructions = helper.inputValidator(instructions, 'instructions');
+        difficulty = helper.inputValidator(difficulty, 'difficulty');
         
         if(!Array.isArray(targetMuscle) ){
             throw "Error in updateExercise: targetMuscle must be an array."

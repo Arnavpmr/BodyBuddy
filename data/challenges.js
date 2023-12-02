@@ -1,12 +1,12 @@
-import { inputValidator, idValidator, dateValidator } from "../helpers.js"
-import { challenges } from '../configurations/mongoCollections.js'
+import helper from "../helpers.js"
+import { challenges } from '../../../configurations/mongoCollections.js'
 import {ObjectId} from 'mongodb';
 
 let challengeDataFunctions = {
     async createChallenge(exerciseList, timeLimit, reward, deadline){
         deadline = deadline.trim();
         try{
-            dateValidator(deadline);
+            helper.dateValidator(deadline);
         }catch(e){
             throw`${e}`;
         }
@@ -54,7 +54,7 @@ let challengeDataFunctions = {
 
     async getChallengeById(challengeId){
         try{
-            idValidator(challengeId, 'challengeId');
+            helper.idValidator(challengeId, 'challengeId');
         } catch (e){
             throw `Error in getChallengeById: ${challengeId} not valid.`;
         }
@@ -68,7 +68,7 @@ let challengeDataFunctions = {
 
     async removeChallenge(challengeId){
         try{
-            idValidator(challengeId, 'challengeId');
+            helper.idValidator(challengeId, 'challengeId');
         } catch (e){
             throw `Error in removeChallenge: ${challengeId} not valid.`;
         }
@@ -85,7 +85,7 @@ let challengeDataFunctions = {
         let challenge = null;
         const challengeCollections = await challenges();
         try{
-            idValidator(challengeId);
+            helper.idValidator(challengeId);
         }catch(e){
             throw `Error in updateChallenge: ${challengeId} not valid.`
         }
@@ -95,7 +95,7 @@ let challengeDataFunctions = {
         }
 
         try{
-            deadline = inputValidator(deadline, 'deadline');
+            deadline = helper.inputValidator(deadline, 'deadline');
         } catch (e){
             throw `Error in updateChallenge: ${e}`;
         }
