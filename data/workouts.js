@@ -1,11 +1,11 @@
-import { idValidator, inputValidator } from "../helpers.js"
-import { workouts, exercises } from '../configurations/mongoCollections.js'
+import helper from "../helpers.js"
+import { workouts, exercises } from '../../../configurations/mongoCollections.js'
 import { ObjectId } from "mongodb";
 
 let workoutDataFunctions = {
     async createWorkout(name, workoutType, notes, exercises){
         try{
-            name = inputValidator(name, "name");
+            name = helper.inputValidator(name, "name");
         } catch (e){
             throw `Error in createWorkout: ${e}`
         }
@@ -51,7 +51,7 @@ let workoutDataFunctions = {
     },
 
     async getWorkoutsByType(workoutType){
-        workoutType = inputValidator(workoutType, 'Type')
+        workoutType = helper.inputValidator(workoutType, 'Type')
         const workoutCollections = await workouts();
         const workoutList = await workoutCollections.find({ "type": { $elemMatch: workoutType}});
         if(!workoutList){
@@ -62,7 +62,7 @@ let workoutDataFunctions = {
 
     async getWorkoutById(workoutId){
         try{
-            idValidator(workoutId);
+            helper.idValidator(workoutId);
         }
         catch(e){
             throw `Error in getWorkoutById: ${e}`;
@@ -78,8 +78,8 @@ let workoutDataFunctions = {
 
     async pushExerciseToWorkout( workoutId, exerciseId){
         try{
-            workoutId = idValidator(workoutId, 'WorkoutId');
-            exerciseId = idValidator(exerciseId, 'ExerciseId');
+            workoutId = helper.idValidator(workoutId, 'WorkoutId');
+            exerciseId = helper.idValidator(exerciseId, 'ExerciseId');
         } catch (e){
             throw`Error in pushExerciseToWorkout: ${e}`
         }
@@ -96,7 +96,7 @@ let workoutDataFunctions = {
 
     async pullExerciseFromWorkout(workoutId, exerciseId){
         try{
-            workoutId = idValidator(workoutId, 'WorkoutId');
+            workoutId = helper.idValidator(workoutId, 'WorkoutId');
         } catch (e){
             throw`Error in pullExerciseFromWorkout: ${e}`
         }
@@ -114,7 +114,7 @@ let workoutDataFunctions = {
 
     async removeWorkout(workoutId){
         try{
-            idValidator(workoutId);
+            helper.idValidator(workoutId);
         }
         catch (e) {
             throw `Error in removeWorkout: ${workoutId} not valid`;
