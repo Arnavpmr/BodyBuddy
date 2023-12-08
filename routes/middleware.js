@@ -12,7 +12,7 @@ export const rewriteUnsupportedBrowserMethods = (req, res, next) => {
 export const root = async (req, res, next) => {
   if (req.originalUrl !== "/") return next();
 
-  if (!req.session.user) return res.redirect("/login");
+  if (!req.session.user) return res.redirect("/about");
 
   return res.redirect("/home");
 };
