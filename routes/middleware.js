@@ -41,7 +41,12 @@ export const logout = (req, res, next) => {
   next();
 };
 
-// Workouts
+export const challenges = (req, res, next) => {
+  if (!req.session.user) return res.redirect("/login");
+
+  next();
+};
+
 export const workouts = (req, res, next) => {
   if (!req.session.user) return res.redirect("/login");
 

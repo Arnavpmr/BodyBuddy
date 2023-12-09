@@ -1,4 +1,4 @@
-import userDataHelpers from "../data/users.js";
+import userDataHelpers from "../data/user.js";
 import helper from "../helpers.js";
 import { Router } from "express";
 

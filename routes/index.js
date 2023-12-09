@@ -1,20 +1,22 @@
 // This file will import both route files and export the constructor method as shown in the lecture code
-import authRoutes from './auth_routes.js';
-import challengesRoutes from './challenges.js';
-import exercisesRoutes from './exercises.js';
-import usersRoutes from './users.js';
-import workoutsRoutes from './workouts.js';
+import authRoutes from "./auth_routes.js";
+import challengesRoutes from "./challenges.js";
+import aboutRoute from "./about.js";
+import usersRoutes from "./users.js";
+import workoutsRoutes from "./workouts.js";
 
 const constructorMethod = (app) => {
-    app.use('/', authRoutes);
-    app.use('/challenges', challengesRoutes);
-    app.use('/exercises', exercisesRoutes);
-    app.use('/users', usersRoutes);
-    app.use('/workouts', workoutsRoutes);
+  app.use("/", authRoutes);
+  app.use("/about", aboutRoute);
+  app.use("/challenges", challengesRoutes);
+  app.use("/user", usersRoutes);
+  app.use("/workouts", workoutsRoutes);
 
-    app.use('*', (req, res) => {
-        res.status(404).json({ error: 'Route Not found' });
+  app.use("*", (req, res) => {
+    return res.status(404).render("error", {
+      error: "The page you requested does not exist",
     });
+  });
 };
 
 export default constructorMethod;
