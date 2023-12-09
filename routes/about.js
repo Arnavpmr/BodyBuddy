@@ -2,8 +2,8 @@ import { Router } from "express";
 
 const router = Router();
 
-router.route("/:userName").get(async (req, res) => {
-  return res.status(200).render("profile", {
+router.route("/").get(async (req, res) => {
+  return res.status(200).render("about", {
     user: req.session.user,
   });
 });
