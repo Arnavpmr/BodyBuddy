@@ -21,4 +21,3 @@ export const users = getCollectionFn("users");
 export const workouts = getCollectionFn("workouts");
 export const exercises = getCollectionFn("exercises");
 export const challenges = getCollectionFn("challenges");
-export const adminInvites = getCollectionFn("adminInvites");
