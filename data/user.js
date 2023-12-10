@@ -14,7 +14,9 @@ let userDataFunctions = {
     age,
   ) {
     let validatedInput = undefined;
-
+    let friendsList = [];
+    let incomingRequests = [];
+    let outgoingRequests = [];
     try {
       validatedInput = helper.createUserValidator(
         firstName,
@@ -24,6 +26,9 @@ let userDataFunctions = {
         password,
         description,
         age,
+        friendsList,
+        incomingRequests,
+        outgoingRequests,
       );
     } catch (e) {
       throw e;
@@ -55,7 +60,7 @@ let userDataFunctions = {
 
     return { insertedUser: true };
   },
-  async getUser(userId) {
+  async getUserById(userId) {
     try {
       userId = helper.idValidator(userId);
     } catch (e) {
@@ -64,6 +69,17 @@ let userDataFunctions = {
     const userCollections = await users();
     let user = await userCollections.findOne({ _id: new ObjectId(userId) });
 
+    user._id = user._id.toString();
+    return user;
+  },
+  async getUserByUsername(userName) {
+    try {
+      userName = helper.inputValidator(userName);
+    } catch (e) {
+      throw `${userName} not valid.`;
+    }
+    const userCollections = await users();
+    let user = await userCollections.findOne({ userName: userName });
     user._id = user._id.toString();
     return user;
   },
@@ -144,6 +160,11 @@ let userDataFunctions = {
           emailAddress: emailAddress,
           password: password,
           aboutMe: { description: description, age: age },
+          friends: {
+            friendsList: updatedUser.friendsList,
+            incomingRequests: updatedUser.incomingRequests,
+            outgoingRequests: updatedUser.outgoingRequests,
+          },
         },
       },
       { returnDocument: "after" },
@@ -191,6 +212,76 @@ let userDataFunctions = {
     }
 
     return userObj;
+  },
+  async addFriend(userId, friendId) {
+    try {
+      userId = helper.idValidator(userId);
+    } catch (e) {
+      throw e;
+    }
+    try {
+      friendId = helper.idValidator(friendId);
+    } catch (e) {
+      throw e;
+    }
+
+    let userCollections = await users();
+    let user = await userCollections.findOne({ _id: new ObjectId(userId) });
+    if (!user) throw "User not found";
+    let friend = await userCollections.findOne({ _id: new ObjectId(friendId) });
+    if (!friend) throw "Friend not found";
+
+    const userAdding = await userCollections.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      {
+        $push: { "friends.friendsList": new ObjectId(friend._id) },
+      },
+      { returnDocument: "after" },
+    );
+    const userAdded = await userCollections.findOneAndUpdate(
+      { _id: new ObjectId(friendId) },
+      {
+        $push: { "friends.friendsList": new ObjectId(user._id) },
+      },
+      { returnDocument: "after" },
+    );
+    let myObj = { friendshipTransaction: "Success" };
+    return myObj;
+  },
+  async friendRequest(userId, friendId) {
+    try {
+      userId = helper.idValidator(userId);
+    } catch (e) {
+      throw e;
+    }
+    try {
+      friendId = helper.idValidator(friendId);
+    } catch (e) {
+      throw e;
+    }
+
+    let userCollections = await users();
+    let user = await userCollections.findOne({ _id: new ObjectId(userId) });
+    if (!user) throw "User not found";
+    let friend = await userCollections.findOne({ _id: new ObjectId(friendId) });
+    if (!friend) throw "Friend not found";
+
+    const outgoingRequest = await userCollections.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      {
+        $push: { "friends.outgoingRequests": new ObjectId(friend._Id) },
+      },
+      { returnDocument: "after" },
+    );
+    const incomingRequest = await userCollections.findOneAndUpdate(
+      { _id: new ObjectId(friendId) },
+      {
+        $push: { "friends.outgoingRequests": new ObjectId(user._id) },
+      },
+      { returnDocument: "after" },
+    );
+    let myObj = { friendshipTransaction: "Success" };
+    return myObj;
   },
 };
 
