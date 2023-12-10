@@ -228,7 +228,9 @@ let userDataFunctions = {
     let userCollections = await users();
     let user = await userCollections.findOne({ _id: new ObjectId(userId) });
     if (!user) throw "User not found";
-    let friend = await userCollections.findOne({ _id: new ObjectId(friendId) });
+    let friend = await userCollections.findOne({
+      _id: new ObjectId(friendId),
+    });
     if (!friend) throw "Friend not found";
 
     const userAdding = await userCollections.findOneAndUpdate(
@@ -263,7 +265,9 @@ let userDataFunctions = {
     let userCollections = await users();
     let user = await userCollections.findOne({ _id: new ObjectId(userId) });
     if (!user) throw "User not found";
-    let friend = await userCollections.findOne({ _id: new ObjectId(friendId) });
+    let friend = await userCollections.findOne({
+      _id: new ObjectId(friendId),
+    });
     if (!friend) throw "Friend not found";
 
     const outgoingRequest = await userCollections.findOneAndUpdate(
