@@ -1,4 +1,4 @@
-import userDataHelpers from "../data/users.js";
+import userDataHelpers from "../data/user.js";
 import helper from "../helpers.js";
 import { Router } from "express";
 
@@ -52,8 +52,8 @@ router
         validatedInput.userName,
         validatedInput.emailAddress,
         validatedInput.password,
-        validatedInput.description,
-        validatedInput.age,
+        validatedInput.aboutMe.description,
+        validatedInput.aboutMe.age,
       );
     } catch (e) {
       const status = 400;
@@ -104,12 +104,6 @@ router
 
     return res.redirect("/home");
   });
-
-router.route("/home").get(async (req, res) => {
-  return res
-    .status(200)
-    .render("home", { title: "Home", userData: req.session.user });
-});
 
 router.route("/logout").get(async (req, res) => {
   const anHourAgo = new Date();

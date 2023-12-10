@@ -8,6 +8,8 @@ let exerciseDataFunctions = {
     targetMuscle,
     exerciseDescription,
     instructions,
+    sets,
+    reps,
     equipment,
     difficulty,
     image,
@@ -25,6 +27,19 @@ let exerciseDataFunctions = {
       throw `Error in createExercise: ${e}`;
     }
 
+    if (isNaN(sets)) {
+      throw "Sets must be a valid integer.";
+    }
+    if (isNaN(reps)) {
+      throw "Reps must be a valid integer.";
+    }
+    if (sets < 0) {
+      throw "Sets must be a positive number.";
+    }
+    if (reps < 0) {
+      throw "Reps must be a positive number.";
+    }
+
     if (!Array.isArray(targetMuscle)) {
       throw "Error in createExercise: targetMuscle must be an array.";
     }
@@ -37,6 +52,8 @@ let exerciseDataFunctions = {
       targetMuscles: targetMuscle,
       description: exerciseDescription,
       instructions: instructions,
+      sets: sets,
+      reps: reps,
       equipment: equipment,
       difficulty: difficulty,
       image: image,
@@ -108,6 +125,8 @@ let exerciseDataFunctions = {
     targetMuscle,
     exerciseDescription,
     instructions,
+    sets,
+    reps,
     equipment,
     difficulty,
     image,
@@ -149,6 +168,8 @@ let exerciseDataFunctions = {
           targetMuscles: targetMuscle,
           description: exerciseDescription,
           instructions: instructions,
+          sets: sets,
+          reps: reps,
           equipment: equipment,
           difficulty: difficulty,
           image: image,
