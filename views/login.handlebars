@@ -1,1 +1,47 @@
-<p>This is the Login page!</p>
+<div class='center' style='padding: 2rem;'>
+    <form action='/login' method='POST' id='loginForm'>
+        <table>
+            <tr>
+                <td>
+                    <label for='emailInput'>
+                        Enter your Email
+                    </label>
+                </td>
+                <td>
+                    <input type='email' name='emailInput' id='emailInput' />
+                    {{#if emailError}}
+                        <span id='emailError' class='errorMsg'>X
+                            {{emailError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='passwordInput'>
+                        Enter your Password
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='password'
+                        name='passwordInput'
+                        id='passwordInput'
+                    />
+                    {{#if passwordError}}
+                        <span id='passwordError' class='errorMsg'>X
+                            {{passwordError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td colspan='1'>
+                    <label for='submitButton'>
+                        <button type='submit' id='submitButton'>Submit</button>
+                    </label>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <a href='/register' style='text-align: left;'>Don't have an account?
+        Register Here</a>
+</div>

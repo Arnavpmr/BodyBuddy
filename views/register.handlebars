@@ -1,1 +1,119 @@
-<p>This is the Register page</p>
+<div class='center' style='padding: 2rem;'>
+    <form action='/register' method='POST' id='registerForm'>
+        <table>
+            <tr>
+                <td>
+                    <label for='firstNameInput'>
+                        Enter your First Name
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='text'
+                        name='firstNameInput'
+                        id='firstNameInput'
+                    />
+                    {{#if firstNameError}}
+                        <span id='firstNameError' class='errorMsg'>X
+                            {{firstNameError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='lastNameInput'>
+                        Enter your Last Name
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='text'
+                        name='lastNameInput'
+                        id='lastNameInput'
+                    />
+                    {{#if lastNameError}}
+                        <span id='lastNameError' class='errorMsg'>X
+                            {{lastNameError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='usernameInput'>
+                        Enter a Username
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='text'
+                        name='usernameInput'
+                        id='usernameInput'
+                    />
+                    {{#if usernameError}}
+                        <span id='usernameError' class='errorMsg'>X
+                            {{usernameError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='emailInput'>
+                        Enter your Email
+                    </label>
+                </td>
+                <td>
+                    <input type='email' name='emailInput' id='emailInput' />
+                    {{#if emailError}}
+                        <span id='emailError' class='errorMsg'>X
+                            {{emailError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='passwordInput'>
+                        Enter your Password
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='password'
+                        name='passwordInput'
+                        id='passwordInput'
+                    />
+                    {{#if passwordError}}
+                        <span id='passwordError' class='errorMsg'>X
+                            {{passwordError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td style='width: 300px'>
+                    <label for='confirmPasswordInput'>
+                        Confirm your Password
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='password'
+                        name='confirmPasswordInput'
+                        id='confirmPasswordInput'
+                    />
+                    {{#if confirmPasswordError}}
+                        <span id='confirmPasswordError' class='errorMsg'>X
+                            {{confirmPasswordError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td colspan='1'>
+                    <label for='submitButton'>
+                        <button type='submit' id='submitButton'>Submit</button>
+                    </label>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <a href='/login' style='text-align: left;'>Already have an account? Login
+        here</a>
+</div>
