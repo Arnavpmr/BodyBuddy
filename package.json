@@ -8,7 +8,7 @@
     "start": "node app.js",
     "prepare": "husky install"
   },
-  "author": "Arnav Marchareddy, Aidan Giordano, Robert Romero, Joshua Bernstein and Rishi Raj",
+  "author": "Arnav Marchareddy, Aidan Giordano, Robertson Romero, Joshua Bernstein and Rishi Raj",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
