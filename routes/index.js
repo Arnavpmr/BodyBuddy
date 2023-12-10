@@ -1,5 +1,5 @@
 // This file will import both route files and export the constructor method as shown in the lecture code
-import authRoutes from "./authRoutes.js";
+import authRoutes from "./auth.js";
 import challengesRoutes from "./challenges.js";
 import aboutRoute from "./about.js";
 import homeRoute from "./home.js";
