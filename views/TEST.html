@@ -1,34 +1,32 @@
-{{! This will be your default layout for all handlebars file rendered. This will be inherited by all other templates. }}
-{{! Refer lecture code to learn more on how this works: https://github.com/stevens-cs546-cs554/CS-546/tree/master/lecture_08/code/HTML_Templating }}
 <!DOCTYPE html>
 <html lang='en'>
     <head>
         <meta charset='UTF-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         <title>{{title}}</title>
-        <link rel='stylesheet' href='/public/site.css' />
+        <link rel='stylesheet' href='../public/css/site.css' />
     </head>
     <body>
-        {{! Navbar }}
         <header class='navbar'>
+               
             <img
-                src='/public/temp_logo.png'
+                src='../public/res/temp_logo.png'
+                style="vertical-align: middle;"
                 alt='Body Buddy Logo'
                 id='navbar_logo'
             />
             <div id='navbar_item_list'>
-                {{#if isLoggedIn}}
                     <a href='/' class='navbar_items'>Home</a>
                     <a href='/about' class='navbar_items'>About</a>
                     <a href='/exercises' class='navbar_items'>Exercises</a>
                     <a href='/workouts' class='navbar_items'>Workouts</a>
                     <a href='/challenges' class='navbar_items'>Challenges</a>
                     <a href='/profile' class='navbar_items'>My Profile</a>
-                {{/if}}
             </div>
         </header>
-        {{! End of Navbar }}
-        {{{body}}}
+
+
+
         <footer>
             This is a footer! For footer things
         </footer>
