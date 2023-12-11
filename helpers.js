@@ -3,14 +3,14 @@ import { ObjectId } from "mongodb";
 let helper = {
   inputValidator(input, inputName) {
     if (!input) {
-      throw `Error: ${input} is not a valid ${inputName}`;
+      throw `${input} is not a valid ${inputName}`;
     }
     if (typeof input != "string") {
-      throw `Error: ${input} is not a valid string`;
+      throw `${input} is not a valid string`;
     }
     input = input.trim();
     if (input === "") {
-      throw `Error: ${inputName} cannot be an empty string`;
+      throw `${inputName} cannot be an empty string`;
     }
 
     return input;
@@ -18,7 +18,7 @@ let helper = {
 
   emailValidator(email) {
     if (!email) {
-      throw `You have input an invalid email address`;
+      throw `Invalid email`;
     }
     email = email.toLowerCase().trim();
 
@@ -35,40 +35,40 @@ let helper = {
     let preRegexTwo = /[._-](?!\w+|\d+)/g;
 
     if (!email.includes("@") || !email.includes(".")) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     if (email.match(/@/g).length != 1) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
 
     const [prefix, domain] = email.split("@");
     if (!prefix | !domain) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     const [domainName, com] = domain.split(".");
     if (prefix.length < 1 || domainName.length < 1) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
 
     let invalidChars = prefix.match(preRegex);
     if (invalidChars != null) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
 
     invalidChars = prefix.match(preRegexTwo);
     if (invalidChars != null) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     invalidChars = domainName.match(domRegex);
     if (invalidChars != null) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     invalidChars = domainName.match(domRegexTwo);
     if (invalidChars != null) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     if (com.length < 2) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     return email;
   },
@@ -76,24 +76,24 @@ let helper = {
   dateValidator(date) {
     let temp = new Date(date);
     if (isNaN(temp)) {
-      throw "Error: Invalid date";
+      throw "Invalid date";
     }
     return true;
   },
 
   idValidator(id) {
     if (!id) {
-      throw "Error: No id was provided";
+      throw "No id was provided";
     }
     if (typeof id != "string") {
-      throw "Error: id must be a string!";
+      throw "Id must be a string!";
     }
     id = id.trim();
     if (id.length === 0) {
-      throw "Error: id can't be an empty string.";
+      throw "Id can't be an empty string.";
     }
     if (!ObjectId.isValid(id)) {
-      throw "Error: id is invalid.";
+      throw "Id is invalid.";
     }
     return id;
   },
@@ -185,6 +185,88 @@ let helper = {
     return {
       userName: userName,
       password: password,
+    };
+  },
+
+  exerciseValidator(
+    exerciseName,
+    targetMuscle,
+    exerciseDescription,
+    instructions,
+    equipment,
+    difficulty,
+    image,
+  ) {
+    try {
+      exerciseName = this.inputValidator(exerciseName, "exerciseName");
+      exerciseDescription = this.inputValidator(
+        exerciseDescription,
+        "exerciseDescription",
+      );
+      instructions = this.inputValidator(instructions, "instructions");
+      difficulty = this.inputValidator(difficulty, "difficulty");
+      image = this.inputValidator(image, "image");
+    } catch (e) {
+      throw `${e}`;
+    }
+
+    return {
+      name: exerciseName,
+      targetMuscles: targetMuscle,
+      description: exerciseDescription,
+      instructions: instructions,
+      equipment: equipment,
+      difficulty: difficulty,
+      image: image,
+    };
+  },
+  workoutValidator(name, workoutTypes, notes, exercises) {
+    const definedWorkoutTypes = [];
+
+    try {
+      name = helper.inputValidator(name, "name");
+    } catch (e) {
+      throw `${e}`;
+    }
+
+    if (typeof notes !== "string") {
+      throw "Notes must be a valid string";
+    }
+    notes = notes.trim();
+
+    if (
+      !Array.isArray(workoutTypes) ||
+      workoutTypes.some(
+        (workout) =>
+          workout.trim() === "" && definedWorkoutTypes.includes(workout.trim()),
+      )
+    ) {
+      throw "workoutType must be a valid array.";
+    }
+
+    if (!Array.isArray(exercises)) throw "Exercises must be an array.";
+
+    exercises = exercises.map((exercise) => {
+      if (typeof exercise.sets !== "number" || exercise.sets <= 0)
+        throw "Sets is invalid";
+
+      if (typeof exercise.reps !== "number" || exercise.reps <= 0)
+        throw "Reps is invalid";
+
+      const id = this.idValidator(exercise.id);
+
+      return {
+        id: id,
+        sets: exercise.sets,
+        reps: exercise.reps,
+      };
+    });
+
+    return {
+      name: name,
+      workoutTypes: workoutTypes,
+      notes: notes,
+      exercises: exercises,
     };
   },
 };

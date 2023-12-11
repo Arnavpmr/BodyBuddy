@@ -31,6 +31,7 @@ app.use("/register", mw.register);
 app.use("/home", mw.home);
 app.use("/logout", mw.logout);
 app.use("/workouts", mw.workouts);
+app.use("/exercises", mw.exercises);
 app.use("/challenges", mw.challenges);
 
 configRoutes(app);
