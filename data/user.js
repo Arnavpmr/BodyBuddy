@@ -141,7 +141,7 @@ let userDataFunctions = {
     // Optional
     description = description.trim();
     if (age && age < 0) {
-      throw `Error in updateUser: Age cannot be a negative number.`;
+      throw `Age cannot be a negative number.`;
     }
 
     try {

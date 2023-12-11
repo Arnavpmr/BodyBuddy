@@ -8,8 +8,6 @@ let exerciseDataFunctions = {
     targetMuscle,
     exerciseDescription,
     instructions,
-    sets,
-    reps,
     equipment,
     difficulty,
     image,
@@ -24,27 +22,14 @@ let exerciseDataFunctions = {
       difficulty = helper.inputValidator(difficulty, "difficulty");
       image = helper.inputValidator(image, "image");
     } catch (e) {
-      throw `Error in createExercise: ${e}`;
-    }
-
-    if (isNaN(sets)) {
-      throw "Sets must be a valid integer.";
-    }
-    if (isNaN(reps)) {
-      throw "Reps must be a valid integer.";
-    }
-    if (sets < 0) {
-      throw "Sets must be a positive number.";
-    }
-    if (reps < 0) {
-      throw "Reps must be a positive number.";
+      throw `${e}`;
     }
 
     if (!Array.isArray(targetMuscle)) {
-      throw "Error in createExercise: targetMuscle must be an array.";
+      throw "TargetMuscle must be an array.";
     }
     if (!Array.isArray(equipment)) {
-      throw "Error in createExercise: Equiment must be an array.";
+      throw "Equiment must be an array.";
     }
 
     let newExercise = {
@@ -52,8 +37,6 @@ let exerciseDataFunctions = {
       targetMuscles: targetMuscle,
       description: exerciseDescription,
       instructions: instructions,
-      sets: sets,
-      reps: reps,
       equipment: equipment,
       difficulty: difficulty,
       image: image,
@@ -62,7 +45,7 @@ let exerciseDataFunctions = {
     const exerciseCollections = await exercises();
     const entry = await exerciseCollections.insertOne(newExercise);
     if (!entry.acknowledged || !entry.insertedId) {
-      throw "Error in createExercise: Unable to add event";
+      throw "Unable to add event";
     }
     return entry;
   },
@@ -71,14 +54,14 @@ let exerciseDataFunctions = {
     try {
       helper.idValidator(exerciseId);
     } catch (e) {
-      throw `Error in getExerciseById: ${exerciseId} not valid`;
+      throw `id not valid`;
     }
     const exerciseCollections = await exercises();
     let exercise = await exerciseCollections.findOne({
       _id: new ObjectId(exerciseId),
     });
     if (!exercise) {
-      throw `Error in getExerciseById: No exercise with the ID of ${exerciseId} exists`;
+      throw `No exercise with the ID of ${exerciseId} exists`;
     }
     exercise._id = exercise._id.toString();
     return exercise;
@@ -88,7 +71,7 @@ let exerciseDataFunctions = {
     try {
       muscle = helper.inputValidator(muscle, "Muscle");
     } catch (e) {
-      throw `Error in getAllExercisesByTarget: ${e}`;
+      throw `${e}`;
     }
 
     const exerciseCollections = await exercises();
@@ -97,7 +80,7 @@ let exerciseDataFunctions = {
       targetMuscles: muscle,
     });
     if (!exerciseList) {
-      throw `Error in getAllExercisesByTarget: No exercises exists that target ${muscle}.`;
+      throw `No exercises exists that target ${muscle}.`;
     }
     return exerciseList.toArray();
   },
@@ -106,14 +89,14 @@ let exerciseDataFunctions = {
     try {
       helper.idValidator(exerciseId);
     } catch (e) {
-      throw `Error in removeExercise: ${exerciseId} not valid.`;
+      throw `Id not valid.`;
     }
     const exerciseCollections = await exercises();
     let exerciseRemoved = await exerciseCollections.findOneAndDelete({
       _id: new ObjectId(exerciseId),
     });
     if (!exerciseRemoved) {
-      throw "Error in removeExercise: Exercise does not exist.";
+      throw "Exercise does not exist.";
     }
     let myObj = { exerciseName: exerciseRemoved.name, deleted: true };
     return myObj;
@@ -125,8 +108,6 @@ let exerciseDataFunctions = {
     targetMuscle,
     exerciseDescription,
     instructions,
-    sets,
-    reps,
     equipment,
     difficulty,
     image,
@@ -136,13 +117,13 @@ let exerciseDataFunctions = {
     try {
       helper.idValidator(exerciseId);
     } catch (e) {
-      throw `Error in updateExercise: ${exerciseId} not valid.`;
+      throw `Id not valid.`;
     }
     exercise = await exerciseCollections.findOne({
       _id: new ObjectId(exerciseId),
     });
     if (!exercise) {
-      throw `Error in updateExercise: Exercise does not exist.`;
+      throw `Exercise does not exist.`;
     }
 
     exerciseName = helper.inputValidator(exerciseName, "exerciseName");
@@ -154,10 +135,10 @@ let exerciseDataFunctions = {
     difficulty = helper.inputValidator(difficulty, "difficulty");
 
     if (!Array.isArray(targetMuscle)) {
-      throw "Error in updateExercise: targetMuscle must be an array.";
+      throw "TargetMuscle must be an array.";
     }
     if (!Array.isArray(equipment)) {
-      throw "Error in updateExercise: Equiment must be an array.";
+      throw "Equiment must be an array.";
     }
 
     let updatedExercise = await exerciseCollections.findOneAndUpdate(
@@ -168,8 +149,6 @@ let exerciseDataFunctions = {
           targetMuscles: targetMuscle,
           description: exerciseDescription,
           instructions: instructions,
-          sets: sets,
-          reps: reps,
           equipment: equipment,
           difficulty: difficulty,
           image: image,

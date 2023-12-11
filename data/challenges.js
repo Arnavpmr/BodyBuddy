@@ -12,19 +12,19 @@ let challengeDataFunctions = {
     }
 
     if (!Array.isArray(exerciseList)) {
-      throw "Error in createChallenge: exerciseList must be an array";
+      throw "ExerciseList must be an array";
     }
     if (isNaN(reward)) {
-      throw "Error in createChallenge: reward must be a valid number";
+      throw "Reward must be a valid number";
     }
     if (reward < 1) {
-      throw "Error in createChallenge: reward cannot be negative.";
+      throw "Reward cannot be negative.";
     }
     if (isNaN(timeLimit)) {
-      throw "Error in createChallenge: timeLimit must be a valid number ";
+      throw "TimeLimit must be a valid number ";
     }
     if (timeLimit < 1) {
-      throw "Error in createChallenge: timeLimit cannot be negative.";
+      throw "TimeLimit cannot be negative.";
     }
 
     let newChallenge = {
@@ -37,7 +37,7 @@ let challengeDataFunctions = {
     const challengesCollections = await challenges();
     const entry = await challengesCollections.insertOne(newChallenge);
     if (!entry.acknowledged || !entry.insertedId) {
-      throw "Error in create: Unable to add event";
+      throw "Unable to add challenge";
     }
     return entry;
   },
@@ -46,7 +46,7 @@ let challengeDataFunctions = {
     const challengeCollections = await challenges();
     let getAllChallenges = await challengeCollections.find({}).toArray();
     if (!getAllChallenges) {
-      throw "Error in getAllChallenges: No challenges in database.";
+      throw "No challenges in database.";
     }
     return getAllChallenges;
   },
@@ -55,7 +55,7 @@ let challengeDataFunctions = {
     try {
       helper.idValidator(challengeId, "challengeId");
     } catch (e) {
-      throw `Error in getChallengeById: ${challengeId} not valid.`;
+      throw `Id not valid.`;
     }
 
     const challengeCollections = await challenges();
@@ -71,14 +71,14 @@ let challengeDataFunctions = {
     try {
       helper.idValidator(challengeId, "challengeId");
     } catch (e) {
-      throw `Error in removeChallenge: ${challengeId} not valid.`;
+      throw `Id not valid.`;
     }
     const challengeCollections = await challenges();
     let challengeRemoved = await challengeCollections.findOneAndDelete({
       _id: new ObjectId(challengeId),
     });
     if (!challengeRemoved) {
-      throw "Error in removeChallenge: Challenge does not exist.";
+      throw "Challenge does not exist.";
     }
     let myObj = { _id: challengeRemoved._id.toString(), deleted: true };
     return myObj;
@@ -96,28 +96,28 @@ let challengeDataFunctions = {
     try {
       helper.idValidator(challengeId);
     } catch (e) {
-      throw `Error in updateChallenge: ${challengeId} not valid.`;
+      throw `Id not valid.`;
     }
     challenge = await challengeCollections.find({
       _id: new ObjectId(challengeId),
     });
     if (!challenge) {
-      throw `Error in updateChallenge: challenge does not exist.`;
+      throw `Challenge does not exist.`;
     }
 
     try {
       deadline = helper.inputValidator(deadline, "deadline");
     } catch (e) {
-      throw `Error in updateChallenge: ${e}`;
+      throw `${e}`;
     }
     if (!Array.isArray(exerciseList)) {
-      throw "Error in updateChallenge: exerciseList must be an array";
+      throw "ExerciseList must be an array";
     }
     if (isNaN(reward)) {
-      throw "Error in updateChallenge: reward must be a valid number";
+      throw "Reward must be a valid number";
     }
     if (isNaN(timeLimit)) {
-      throw "Error in updateChallenge: timeLimit must be a valid number ";
+      throw "TimeLimit must be a valid number ";
     }
 
     let updatedChallenge = await challengeCollections.findOneAndUpdate(
