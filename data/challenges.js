@@ -3,35 +3,34 @@ import { challenges } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 
 let challengeDataFunctions = {
-  async createChallenge(exerciseList, timeLimit, reward, deadline) {
-    deadline = deadline.trim();
+  async createChallenge(
+    challengeExerciseList,
+    challengeTitle,
+    challengeReward,
+    challengeDescription,
+  ) {
     try {
-      helper.dateValidator(deadline);
+      challengeTitle = helper.inputValidator;
+      challengeDescription = helper.inputValidator;
     } catch (e) {
       throw `${e}`;
     }
 
-    if (!Array.isArray(exerciseList)) {
+    if (!Array.isArray(challengeExerciseList)) {
       throw "ExerciseList must be an array";
     }
-    if (isNaN(reward)) {
+    if (isNaN(challengeReward)) {
       throw "Reward must be a valid number";
     }
-    if (reward < 1) {
+    if (challengeReward < 1) {
       throw "Reward cannot be negative.";
-    }
-    if (isNaN(timeLimit)) {
-      throw "TimeLimit must be a valid number ";
-    }
-    if (timeLimit < 1) {
-      throw "TimeLimit cannot be negative.";
     }
 
     let newChallenge = {
-      exercises: exerciseList,
-      timeLimit: timeLimit,
-      reward: reward,
-      deadline: deadline,
+      title: challengeTitle,
+      description: challengeDescription,
+      exercises: challengeExerciseList,
+      reward: challengeReward,
     };
 
     const challengesCollections = await challenges();
@@ -86,48 +85,42 @@ let challengeDataFunctions = {
 
   async updateChallenge(
     challengeId,
-    exerciseList,
-    timeLimit,
-    reward,
-    deadline,
+    challengeExerciseList,
+    challengeTitle,
+    challengeReward,
+    challengeDescription,
   ) {
-    let challenge = null;
-    const challengeCollections = await challenges();
     try {
-      helper.idValidator(challengeId);
+      challengeTitle = helper.inputValidator;
+      challengeDescription = helper.inputValidator;
     } catch (e) {
-      throw `Id not valid.`;
+      throw `${e}`;
     }
-    challenge = await challengeCollections.find({
+
+    if (!Array.isArray(challengeExerciseList)) {
+      throw "ExerciseList must be an array";
+    }
+    if (isNaN(challengeReward)) {
+      throw "Reward must be a valid number";
+    }
+    if (challengeReward < 1) {
+      throw "Reward cannot be negative.";
+    }
+    let challenge = await challengeCollections.find({
       _id: new ObjectId(challengeId),
     });
     if (!challenge) {
       throw `Challenge does not exist.`;
     }
 
-    try {
-      deadline = helper.inputValidator(deadline, "deadline");
-    } catch (e) {
-      throw `${e}`;
-    }
-    if (!Array.isArray(exerciseList)) {
-      throw "ExerciseList must be an array";
-    }
-    if (isNaN(reward)) {
-      throw "Reward must be a valid number";
-    }
-    if (isNaN(timeLimit)) {
-      throw "TimeLimit must be a valid number ";
-    }
-
     let updatedChallenge = await challengeCollections.findOneAndUpdate(
       { _id: new ObjectId(challengeId) },
       {
         $set: {
-          exercises: exerciseList,
-          timeLimit: timeLimit,
-          reward: reward,
-          deadline: deadline,
+          title: challengeTitle,
+          description: challengeDescription,
+          exercises: challengeExerciseList,
+          reward: challengeReward,
         },
       },
       { returnDocument: "after" },
