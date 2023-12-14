@@ -16,7 +16,9 @@
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
     "handlebars": "^4.7.8",
-    "mongodb": "^6.2.0"
+    "mongodb": "^6.2.0",
+    "@datastructures-js/queue": "^4.2.3",
+    "node-schedule": "^2.1.1"
   },
   "devDependencies": {
     "husky": "^8.0.3",
