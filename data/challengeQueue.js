@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 const schedule = require("node-schedule");
 
 const queue = new Queue();
+
 let challengeQueueFunctions = {
   async queueObject() {
     let staticObject = {
@@ -20,7 +21,6 @@ let challengeQueueFunctions = {
     }
     return entry;
   },
-
   async pushChallenge(challengeID) {
     try {
       challengeID = helper.idValidator(challengeID);
@@ -37,7 +37,7 @@ let challengeQueueFunctions = {
     let challengesObject = queueCollection.find({}).toArray()[0];
     challengesObject["pastChallenges"].push(challengesObject.current);
     challengesObject.current = challengeQueue.dequeue();
-    return { newCurrentChallenge: "challengesObject.current" };
+    return { newCurrentChallenge: challengesObject.current };
   },
 };
 
