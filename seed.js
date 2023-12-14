@@ -15,6 +15,7 @@ const seedUsers = [
       description: "Hello",
       age: 33,
     },
+    role: "user",
   },
   {
     firstName: "Jennifer",
@@ -26,6 +27,7 @@ const seedUsers = [
       description: "Hi there!",
       age: 28,
     },
+    role: "user",
   },
   {
     firstName: "David",
@@ -37,6 +39,7 @@ const seedUsers = [
       description: "Greetings!",
       age: 35,
     },
+    role: "user",
   },
   {
     firstName: "Emily",
@@ -48,6 +51,7 @@ const seedUsers = [
       description: "Nice to meet you!",
       age: 22,
     },
+    role: "owner",
   },
   {
     firstName: "Daniel",
@@ -59,6 +63,7 @@ const seedUsers = [
       description: "Hello world!",
       age: 40,
     },
+    role: "admin",
   },
 ];
 
@@ -237,19 +242,22 @@ const seedWorkouts = [
     name: "Royal Chest Triumph",
     type: ["Strength", "Upper Body"],
     notes: "Conquer your chest and triceps with regal strength!",
-    exercises: [],
+    exercises: ["exercise3"],
+    isPreset: true,
   },
   {
     name: "Mighty Back & Bicep Blitz",
     type: ["Strength", "Upper Body"],
     notes: "Embark on a powerful journey to sculpt your back and biceps!",
-    exercises: [],
+    exercises: ["exercise1"],
+    isPreset: true,
   },
   {
     name: "Dynamic Leg & Calf Elevation",
     type: ["Strength", "Lower Body"],
     notes: "Elevate your lower body with dynamic leg and calf exercises!",
-    exercises: [],
+    exercises: ["exercise2"],
+    isPreset: true,
   },
 ];
 
@@ -267,21 +275,26 @@ for (const users of seedUsers) {
     users.password,
     users.aboutMe.description,
     users.aboutMe.age,
+    users.role,
   );
 }
 
 for (const exercises of seedExercises) {
-  let created = await exerciseData.createExercise(
-    exercises.name,
-    exercises.targetMuscles,
-    exercises.description,
-    exercises.instructions,
-    exercises.sets,
-    exercises.reps,
-    exercises.equipment,
-    exercises.difficulty,
-    exercises.image,
-  );
+  try {
+    let created = await exerciseData.createExercise(
+      exercises.name,
+      exercises.targetMuscles,
+      exercises.description,
+      exercises.instructions,
+      exercises.sets,
+      exercises.reps,
+      exercises.equipment,
+      exercises.difficulty,
+      exercises.image,
+    );
+  } catch (e) {
+    console.log(e);
+  }
 }
 for (const workouts of seedWorkouts) {
   let created = await workoutData.createWorkout(
@@ -289,49 +302,50 @@ for (const workouts of seedWorkouts) {
     workouts.type,
     workouts.notes,
     workouts.exercises,
+    workouts.isPreset,
   );
   workoutIds.push(created._id);
 }
 
-let triExs = await exerciseData.getAllExercisesByTarget("Triceps");
-let chestExs = await exerciseData.getAllExercisesByTarget("Chest");
-let uniqueIds = new Set([
-  ...triExs.map((i) => i._id.toString()),
-  ...chestExs.map((i) => i._id.toString()),
-]);
-let chestWorkout = [...uniqueIds];
+// let triExs = await exerciseData.getAllExercisesByTarget("Triceps");
+// let chestExs = await exerciseData.getAllExercisesByTarget("Chest");
+// let uniqueIds = new Set([
+//   ...triExs.map((i) => i._id.toString()),
+//   ...chestExs.map((i) => i._id.toString()),
+// ]);
+// let chestWorkout = [...uniqueIds];
 
-for (let i of chestWorkout) {
-  let push = await workoutData.pushExerciseToWorkout(workoutIds[0], i);
-}
+// // for (let i of chestWorkout) {
+// //   let push = await workoutData.pushExerciseToWorkout(workoutIds[0], i);
+// // }
 
-let back = await exerciseData.getAllExercisesByTarget("Back");
-let bi = await exerciseData.getAllExercisesByTarget("Biceps");
-let uniqueIds1 = new Set([
-  ...back.map((i) => i._id.toString()),
-  ...bi.map((i) => i._id.toString()),
-]);
-let backWorkout = [...uniqueIds1];
-for (let i of backWorkout) {
-  let push = await workoutData.pushExerciseToWorkout(workoutIds[1], i);
-}
+// let back = await exerciseData.getAllExercisesByTarget("Back");
+// let bi = await exerciseData.getAllExercisesByTarget("Biceps");
+// let uniqueIds1 = new Set([
+//   ...back.map((i) => i._id.toString()),
+//   ...bi.map((i) => i._id.toString()),
+// ]);
+// let backWorkout = [...uniqueIds1];
+// // for (let i of backWorkout) {
+// //   let push = await workoutData.pushExerciseToWorkout(workoutIds[1], i);
+// // }
 
-let hamstringsEx = await exerciseData.getAllExercisesByTarget("Hamstrings");
-let quadricepsEx = await exerciseData.getAllExercisesByTarget("Quadriceps");
-let calvesEx = await exerciseData.getAllExercisesByTarget("Calves");
-let uniqueIds2 = new Set([
-  ...hamstringsEx.map((i) => i._id.toString()),
-  ...calvesEx.map((i) => i._id.toString()),
-  ...quadricepsEx.map((i) => i._id.toString()),
-]);
-let legWorkout = [...uniqueIds2];
-for (let i of legWorkout) {
-  let push = await workoutData.pushExerciseToWorkout(workoutIds[2], i);
-}
+// let hamstringsEx = await exerciseData.getAllExercisesByTarget("Hamstrings");
+// let quadricepsEx = await exerciseData.getAllExercisesByTarget("Quadriceps");
+// let calvesEx = await exerciseData.getAllExercisesByTarget("Calves");
+// let uniqueIds2 = new Set([
+//   ...hamstringsEx.map((i) => i._id.toString()),
+//   ...calvesEx.map((i) => i._id.toString()),
+//   ...quadricepsEx.map((i) => i._id.toString()),
+// ]);
+// let legWorkout = [...uniqueIds2];
+// for (let i of legWorkout) {
+//   let push = await workoutData.pushExerciseToWorkout(workoutIds[2], i);
+// }
 
-let user1 = await userData.getUserByUsername("mromero243");
-let friend = await userData.getUserByUsername("emilyPass789");
-let friendLink = await userData.friendRequest(user1._id, friend._id);
-console.log(friendLink);
+// let user1 = await userData.getUserByUsername("mromero243");
+// let friend = await userData.getUserByUsername("emilyPass789");
+// let friendLink = await userData.friendRequest(user1._id, friend._id);
+// console.log(friendLink);
 
 await closeConnection();

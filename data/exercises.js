@@ -8,6 +8,8 @@ let exerciseDataFunctions = {
     targetMuscle,
     exerciseDescription,
     instructions,
+    sets,
+    reps,
     equipment,
     difficulty,
     image,
@@ -31,7 +33,8 @@ let exerciseDataFunctions = {
     if (!Array.isArray(equipment)) {
       throw "Equiment must be an array.";
     }
-
+    if (isNaN(sets)) throw "Sets must be a number";
+    if (isNaN(reps)) throw "Reps must be a number";
     let newExercise = {
       name: exerciseName,
       targetMuscles: targetMuscle,
@@ -108,6 +111,8 @@ let exerciseDataFunctions = {
     targetMuscle,
     exerciseDescription,
     instructions,
+    sets,
+    reps,
     equipment,
     difficulty,
     image,
@@ -119,6 +124,8 @@ let exerciseDataFunctions = {
     } catch (e) {
       throw `Id not valid.`;
     }
+    if (!isNaN(sets)) throw "Sets must be a number";
+    if (!isNaN(reps)) throw "Reps must be a number";
     exercise = await exerciseCollections.findOne({
       _id: new ObjectId(exerciseId),
     });

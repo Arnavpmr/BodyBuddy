@@ -4,10 +4,11 @@ import { Queue } from "@datastructures-js/queue";
 import { ObjectId } from "mongodb";
 // const schedule = require("node-schedule");
 
-const queue = new Queue();
+// const queue = new Queue();
 
 let challengeQueueFunctions = {
   async queueObject() {
+    let queue = new Queue();
     let current = undefined;
     let pastChallenges = [];
     let staticObject = {
@@ -29,17 +30,24 @@ let challengeQueueFunctions = {
     // } catch (e) {
     //   throw `${e}`;
     // }
-
-    queue.enqueue(challengeID);
+    const queueCollection = await challengeQueue();
+    let challengesObject = await queueCollection.find({}).toArray()[0];
+    challengesObject.queue.enqueue(challengeID);
   },
   async popChallenge() {
     queue.dequeue();
   },
   async updateCurrent() {
     const queueCollection = await challengeQueue();
-    let challengesObject = queueCollection.find({}).toArray()[0];
+    let challengesObject = await queueCollection.find({}).toArray()[0];
+    // console.log(challengesObject[0])
     challengesObject["pastChallenges"].push(challengesObject.current);
-    challengesObject.current = challengeQueue.dequeue();
+    if (challengesObject.isEmpty()) {
+      challengesObject["current"] = "";
+    } else {
+      challengesObject.current = challengeQueue.dequeue();
+    }
+
     return { newCurrentChallenge: challengesObject.current };
   },
 };
