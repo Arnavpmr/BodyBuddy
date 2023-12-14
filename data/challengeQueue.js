@@ -32,7 +32,13 @@ let challengeQueueFunctions = {
   async popChallenge() {
     queue.dequeue();
   },
-  async scheduler() {},
+  async updateCurrent() {
+    const queueCollection = await challengeQueue();
+    let challengesObject = queueCollection.find({}).toArray()[0];
+    challengesObject["pastChallenges"].push(challengesObject.current);
+    challengesObject.current = challengeQueue.dequeue();
+    return { newCurrentChallenge: "challengesObject.current" };
+  },
 };
 
 export default challengeQueueFunctions;
