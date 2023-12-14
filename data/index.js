@@ -8,4 +8,4 @@ export const userData = userDataFunctions;
 export const exerciseData = exerciseDataFunctions;
 export const workoutData = workoutDataFunctions;
 export const challengeData = challengeDataFunctions;
-export const challengeQueue = challengeDataFunctions;
+export const challengeQueue = challengeQueueFunctions;

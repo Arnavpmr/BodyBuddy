@@ -1,13 +1,15 @@
-import { challengeQueue } from "../config/mongoCollections";
-import helper from "../helpers";
+import { challengeQueue } from "../config/mongoCollections.js";
+import helper from "../helpers.js";
 import { Queue } from "@datastructures-js/queue";
 import { ObjectId } from "mongodb";
-const schedule = require("node-schedule");
+// const schedule = require("node-schedule");
 
 const queue = new Queue();
 
 let challengeQueueFunctions = {
   async queueObject() {
+    let current = undefined;
+    let pastChallenges = [];
     let staticObject = {
       current: current,
       queue: queue,
@@ -22,11 +24,12 @@ let challengeQueueFunctions = {
     return entry;
   },
   async pushChallenge(challengeID) {
-    try {
-      challengeID = helper.idValidator(challengeID);
-    } catch (e) {
-      throw `${e}`;
-    }
+    // try {
+    //   challengeID = helper.idValidator(challengeID);
+    // } catch (e) {
+    //   throw `${e}`;
+    // }
+
     queue.enqueue(challengeID);
   },
   async popChallenge() {
