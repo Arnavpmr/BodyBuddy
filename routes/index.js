@@ -3,7 +3,7 @@ import authRoutes from "./auth.js";
 import challengesRoutes from "./challenges.js";
 import aboutRoute from "./about.js";
 import homeRoute from "./home.js";
-import usersRoutes from "./users.js";
+import profileRoutes from "./profile.js";
 import workoutsRoutes from "./workouts.js";
 
 const constructorMethod = (app) => {
@@ -11,7 +11,7 @@ const constructorMethod = (app) => {
   app.use("/about", aboutRoute);
   app.use("/home", homeRoute);
   app.use("/challenges", challengesRoutes);
-  app.use("/user", usersRoutes);
+  app.use("/user", profileRoutes);
   app.use("/workouts", workoutsRoutes);
 
   app.use("*", (req, res) => {
