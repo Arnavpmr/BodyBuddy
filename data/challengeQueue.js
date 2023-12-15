@@ -51,12 +51,6 @@ let challengeQueueFunctions = {
       },
       { returnDocument: "after" },
     );
-    // challengesObject["pastChallenges"].push(challengesObject.current);
-    // if (challengesObject.isEmpty()) {
-    //   challengesObject["current"] = "";
-    // } else {
-    //   challengesObject.current = challengeQueue.dequeue();
-    // }
 
     return { newCurrentChallenge: challengesObject.current };
   },

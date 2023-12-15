@@ -153,8 +153,8 @@ let workoutDataFunctions = {
     if (exercises.length < 1) {
       throw "There must be atleast one exercise selected";
     }
-
-    let updatedWorkout = await workoutData.findOneAndUpdate(
+    const workoutCollections = await workouts();
+    let updatedWorkout = await workoutCollections.findOneAndUpdate(
       { _id: new ObjectId(workoutId) },
       {
         $set: {
