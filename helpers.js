@@ -142,6 +142,7 @@ let helper = {
     friendsList,
     incomingRequests,
     outgoingRequests,
+    role,
   ) {
     try {
       firstName = this.inputValidator(firstName, "firstName");
@@ -152,7 +153,8 @@ let helper = {
     } catch (e) {
       throw `${e}`;
     }
-
+    // console.log(role);
+    // if(!["admin", "owner","user"].includes(role)) throw "Role must be either admin, user, or owner";
     description = description.trim();
 
     if (age && age < 0) throw "Age cannot be a negative number";
@@ -169,6 +171,7 @@ let helper = {
         incomingRequests: incomingRequests,
         outgoingRequests: outgoingRequests,
       },
+      role: role,
     };
   },
 
@@ -193,6 +196,8 @@ let helper = {
     targetMuscle,
     exerciseDescription,
     instructions,
+    sets,
+    reps,
     equipment,
     difficulty,
     image,
@@ -215,6 +220,8 @@ let helper = {
       targetMuscles: targetMuscle,
       description: exerciseDescription,
       instructions: instructions,
+      sets: sets,
+      reps: reps,
       equipment: equipment,
       difficulty: difficulty,
       image: image,

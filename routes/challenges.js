@@ -1,15 +1,15 @@
+import { challengeQueue } from "../config/mongoCollections";
 import { Router } from "express";
 
 const router = Router();
 
 router.route("/").get(async (req, res) => {
-  //TODO: Implement fetching of data for current and past challenges by retrieving it from some mongo object
-  const curChallenge = [];
-  const pastChallenges = [];
+  const queueCollection = await challengeQueue();
+  const challengesObject = await queueCollection.find({}).toArray()[0];
 
   return res.status(200).render("challenges", {
-    curChallenge: curChallenge,
-    pastChallenges: pastChallenges,
+    curChallenge: challengesObject.current,
+    pastChallenges: challengeQueue.pastChallenges,
     user: req.session.user,
   });
 });

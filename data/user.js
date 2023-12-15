@@ -12,11 +12,13 @@ let userDataFunctions = {
     password,
     description,
     age,
+    role,
   ) {
     let validatedInput = undefined;
     let friendsList = [];
     let incomingRequests = [];
     let outgoingRequests = [];
+    // console.log(role)
     try {
       validatedInput = helper.createUserValidator(
         firstName,
@@ -29,6 +31,7 @@ let userDataFunctions = {
         friendsList,
         incomingRequests,
         outgoingRequests,
+        role,
       );
     } catch (e) {
       throw e;
@@ -49,7 +52,7 @@ let userDataFunctions = {
       throw "That username is already taken.";
     }
 
-    let saltRounds = 16;
+    let saltRounds = 10;
     const hash = await bcrypt.hash(validatedInput.password, saltRounds);
     const newUser = { ...validatedInput, password: hash };
 
@@ -117,6 +120,7 @@ let userDataFunctions = {
     password,
     description,
     age,
+    role,
   ) {
     let user = null;
     const userCollections = await users();
@@ -165,6 +169,7 @@ let userDataFunctions = {
             incomingRequests: updatedUser.incomingRequests,
             outgoingRequests: updatedUser.outgoingRequests,
           },
+          role: role,
         },
       },
       { returnDocument: "after" },

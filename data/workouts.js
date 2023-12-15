@@ -119,6 +119,55 @@ let workoutDataFunctions = {
     let myObj = { name: workoutRemoved.name, deleted: true };
     return myObj;
   },
+
+  async updateWorkout(
+    workoutId,
+    workoutName,
+    workoutType,
+    notes,
+    exercises,
+    isPreset,
+  ) {
+    try {
+      workoutName = helper.inputValidator(workoutName, "workoutName");
+    } catch (e) {
+      throw `${e}`;
+    }
+
+    if (typeof isPreset != "boolean") {
+      throw "isPreset must be a boolean";
+    }
+    //optional
+    notes = notes.trim();
+    if (typeof notes != "string") {
+      throw "Notes must be a valid string";
+    }
+
+    if (!Array.isArray(workoutType)) {
+      throw "WorkoutType must be an array.";
+    }
+    if (!Array.isArray(exercises)) {
+      throw "Exercises must be an array.";
+    }
+    if (exercises.length < 1) {
+      throw "There must be atleast one exercise selected";
+    }
+    const workoutCollections = await workouts();
+    let updatedWorkout = await workoutCollections.findOneAndUpdate(
+      { _id: new ObjectId(workoutId) },
+      {
+        $set: {
+          name: workoutName,
+          workoutType: workoutType,
+          notes: notes,
+          exercises: exercises,
+          isPreset: isPreset,
+        },
+      },
+      { returnDocument: "after" },
+    );
+    return updatedWorkout;
+  },
 };
 
 export default workoutDataFunctions;
