@@ -124,8 +124,8 @@ let exerciseDataFunctions = {
     } catch (e) {
       throw `Id not valid.`;
     }
-    if (!isNaN(sets)) throw "Sets must be a number";
-    if (!isNaN(reps)) throw "Reps must be a number";
+    if (isNaN(sets)) throw "Sets must be a number";
+    if (isNaN(reps)) throw "Reps must be a number";
     exercise = await exerciseCollections.findOne({
       _id: new ObjectId(exerciseId),
     });

@@ -210,7 +210,7 @@ let userDataFunctions = {
           description: user.aboutMe.description,
           age: user.aboutMe.age,
         },
-        role: "user",
+        role: user.role,
       };
     } else {
       throw "Either the Username or password is invalid";
