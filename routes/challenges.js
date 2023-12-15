@@ -1,23 +1,15 @@
-import usrFuncs from "../data/challenges.js";
+import { challengeQueue } from "../config/mongoCollections";
 import { Router } from "express";
 
 const router = Router();
 
 router.route("/").get(async (req, res) => {
-  // const challenges = await usrFuncs.getAllChallenges();
-  // const curDate = new Date();
-
-  // const curChallenges = challenges.filter(
-  //     (challenge) => challenge.deadline > curDate
-  // );
-
-  // const pastChallenges = challenges.filter(
-  //     (challenge) => challenge.deadline < curDate
-  // );
+  const queueCollection = await challengeQueue();
+  const challengesObject = await queueCollection.find({}).toArray()[0];
 
   return res.status(200).render("challenges", {
-    // curChallenges: curChallenges,
-    // pastChallenges: pastChallenges,
+    curChallenge: challengesObject.current,
+    pastChallenges: challengeQueue.pastChallenges,
     user: req.session.user,
   });
 });
