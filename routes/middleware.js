@@ -70,6 +70,8 @@ export const workouts = (req, res, next) => {
     });
   }
 
+  if (!req.body.isPreset) req.body.isPreset = false;
+
   const { isPreset } = req.body;
 
   if (

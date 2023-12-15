@@ -13,7 +13,7 @@ router.route("/").get(async (req, res) => {
 });
 
 router.route("/workout").post(async (req, res) => {
-  const { name, workoutTypes, notes, exercises } = req.body;
+  const { name, workoutTypes, notes, exercises, isPreset } = req.body;
   let newWorkout = null;
   let newWorkoutDB = null;
 
@@ -23,7 +23,12 @@ router.route("/workout").post(async (req, res) => {
     return res.status(400).json({ error: e });
   }
 
-  const { newName, newWorkoutTypes, newNotes, newExercises } = newWorkout;
+  const {
+    name: newName,
+    workoutTypes: newWorkoutTypes,
+    notes: newNotes,
+    exercises: newExercises,
+  } = newWorkout;
 
   try {
     newWorkoutDB = await workouts.createWorkout(
@@ -31,6 +36,7 @@ router.route("/workout").post(async (req, res) => {
       newWorkoutTypes,
       newNotes,
       newExercises,
+      isPreset,
     );
 
     return res.status(200).json(newWorkoutDB);
@@ -42,7 +48,7 @@ router.route("/workout").post(async (req, res) => {
 router
   .route("/workout/:workoutId")
   .put(async (req, res) => {
-    const { name, workoutTypes, notes, exercises } = req.body;
+    const { name, workoutTypes, notes, exercises, isPreset } = req.body;
 
     let workoutId = null;
     let newWorkout = null;
@@ -60,7 +66,12 @@ router
       return res.status(400).json({ error: e });
     }
 
-    const { newName, newWorkoutTypes, newNotes, newExercises } = newWorkout;
+    const {
+      name: newName,
+      workoutTypes: newWorkoutTypes,
+      notes: newNotes,
+      exercises: newExercises,
+    } = newWorkout;
 
     try {
       newWorkoutDB = await workouts.updateWorkout(
@@ -69,6 +80,7 @@ router
         newWorkoutTypes,
         newNotes,
         newExercises,
+        isPreset,
       );
 
       return res.status(200).json(newWorkoutDB);
