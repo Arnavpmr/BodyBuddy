@@ -13,17 +13,21 @@ router.route("/exercise").post(async (req, res) => {
     equipmentInput,
     difficultyInput,
     imageInput,
+    setsInput,
+    repsInput,
   } = req.body;
 
   let newExercise = null;
   let newExerciseDB = null;
 
   try {
-    newExercise = helper.exerciseValidator(
+    newExercise = await helper.exerciseValidator(
       exerciseNameInput,
       targetMusclesInput,
       exerciseDescriptionInput,
       instructionsInput,
+      setsInput,
+      repsInput,
       equipmentInput,
       difficultyInput,
       imageInput,
@@ -37,17 +41,21 @@ router.route("/exercise").post(async (req, res) => {
     targetMuscles,
     description,
     instructions,
+    sets,
+    reps,
     equipment,
     difficulty,
     image,
   } = newExercise;
 
   try {
-    newExerciseDB = exercises.createExercise(
+    newExerciseDB = await exercises.createExercise(
       name,
       targetMuscles,
       description,
       instructions,
+      sets,
+      reps,
       equipment,
       difficulty,
       image,
@@ -70,6 +78,8 @@ router
       equipmentInput,
       difficultyInput,
       imageInput,
+      setsInput,
+      repsInput,
     } = req.body;
 
     let newExercise = null;
@@ -82,6 +92,8 @@ router
         targetMusclesInput,
         exerciseDescriptionInput,
         instructionsInput,
+        setsInput,
+        repsInput,
         equipmentInput,
         difficultyInput,
         imageInput,
@@ -96,18 +108,22 @@ router
       targetMuscles,
       description,
       instructions,
+      sets,
+      reps,
       equipment,
       difficulty,
       image,
     } = newExercise;
 
     try {
-      newExerciseDB = exercises.updateExercise(
+      newExerciseDB = await exercises.updateExercise(
         exerciseId,
         name,
         targetMuscles,
         description,
         instructions,
+        sets,
+        reps,
         equipment,
         difficulty,
         image,
