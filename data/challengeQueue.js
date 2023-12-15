@@ -1,6 +1,5 @@
 import { challengeQueue } from "../config/mongoCollections.js";
 import helper from "../helpers.js";
-import { Queue } from "@datastructures-js/queue";
 import { ObjectId } from "mongodb";
 // const schedule = require("node-schedule");
 
@@ -8,8 +7,8 @@ import { ObjectId } from "mongodb";
 
 let challengeQueueFunctions = {
   async queueObject() {
-    let queue = new Queue();
     let current = undefined;
+    let queue = [];
     let pastChallenges = [];
     let staticObject = {
       current: current,
@@ -25,28 +24,39 @@ let challengeQueueFunctions = {
     return entry;
   },
   async pushChallenge(challengeID) {
-    // try {
-    //   challengeID = helper.idValidator(challengeID);
-    // } catch (e) {
-    //   throw `${e}`;
-    // }
     const queueCollection = await challengeQueue();
-    let challengesObject = await queueCollection.find({}).toArray()[0];
-    challengesObject.queue.enqueue(challengeID);
+
+    let challengesObject = await queueCollection.findOneAndUpdate(
+      { _id: new ObjectId("657b9f4a1dccfc052f6dc407") },
+      { $push: { queue: challengeID } },
+      { returnDocument: "after" },
+    );
+    return challengesObject;
   },
   async popChallenge() {
-    queue.dequeue();
+    const queueCollection = await challengeQueue();
+    let challengesObject = await queueCollection.find({}).toArray()[0];
+    challengesObject.queue.dequeue();
   },
   async updateCurrent() {
     const queueCollection = await challengeQueue();
-    let challengesObject = await queueCollection.find({}).toArray()[0];
-    // console.log(challengesObject[0])
-    challengesObject["pastChallenges"].push(challengesObject.current);
-    if (challengesObject.isEmpty()) {
-      challengesObject["current"] = "";
-    } else {
-      challengesObject.current = challengeQueue.dequeue();
-    }
+    let challengesObject = await queueCollection.find({}).toArray();
+    console.log(challengesObject);
+    let oldChallenge = await queueCollection.findOneAndUpdate(
+      { _id: challengesObject._id },
+      {
+        $push: { pastChallenges: challengesObject.current },
+        $set: { current: challengesObject.queue[0] },
+        $pop: { queue: -1 },
+      },
+      { returnDocument: "after" },
+    );
+    // challengesObject["pastChallenges"].push(challengesObject.current);
+    // if (challengesObject.isEmpty()) {
+    //   challengesObject["current"] = "";
+    // } else {
+    //   challengesObject.current = challengeQueue.dequeue();
+    // }
 
     return { newCurrentChallenge: challengesObject.current };
   },

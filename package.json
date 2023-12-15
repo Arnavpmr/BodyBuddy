@@ -11,13 +11,14 @@
   "author": "Arnav Marchareddy, Aidan Giordano, Robertson Romero, Joshua Bernstein and Rishi Raj",
   "license": "ISC",
   "dependencies": {
+    "@datastructures-js/queue": "^4.2.3",
     "bcrypt": "^5.1.1",
     "express": "^4.18.2",
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
+    "fastq": "^1.15.0",
     "handlebars": "^4.7.8",
     "mongodb": "^6.2.0",
-    "@datastructures-js/queue": "^4.2.3",
     "node-schedule": "^2.1.1"
   },
   "devDependencies": {
