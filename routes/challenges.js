@@ -1,4 +1,4 @@
-import { challengeQueue } from "../config/mongoCollections";
+import { challengeQueue } from "../config/mongoCollections.js";
 import { Router } from "express";
 
 const router = Router();
