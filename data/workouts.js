@@ -1,7 +1,6 @@
 import helper from "../helpers.js";
 import { workouts, exercises } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
-// import { workoutData } from './index.js';
 
 let workoutDataFunctions = {
   async createWorkout(name, workoutType, notes, exercises, isPreset) {
