@@ -25,9 +25,9 @@ let challengeQueueFunctions = {
   },
   async pushChallenge(challengeID) {
     const queueCollection = await challengeQueue();
-
-    let challengesObject = await queueCollection.findOneAndUpdate(
-      { _id: new ObjectId("657b9f4a1dccfc052f6dc407") },
+    let challengesObject = await queueCollection.find({}).toArray();
+    let pushToQueue = await queueCollection.findOneAndUpdate(
+      { _id: challengesObject[0]._id },
       { $push: { queue: challengeID } },
       { returnDocument: "after" },
     );
@@ -41,12 +41,12 @@ let challengeQueueFunctions = {
   async updateCurrent() {
     const queueCollection = await challengeQueue();
     let challengesObject = await queueCollection.find({}).toArray();
-    console.log(challengesObject);
+
     let oldChallenge = await queueCollection.findOneAndUpdate(
-      { _id: challengesObject._id },
+      { _id: challengesObject[0]._id },
       {
-        $push: { pastChallenges: challengesObject.current },
-        $set: { current: challengesObject.queue[0] },
+        $push: { pastChallenges: challengesObject[0].current },
+        $set: { current: challengesObject[0].queue[0] },
         $pop: { queue: -1 },
       },
       { returnDocument: "after" },
