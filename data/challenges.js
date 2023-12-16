@@ -145,14 +145,22 @@ let challengeDataFunctions = {
   },
 
   async uploadToFirebase(userId,challengeId, imageList){
-    const bucket = admin.storage.bucket();
-    userId = helper.idValidator(userId);
-    challengeId = helper.idValidator(challengeId);
+    const bucket = admin.storage().bucket();
+    // userId = helper.idValidator(userId);
+    // challengeId = helper.idValidator(challengeId);
+
+    "userId/challengeId/(pictures)"
+
     if(!Array.isArray(imageList)) throw "imageList must be an array";
     if(imageList.length === 0) throw "imageList must not be an empty list";
     imageList.forEach(fileData => {
-      const name = fileData.name;
-      if(!name || name.length === 0) throw "Each image must have a name and not be empty";
+      const name = fileData.originalname;
+      const buffer = new Uint8Array(fileData.buffer);
+      const file = bucket.file(`${name}`, {uploadType: {resumeable: false}});
+      file.save(fileData.buffer, (err) => {
+        if(err) throw err;
+        else return;
+      })
       
     });
 
