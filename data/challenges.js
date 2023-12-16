@@ -10,8 +10,11 @@ let challengeDataFunctions = {
     challengeDescription,
   ) {
     try {
-      challengeTitle = helper.inputValidator;
-      challengeDescription = helper.inputValidator;
+      challengeTitle = helper.inputValidator(challengeTitle, "title");
+      challengeDescription = helper.inputValidator(
+        challengeDescription,
+        "description",
+      );
     } catch (e) {
       throw `${e}`;
     }

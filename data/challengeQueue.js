@@ -1,19 +1,18 @@
 import { challengeQueue } from "../config/mongoCollections.js";
+import user from "../data/user.js";
 import helper from "../helpers.js";
-import { ObjectId } from "mongodb";
-// const schedule = require("node-schedule");
-
-// const queue = new Queue();
 
 let challengeQueueFunctions = {
   async queueObject() {
     let current = undefined;
     let queue = [];
     let pastChallenges = [];
+    let submissions = [];
     let staticObject = {
       current: current,
       queue: queue,
       pastChallenges: pastChallenges,
+      submissions: submissions,
     };
 
     const queueCollection = await challengeQueue();
@@ -53,6 +52,35 @@ let challengeQueueFunctions = {
     );
 
     return { newCurrentChallenge: challengesObject.current };
+  },
+  async createSubmission(userName, images) {
+    let userDB = null;
+
+    try {
+      userDB = await user.getUserByUsername(userName);
+
+      if (!Array.isArray(images)) throw "Images is not valid";
+    } catch (e) {
+      throw e;
+    }
+
+    const queueCollection = await challengeQueue();
+    let challengesObject = await queueCollection.find({}).toArray()[0];
+
+    const curSubmission = {
+      userName: userName,
+      images: images,
+      status: "review",
+    };
+
+    const newSubmissionDB = await queueCollection.findOneAndUpdate(
+      {
+        _id: challengesObject[0]._id,
+      },
+      { $push: { submissions: curSubmission } },
+    );
+
+    return newSubmissionDB;
   },
 };
 

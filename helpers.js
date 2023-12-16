@@ -227,6 +227,29 @@ let helper = {
       image: image,
     };
   },
+  exerciseComponentValidator(exercise) {
+    if (
+      isNaN(exercise.sets) ||
+      exercise.sets <= 0 ||
+      !Number.isInteger(exercise.sets)
+    )
+      throw "Sets is invalid";
+
+    if (
+      isNaN(exercise.reps) ||
+      exercise.reps <= 0 ||
+      !Number.isInteger(exercise.reps)
+    )
+      throw "Reps is invalid";
+
+    const id = this.idValidator(exercise.id);
+
+    return {
+      id: id,
+      sets: exercise.sets,
+      reps: exercise.reps,
+    };
+  },
   workoutValidator(name, workoutTypes, notes, exercises) {
     const definedWorkoutTypes = [];
 
@@ -253,27 +276,38 @@ let helper = {
 
     if (!Array.isArray(exercises)) throw "Exercises must be an array.";
 
-    exercises = exercises.map((exercise) => {
-      if (typeof exercise.sets !== "number" || exercise.sets <= 0)
-        throw "Sets is invalid";
-
-      if (typeof exercise.reps !== "number" || exercise.reps <= 0)
-        throw "Reps is invalid";
-
-      const id = this.idValidator(exercise.id);
-
-      return {
-        id: id,
-        sets: exercise.sets,
-        reps: exercise.reps,
-      };
-    });
+    exercises = exercises.map((exercise) =>
+      this.exerciseComponentValidator(exercise),
+    );
 
     return {
       name: name,
       workoutTypes: workoutTypes,
       notes: notes,
       exercises: exercises,
+    };
+  },
+  challengeValidator(title, description, exercises, reward) {
+    try {
+      title = helper.inputValidator(title, "title");
+      description = helper.inputValidator(description, "description");
+      reward = helper.inputValidator(reward, "reward");
+
+      if (isNaN(reward) || reward <= 0 || !Number.isInteger(reward))
+        throw "Reward is not a valid number";
+
+      exercises = exercises.map((exercise) =>
+        this.exerciseComponentValidator(exercise),
+      );
+    } catch (e) {
+      throw `${e}`;
+    }
+
+    return {
+      title: title,
+      description: description,
+      exercises: exercises,
+      reward: reward,
     };
   },
 };

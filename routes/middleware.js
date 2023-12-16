@@ -1,4 +1,3 @@
-// If the user posts to the server with a property called _method, rewrite the request's method
 export const rewriteUnsupportedBrowserMethods = (req, res, next) => {
   if (req.body && req.body._method) {
     req.method = req.body._method;
@@ -8,7 +7,6 @@ export const rewriteUnsupportedBrowserMethods = (req, res, next) => {
   next();
 };
 
-// Authentication
 export const root = async (req, res, next) => {
   if (req.originalUrl !== "/") return next();
 
@@ -43,6 +41,23 @@ export const home = async (req, res, next) => {
 
 export const challenges = (req, res, next) => {
   if (!req.session.user) return res.redirect("/login");
+
+  if (
+    req.originalUrl === "/challenges/challenge/submit" &&
+    req.session.user.role !== "user"
+  )
+    return res.status(403).json({
+      error: "An admin or owner cannot perform this operation",
+    });
+
+  if (
+    req.originalUrl.startsWith("/challenges/challenge") &&
+    !["admin", "owner"].includes(req.session.user.role)
+  ) {
+    return res.status(403).json({
+      error: "A user cannot perform this operation",
+    });
+  }
 
   next();
 };
