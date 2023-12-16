@@ -6,14 +6,26 @@ import { dbConnection, closeConnection } from "./config/mongoConnection.js";
 
 const seedUsers = [
   {
-    firstName: "Michael",
-    lastName: "Romero",
-    userName: "mromero243",
-    email: "mromero243@gmail.com",
-    password: "Mrfable243@",
+    firstName: "Arnav",
+    lastName: "Marchareddy",
+    userName: "arnavpmr",
+    email: "arnavpmr@gmail.com",
+    password: "Apal@9761",
     aboutMe: {
-      description: "Hello",
-      age: 33,
+      description: "I am a dude looking to workout!",
+      age: 20,
+    },
+    role: "owner",
+  },
+  {
+    firstName: "John",
+    lastName: "Doe",
+    userName: "jdoe69",
+    email: "jdoe@gmail.com",
+    password: "Apal@9761",
+    aboutMe: {
+      description: "I am a dude looking to workout!",
+      age: 69,
     },
     role: "user",
   },

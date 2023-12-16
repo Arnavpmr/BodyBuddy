@@ -1,39 +1,28 @@
 import helper from "../helpers.js";
 import { challenges } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
+import storageFirebase from "../firebase.js";
 
 let challengeDataFunctions = {
-  async createChallenge(
-    challengeExerciseList,
-    challengeTitle,
-    challengeReward,
-    challengeDescription,
-  ) {
-    try {
-      challengeTitle = helper.inputValidator(challengeTitle, "title");
-      challengeDescription = helper.inputValidator(
-        challengeDescription,
-        "description",
-      );
-    } catch (e) {
-      throw `${e}`;
-    }
+  async createChallenge(exerciseList, title, reward, description) {
+    title = helper.inputValidator(title, "title");
+    description = helper.inputValidator(description, "description");
 
-    if (!Array.isArray(challengeExerciseList)) {
+    if (!Array.isArray(exerciseList)) {
       throw "ExerciseList must be an array";
     }
-    if (isNaN(challengeReward)) {
+    if (isNaN(reward)) {
       throw "Reward must be a valid number";
     }
-    if (challengeReward < 1) {
+    if (reward < 1) {
       throw "Reward cannot be negative.";
     }
 
     let newChallenge = {
-      title: challengeTitle,
-      description: challengeDescription,
-      exercises: challengeExerciseList,
-      reward: challengeReward,
+      title: title,
+      description: description,
+      exercises: exerciseList,
+      reward: reward,
     };
 
     const challengesCollections = await challenges();
@@ -53,31 +42,24 @@ let challengeDataFunctions = {
     return getAllChallenges;
   },
 
-  async getChallengeById(challengeId) {
-    try {
-      helper.idValidator(challengeId, "challengeId");
-    } catch (e) {
-      throw `Id not valid.`;
-    }
+  async getChallengeById(id) {
+    id = helper.idValidator(id, "challengeId");
 
     const challengeCollections = await challenges();
     let challenge = challengeCollections.findOne({
-      _id: new ObjectId(challengeId),
+      _id: new ObjectId(id),
     });
 
     challenge._id = challenge.id.toString();
     return challenge;
   },
 
-  async removeChallenge(challengeId) {
-    try {
-      helper.idValidator(challengeId, "challengeId");
-    } catch (e) {
-      throw `Id not valid.`;
-    }
+  async removeChallenge(id) {
+    id = helper.idValidator(id, "challengeId");
+
     const challengeCollections = await challenges();
     let challengeRemoved = await challengeCollections.findOneAndDelete({
-      _id: new ObjectId(challengeId),
+      _id: new ObjectId(id),
     });
     if (!challengeRemoved) {
       throw "Challenge does not exist.";
@@ -86,50 +68,67 @@ let challengeDataFunctions = {
     return myObj;
   },
 
-  async updateChallenge(
-    challengeId,
-    challengeExerciseList,
-    challengeTitle,
-    challengeReward,
-    challengeDescription,
-  ) {
-    try {
-      challengeTitle = helper.inputValidator;
-      challengeDescription = helper.inputValidator;
-    } catch (e) {
-      throw `${e}`;
-    }
+  async updateChallenge(id, exerciseList, title, reward, description) {
+    title = helper.inputValidator;
+    description = helper.inputValidator;
 
-    if (!Array.isArray(challengeExerciseList)) {
+    if (!Array.isArray(exerciseList)) {
       throw "ExerciseList must be an array";
     }
-    if (isNaN(challengeReward)) {
+    if (isNaN(reward)) {
       throw "Reward must be a valid number";
     }
-    if (challengeReward < 1) {
+    if (reward < 1) {
       throw "Reward cannot be negative.";
     }
     let challenge = await challengeCollections.find({
-      _id: new ObjectId(challengeId),
+      _id: new ObjectId(id),
     });
     if (!challenge) {
       throw `Challenge does not exist.`;
     }
 
     let updatedChallenge = await challengeCollections.findOneAndUpdate(
-      { _id: new ObjectId(challengeId) },
+      { _id: new ObjectId(id) },
       {
         $set: {
-          title: challengeTitle,
-          description: challengeDescription,
-          exercises: challengeExerciseList,
-          reward: challengeReward,
+          title: title,
+          description: description,
+          exercises: exerciseList,
+          reward: reward,
         },
       },
       { returnDocument: "after" },
     );
     return updatedChallenge;
   },
+
+  async uploadSubmissionToFirebase(userName, challengeId, imageList) {
+    userId = helper.inputValidator(userName);
+    challengeId = helper.idValidator(challengeId);
+
+    const bucket = storageFirebase.bucket();
+
+    ("challenges/challengeId/userId/(pictures)");
+
+    if (!Array.isArray(imageList)) throw "imageList must be an array";
+
+    if (imageList.length === 0) throw "imageList must not be an empty list";
+
+    imageList.forEach((fileData) => {
+      const name = fileData.originalname;
+
+      const file = bucket.file(`${name}`, {
+        uploadType: { resumeable: false },
+      });
+
+      file.save(fileData.buffer, (err) => {
+        if (err) throw err;
+      });
+    });
+  },
+
+  async createSubmission(userName, images) {},
 };
 
 export default challengeDataFunctions;

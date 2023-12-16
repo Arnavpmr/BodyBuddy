@@ -1,1 +1,51 @@
-<p>This is the workouts page!</p>
+<div id='workout_container' class='center'>
+    <label for='workoutSearch'>Search for Workouts:</label>
+    <input
+        type='text'
+        placeholder='Search for workouts...'
+        id='workoutSearch'
+        onkeyup='filterWorkouts()'
+    />
+    <br />
+    <div id='element_container'>
+        {{#each workouts}}
+            <div
+                class='favoriteWorkoutElement'
+                style='width: 25%;color: var(--light-text);padding: 1rem;display: none;'
+                aria-label='{{name}}'
+            >
+                <div style='display: table;'>
+                    <div style='display: table-cell;'>{{name}}</div>
+                    <div
+                        style='display: table-cell;text-align: right;width: 100%;'
+                    >
+                        <button
+                            class='about_button'
+                            style='font-size: 16px;'
+                            onclick='expandWorkout({{id}})'
+                        >View</button>
+                        <button
+                            class='about_button'
+                            style='font-size: 16px;'
+                            onclick='editWorkout({{id}})'
+                        >Edit</button>
+                        {{#if userCreated}}
+                            <button
+                                class='about_button'
+                                style='font-size: 16px;color: red;'
+                                onclick='deleteWorkout({{id}})'
+                            >Delete</button>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+    <button
+        class='about_button'
+        style='background-color: var(--dark-grey);color: green;'
+        onclick='createWorkout()'
+    >Create your Own Workout!</button>
+</div>
+
+<script src='../public/js/workouts.js'></script>

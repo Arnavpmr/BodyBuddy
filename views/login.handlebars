@@ -3,12 +3,16 @@
         <table>
             <tr>
                 <td>
-                    <label for='emailInput'>
-                        Enter your Email
+                    <label for='userNameInput'>
+                        Enter your Username
                     </label>
                 </td>
                 <td>
-                    <input type='email' name='emailInput' id='emailInput' />
+                    <input
+                        type='text'
+                        name='userNameInput'
+                        id='userNameInput'
+                    />
                     {{#if emailError}}
                         <span id='emailError' class='errorMsg'>X
                             {{emailError}}</span>

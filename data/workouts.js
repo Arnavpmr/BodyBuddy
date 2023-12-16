@@ -3,7 +3,7 @@ import { workouts, exercises } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 
 let workoutDataFunctions = {
-  async createWorkout(name, workoutType, notes, exercises, isPreset) {
+  async createWorkout(name, workoutTypes, notes, exercises, isPreset) {
     try {
       name = helper.inputValidator(name, "name");
     } catch (e) {
@@ -19,7 +19,7 @@ let workoutDataFunctions = {
       throw "Notes must be a valid string";
     }
 
-    if (!Array.isArray(workoutType)) {
+    if (!Array.isArray(workoutTypes)) {
       throw "WorkoutType must be an array.";
     }
     if (!Array.isArray(exercises)) {
@@ -31,7 +31,7 @@ let workoutDataFunctions = {
 
     let newWorkout = {
       name: name,
-      type: workoutType,
+      type: workoutTypes,
       notes: notes,
       exercises: exercises,
       isPreset: isPreset,
@@ -123,7 +123,7 @@ let workoutDataFunctions = {
   async updateWorkout(
     workoutId,
     workoutName,
-    workoutType,
+    workoutTypes,
     notes,
     exercises,
     isPreset,
@@ -143,7 +143,7 @@ let workoutDataFunctions = {
       throw "Notes must be a valid string";
     }
 
-    if (!Array.isArray(workoutType)) {
+    if (!Array.isArray(workoutTypes)) {
       throw "WorkoutType must be an array.";
     }
     if (!Array.isArray(exercises)) {
@@ -158,7 +158,7 @@ let workoutDataFunctions = {
       {
         $set: {
           name: workoutName,
-          workoutType: workoutType,
+          workoutType: workoutTypes,
           notes: notes,
           exercises: exercises,
           isPreset: isPreset,

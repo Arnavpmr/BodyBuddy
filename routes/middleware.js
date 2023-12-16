@@ -42,13 +42,14 @@ export const home = async (req, res, next) => {
 export const challenges = (req, res, next) => {
   if (!req.session.user) return res.redirect("/login");
 
-  if (
-    req.originalUrl === "/challenges/challenge/submit" &&
-    req.session.user.role !== "user"
-  )
-    return res.status(403).json({
-      error: "An admin or owner cannot perform this operation",
-    });
+  if (req.originalUrl === "/challenges/challenge/submit") {
+    if (req.session.user.role !== "user")
+      return res.status(403).json({
+        error: "An admin or owner cannot perform this operation",
+      });
+
+    return next();
+  }
 
   if (
     req.originalUrl === "/challenges/current/update" &&
