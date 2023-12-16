@@ -1,6 +1,15 @@
 import helper from "../helpers.js";
 import { challenges } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
+import admin from 'firebase-admin';
+import firebaseKey from "../firebaseKey.json" assert {type: 'json'};
+
+
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseKey),
+  storageBucket: "gs://bodybuddy-2bcc5.appspot.com",
+});
+
 
 let challengeDataFunctions = {
   async createChallenge(exerciseList, timeLimit, reward, deadline) {
@@ -53,7 +62,7 @@ let challengeDataFunctions = {
 
   async getChallengeById(challengeId) {
     try {
-      helper.idValidator(challengeId, "challengeId");
+      challengeId = helper.idValidator(challengeId, "challengeId");
     } catch (e) {
       throw `Error in getChallengeById: ${challengeId} not valid.`;
     }
@@ -69,7 +78,7 @@ let challengeDataFunctions = {
 
   async removeChallenge(challengeId) {
     try {
-      helper.idValidator(challengeId, "challengeId");
+      challengeId = helper.idValidator(challengeId, "challengeId");
     } catch (e) {
       throw `Error in removeChallenge: ${challengeId} not valid.`;
     }
@@ -94,7 +103,7 @@ let challengeDataFunctions = {
     let challenge = null;
     const challengeCollections = await challenges();
     try {
-      helper.idValidator(challengeId);
+      challengeId = helper.idValidator(challengeId);
     } catch (e) {
       throw `Error in updateChallenge: ${challengeId} not valid.`;
     }
@@ -133,6 +142,20 @@ let challengeDataFunctions = {
       { returnDocument: "after" },
     );
     return updatedChallenge;
+  },
+
+  async uploadToFirebase(userId,challengeId, imageList){
+    const bucket = admin.storage.bucket();
+    userId = helper.idValidator(userId);
+    challengeId = helper.idValidator(challengeId);
+    if(!Array.isArray(imageList)) throw "imageList must be an array";
+    if(imageList.length === 0) throw "imageList must not be an empty list";
+    imageList.forEach(fileData => {
+      const name = fileData.name;
+      if(!name || name.length === 0) throw "Each image must have a name and not be empty";
+      
+    });
+
   },
 };
 

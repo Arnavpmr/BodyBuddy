@@ -5,6 +5,7 @@ import configRoutes from "./routes/index.js";
 import exphbs from "express-handlebars";
 import * as mw from "./routes/middleware.js";
 
+
 const app = express();
 
 app.use("/public", express.static("public"));
@@ -23,15 +24,16 @@ app.use(
   }),
 );
 
+
 app.use(mw.rewriteUnsupportedBrowserMethods);
 
-app.use("/", mw.root);
-app.use("/login", mw.login);
-app.use("/register", mw.register);
-app.use("/home", mw.home);
-app.use("/logout", mw.logout);
-app.use("/workouts", mw.workouts);
-app.use("/challenges", mw.challenges);
+// app.use("/", mw.root);
+// app.use("/login", mw.login);
+// app.use("/register", mw.register);
+// app.use("/home", mw.home);
+// app.use("/logout", mw.logout);
+// app.use("/workouts", mw.workouts);
+// app.use("/challenges", mw.challenges);
 
 configRoutes(app);
 
