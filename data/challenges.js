@@ -2,12 +2,14 @@ import helper from "../helpers.js";
 import { challenges } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import admin from 'firebase-admin';
+import {getDownloadURL} from 'firebase-admin/storage';
 import firebaseKey from "../firebaseKey.json" assert {type: 'json'};
 
+const storageLink = "gs://bodybuddy-2bcc5.appspot.com";
 
 admin.initializeApp({
   credential: admin.credential.cert(firebaseKey),
-  storageBucket: "gs://bodybuddy-2bcc5.appspot.com",
+  storageBucket: storageLink,
 });
 
 
@@ -155,13 +157,14 @@ let challengeDataFunctions = {
     if(imageList.length === 0) throw "imageList must not be an empty list";
     imageList.forEach(fileData => {
       const name = fileData.originalname;
-      const buffer = new Uint8Array(fileData.buffer);
-      const file = bucket.file(`${name}`, {uploadType: {resumeable: false}});
-      file.save(fileData.buffer, (err) => {
+      const path = `challenges/${name}`;
+      const file = bucket.file(path, {uploadType: {resumeable: false}});
+      file.save(fileData.buffer, async (err) => {
         if(err) throw err;
-        else return;
-      })
-      
+        else{
+          console.log(await getDownloadURL(file));
+        };
+      });   
     });
 
   },

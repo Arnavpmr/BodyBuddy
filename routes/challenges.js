@@ -38,7 +38,6 @@ router.route("/").get(async (req, res) => {
 router.post("/submit",upload.array("uploaded_file",10), async (req,res) => {
   try {
     const files = req.files;
-    console.log(req.files);
     await usrFuncs.uploadToFirebase("","",files);
     res.json("all good");
 
