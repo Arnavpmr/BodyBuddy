@@ -1,4 +1,5 @@
 import { challengeQueue } from "../config/mongoCollections.js";
+import { challengeObject } from "../data/index.js";
 import challenges from "../data/challenges.js";
 import { Router } from "express";
 import helper from "../helpers.js";
@@ -16,8 +17,20 @@ router.route("/").get(async (req, res) => {
   });
 });
 
+router.route("/current/update").post(async (req, res) => {
+  const { status } = req.body;
+
+  if (status !== "on" && status !== "off")
+    return res.status(400).json({ error: "Status is invalid" });
+
+  challengeObject.toggleUpdate(status);
+
+  return res.status(200).json({ toggledUpdate: true });
+});
+
 router.route("/challenge/submit").post(async (req, res) => {
   // TODO validate all images
+  // store the images in firebase and get all the urls and place them in the images field in new object
   // if everythings good, then check if user made a prev submission and remove that
   // set the status of new submission to review and push it to the db
 });
@@ -29,22 +42,22 @@ router.route("/challenge/submissions").get(async (req, res) => {
   return res.status(200).json(challengesObject.submissions);
 });
 
-router.route("/challenge/:submissionId").post(async (req, res) => {
+router.route("/challenge/:userName").post(async (req, res) => {
   const status = req.body;
 
-  let submissionId = null;
+  let userName = null;
   let resDB = null;
 
   try {
     if (status !== "approved" && status !== "denied") throw "Status is invalid";
 
-    submissionId = helper.idValidator(req.params.submissionId);
+    userName = helper.idValidator(req.params.userName);
   } catch (e) {
     return res.status(400).json({ error: e });
   }
 
   try {
-    resDB = await challengeQueue.updateSubmission(submissionId, status);
+    resDB = await challengeQueue.updateSubmission(userName, status);
   } catch (e) {
     return res.status(500).json({ error: e });
   }

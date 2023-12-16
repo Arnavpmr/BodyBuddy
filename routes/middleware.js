@@ -51,6 +51,14 @@ export const challenges = (req, res, next) => {
     });
 
   if (
+    req.originalUrl === "/challenges/current/update" &&
+    req.session.user.role === "user"
+  )
+    return res.status(403).json({
+      error: "A user cannot perform this operation",
+    });
+
+  if (
     req.originalUrl.startsWith("/challenges/challenge") &&
     !["admin", "owner"].includes(req.session.user.role)
   ) {

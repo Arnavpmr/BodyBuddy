@@ -5,6 +5,8 @@ import configRoutes from "./routes/index.js";
 import exphbs from "express-handlebars";
 import * as mw from "./routes/middleware.js";
 
+import { challengeObject } from "./data/index.js";
+
 const app = express();
 
 app.use("/public", express.static("public"));
@@ -35,6 +37,12 @@ app.use("/exercises", mw.exercises);
 app.use("/challenges", mw.challenges);
 
 configRoutes(app);
+
+try {
+  await challengeObject.initializeQueue();
+} catch (e) {
+  console.log(e);
+}
 
 app.listen(3000, () => {
   console.log("We've now got a server!");
