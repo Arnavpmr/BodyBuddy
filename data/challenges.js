@@ -146,27 +146,42 @@ let challengeDataFunctions = {
     return updatedChallenge;
   },
 
-  async uploadToFirebase(userId,challengeId, imageList){
-    const bucket = admin.storage().bucket();
-    // userId = helper.idValidator(userId);
-    // challengeId = helper.idValidator(challengeId);
 
-    "userId/challengeId/(pictures)"
+  async uploadImage(firebasePath, imageBuffer){
+    const bucket = admin.storage().bucket();
+    if(typeof firebasePath !== "string") throw "firebasePath must be a String";
+    const path = firebasePath.trim();
+    if(!Array.isArray(imageBuffer)) throw 'imageBuffer must be an arry';
+
+    let link = "";
+    const file = bucket.file(path,{uploadType: {resumeable: false}});
+    file.save(imageBuffer, async (err) => {
+      if(err) throw err;
+      else {
+        link = await getDownloadURL(file); 
+      }
+    });
+    return link;
+  },
+
+  async uploadChallengeImages(userId,challengeId, imageList){
+    userId = helper.idValidator(userId);
+    challengeId = helper.idValidator(challengeId);
+
+    //File structure: challenges/challengeId/userId/(pictures)
 
     if(!Array.isArray(imageList)) throw "imageList must be an array";
     if(imageList.length === 0) throw "imageList must not be an empty list";
-    imageList.forEach(fileData => {
+    const imageUrls = [];
+    imageList.forEach(async fileData => {
       const name = fileData.originalname;
-      const path = `challenges/${name}`;
-      const file = bucket.file(path, {uploadType: {resumeable: false}});
-      file.save(fileData.buffer, async (err) => {
-        if(err) throw err;
-        else{
-          console.log(await getDownloadURL(file));
-        };
-      });   
+      const path = `challenges/${challengeId}/${userId}/${name}`;
+      imageUrls.push(await this.uploadImage(path,fileData.buffer));
     });
 
+    //TODO: Upload to mongo
+
+    return imageUrls;
   },
 };
 
