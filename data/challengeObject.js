@@ -94,7 +94,7 @@ let challengeObjectFunctions = {
     const curSubmission = {
       userName: userName,
       images: images,
-      status: "review",
+      status: "pending",
     };
 
     const newSubmissionDB = await queueCollection.findOneAndUpdate(
