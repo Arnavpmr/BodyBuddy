@@ -119,6 +119,147 @@ body {
   text-align: left;
 }
 
+h1,
+h2,
+h3 {
+  color: var(--dark-grey);
+}
+
+#profile {
+  padding: 20px;
+}
+
+#profile img {
+  max-width: 150px;
+  border-radius: 50%;
+}
+
+#userSearch {
+  margin-bottom: 20px;
+}
+
+.searchContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#searchInput {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid var(--dark-grey);
+  border-radius: 5px;
+}
+
+#profileForm {
+  margin-bottom: 20px;
+}
+
+#profileForm input[type="text"],
+#profileForm input[type="email"],
+#profileForm input[type="password"],
+#profileForm textarea,
+#profileForm input[type="number"] {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--light-grey);
+  border-radius: 5px;
+}
+
+#profileForm textarea {
+  resize: vertical;
+}
+
+button {
+  background-color: var(--dark-grey);
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--light-grey);
+}
+
+#friendsList ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#friendsList ul li a {
+  color: var(--dark-grey);
+  text-decoration: none;
+}
+
+.friendRequest {
+  margin-bottom: 10px;
+}
+
+.friendRequest span {
+  margin-right: 10px;
+}
+
+#avatarSelection {
+  margin-top: 20px;
+}
+
+.avatar-option img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.otherUserProfile {
+  margin-top: 20px;
+}
+
+.otherUserProfile div {
+  margin-bottom: 10px;
+}
+.errorMsg,
+.friend-request-status {
+  color: red;
+  margin-top: 10px;
+}
+
+.searchContainer {
+  position: relative;
+  width: 300px;
+  margin: 0 auto;
+}
+
+#searchResults {
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid var(--light-grey);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+#searchResults div {
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#searchResults div:hover {
+  background-color: var(--light-grey);
+}
+
+#searchResults a {
+  color: var(--dark-grey);
+  text-decoration: none;
+  display: block;
+}
 footer {
   background-color: red;
 }
