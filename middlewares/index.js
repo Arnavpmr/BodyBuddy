@@ -3,6 +3,7 @@ import * as challenges from "./challenges.js";
 import * as exercises from "./exercises.js";
 import * as homeR from "./home.js";
 import * as workouts from "./workouts.js";
+import * as profile from "./profile.js";
 
 const configMiddlewares = (app) => {
   app.use(auth.rewriteUnsupportedBrowserMethods);
@@ -13,6 +14,8 @@ const configMiddlewares = (app) => {
   app.use("/logout", auth.logout);
 
   app.use("/home", homeR.home);
+
+  app.use("/profile", profile.profile);
 
   app.use("/workouts", workouts.workouts);
   app.use("/workouts/workout", workouts.workout);
