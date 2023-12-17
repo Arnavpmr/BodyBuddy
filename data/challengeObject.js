@@ -80,8 +80,7 @@ let challengeObjectFunctions = {
     if (challengesObject.current)
       challengesObject.pastChallenges.push(challengesObject.current);
 
-    challengesObject.current = challengesObject.queue[0];
-    challengesObject.queue.pop();
+    challengesObject.current = challengesObject.queue.shift();
 
     let oldChallenge = await queueCollection.findOneAndUpdate(
       { _id: challengesObject._id },

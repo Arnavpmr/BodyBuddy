@@ -139,10 +139,10 @@ let challengeDataFunctions = {
     const challengesObject = (await queueCollection.find({}).toArray())[0];
 
     const baseReward = 25;
-    const extraReward = 0;
+    let extraReward = 0;
 
     const curChallenge = await challengeCollections.findOne({
-      _id: challengesObject.current,
+      _id: new ObjectId(challengesObject.current),
     });
 
     if (!curChallenge) throw "Current challenge not found";
@@ -160,7 +160,7 @@ let challengeDataFunctions = {
 
     const pushToLeaderboard = await challengeCollections.updateOne(
       {
-        _id: challengesObject.current,
+        _id: new ObjectId(challengesObject.current),
       },
       {
         $push: {
@@ -182,14 +182,14 @@ let challengeDataFunctions = {
     );
 
     if (foundGlobalEntry) {
-      const totalReward = foundGlobalEntry.reward + baseReward + extraReward;
+      const totalReward = foundGlobalEntry.points + baseReward + extraReward;
 
       const resDB = await queueCollection.updateOne(
         {
           "leaderboard.userName": userName,
         },
         {
-          $set: { "leaderboard.$.reward": totalReward },
+          $set: { "leaderboard.$.points": totalReward },
         },
       );
 
@@ -206,10 +206,10 @@ let challengeDataFunctions = {
             $each: [
               {
                 userName: userName,
-                reward: baseReward + extraReward,
+                points: baseReward + extraReward,
               },
             ],
-            $sort: { reward: -1 },
+            $sort: { points: -1 },
           },
         },
       },

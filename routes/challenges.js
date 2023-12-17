@@ -63,8 +63,10 @@ router.post(
         req.body.username,
         files,
       );
+
       console.log(links);
-      res.end();
+
+      return res.status(200).json({ isUploaded: true });
     } catch (e) {
       return res.status(400).json({ error: e.toString() });
     }
