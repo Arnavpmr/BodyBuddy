@@ -159,3 +159,40 @@ footer {
 #workoutSearch {
   width: 25%;
 }
+
+#create_workout_popup {
+  border: 0.1rem solid black;
+  border-radius: 5px;
+  padding: 2rem;
+  background-color: white;
+  overflow: scroll;
+}
+
+.muscle_group_button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 5px;
+  color: var(--light-text);
+  background-color: var(--light-grey);
+  padding: 0.5rem;
+  border-style: none;
+  cursor: pointer;
+}
+.muscle_group_button:hover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 5px;
+  color: var(--light-text);
+  background-color: var(--dark-grey);
+  padding: 0.5rem;
+  border-style: none;
+  cursor: pointer;
+}
+
+.expand_title {
+  color: black;
+  font-weight: bold;
+  font-size: 18pt;
+}

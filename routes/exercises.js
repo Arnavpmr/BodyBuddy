@@ -4,7 +4,7 @@ import exercises from "../data/exercises.js";
 
 const router = Router();
 
-router.route("/exercise").post(async (req, res) => {
+router.route("/").post(async (req, res) => {
   const {
     exerciseNameInput,
     targetMusclesInput,
@@ -60,7 +60,7 @@ router.route("/exercise").post(async (req, res) => {
 });
 
 router
-  .route("/exercise/:exerciseId")
+  .route("/:exerciseId")
   .put(async (req, res) => {
     const {
       exerciseNameInput,
@@ -136,5 +136,17 @@ router
 
     return res.status(200).json(exercise);
   });
+
+router.route("/target/:muscle_target").get(async (req, res) => {
+  try {
+    const exerciseLst = await exercises.getAllExercisesByTarget(
+      req.params.muscle_target,
+    );
+    res.json({ match: exerciseLst });
+  } catch (error) {
+    console.log(error.toString());
+    res.status(500).json({ error: error.toString() });
+  }
+});
 
 export default router;

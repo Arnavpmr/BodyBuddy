@@ -220,26 +220,21 @@ let helper = {
   },
 
   exerciseComponentValidator(exercise) {
-    if (
-      isNaN(exercise.sets) ||
-      exercise.sets <= 0 ||
-      !Number.isInteger(exercise.sets)
-    )
+    const sets = Number(exercise.sets);
+    const reps = Number(exercise.reps);
+    const test_id = exercise._id;
+    if (isNaN(sets) || sets <= 0 || !Number.isInteger(sets))
       throw "Sets is invalid";
 
-    if (
-      isNaN(exercise.reps) ||
-      exercise.reps <= 0 ||
-      !Number.isInteger(exercise.reps)
-    )
+    if (isNaN(reps) || reps <= 0 || !Number.isInteger(reps))
       throw "Reps is invalid";
 
-    const id = this.idValidator(exercise.id);
+    const id = this.idValidator(test_id);
 
     return {
       id: id,
-      sets: exercise.sets,
-      reps: exercise.reps,
+      sets: sets,
+      reps: reps,
     };
   },
 
@@ -270,10 +265,10 @@ let helper = {
     );
 
     return {
-      name: name,
-      workoutTypes: workoutTypes,
-      notes: notes,
-      exercises: exercises,
+      newName: name,
+      newWorkoutTypes: workoutTypes,
+      newNotes: notes,
+      newExercises: exercises,
     };
   },
 

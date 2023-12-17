@@ -235,6 +235,10 @@ let challengeDataFunctions = {
 
     for (let i = 0; i < imageList.length; i++) {
       const element = imageList[i];
+      if (!element.originalname || typeof element.originalname !== "string")
+        throw "imageList.originalname must exist and be a string";
+      if (!element.buffer && element.buffer.constructor === ArrayBuffer)
+        throw "imageList.buffer must exist and be a buffer";
       const path = `challenges/${userName}/${element.originalname}`;
 
       links.push(await helper.uploadImageToFirebase(path, element.buffer));
