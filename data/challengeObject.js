@@ -1,6 +1,7 @@
 import { challengeQueue } from "../config/mongoCollections.js";
 import user from "./user.js";
 import helper from "../helpers.js";
+import storageFirebase from "../firebase.js";
 
 let challengeObjectFunctions = {
   job: {
@@ -150,6 +151,50 @@ let challengeObjectFunctions = {
     if (!foundSubmission) throw "Submission not found for user";
 
     return foundSubmission;
+  },
+
+  async removeSubmissionIfPresent(username) {
+    let isFound = false;
+    try {
+      const res = await this.getSubmissionByUserName(username);
+      const queueCollection = await challengeQueue();
+      const challengesObject = (await queueCollection.find({}).toArray())[0];
+
+      const newSubmissions = [];
+      for (
+        let index = 0;
+        index < challengesObject.submissions.length;
+        index++
+      ) {
+        const submission = challengesObject.submissions[index];
+
+        if (submission.userName === username) {
+          const bucket = storageFirebase.bucket();
+          for (let i = 0; i < res.images.length; i++) {
+            const element = res.images[i];
+            const file = bucket.file(element.relPath);
+            await file.delete();
+          }
+        } else {
+          newSubmissions.push(submission);
+        }
+      }
+
+      await queueCollection.updateOne(
+        { _id: challengesObject._id },
+        {
+          $set: {
+            submissions: newSubmissions,
+          },
+        },
+      );
+
+      return true;
+    } catch (error) {
+      const strErr = error.toString();
+      if (strErr !== "Submission not found for user") throw strErr;
+      else return false;
+    }
   },
 
   toggleUpdate(status) {

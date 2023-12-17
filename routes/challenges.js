@@ -4,6 +4,7 @@ import challenges from "../data/challenges.js";
 import { Router } from "express";
 import helper from "../helpers.js";
 import multer from "multer";
+import storageFirebase from "../firebase.js";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -56,13 +57,17 @@ router.post(
     // then check if user made a prev submission and remove it from mongo and prepare to replace it with the new submission
     // set the status of new submission to "pending" and push it to the db
 
-    // try {
-    //     const files = req.files;
-    //     await usrFuncs.uploadSubmissionToFirebase('', '', files);
-    // } catch (e) {
-    //     return res.status(400).json({ error: e });
-    // }
-    console.log(req.files);
+    try {
+      const files = req.files;
+      const links = await challenges.uploadSubmissionImages(
+        req.body.username,
+        files,
+      );
+      console.log(links);
+      res.end();
+    } catch (e) {
+      return res.status(400).json({ error: e.toString() });
+    }
   },
 );
 

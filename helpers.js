@@ -1,4 +1,6 @@
 import { ObjectId } from "mongodb";
+import storageFirebase from "./firebase.js";
+import { getDownloadURL } from "firebase-admin/storage";
 
 let helper = {
   inputValidator(input, inputName) {
@@ -309,6 +311,24 @@ let helper = {
       exercises: exercises,
       reward: reward,
     };
+  },
+  async uploadImageToFirebase(firebasePath, imageBuffer) {
+    const bucket = storageFirebase.bucket();
+    if (typeof firebasePath !== "string") throw "firebasePath must be a String";
+    const path = firebasePath.trim();
+
+    let link = "";
+    const file = bucket.file(path, { uploadType: { resumeable: false } });
+    await new Promise((res) => {
+      file.save(imageBuffer, async (err) => {
+        if (err) throw err;
+        else {
+          link = await getDownloadURL(file);
+          res();
+        }
+      });
+    });
+    return { link: link, relPath: path };
   },
 };
 
