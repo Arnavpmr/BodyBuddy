@@ -29,7 +29,7 @@ let exerciseDataFunctions = {
       throw "Unable to add event";
     }
 
-    return { inserted: true };
+    return { id: entry.insertedId, inserted: true };
   },
 
   async getExerciseById(exerciseId) {

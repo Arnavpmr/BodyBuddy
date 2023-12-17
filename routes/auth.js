@@ -80,7 +80,10 @@ router
     const { userNameInput, passwordInput } = req.body;
 
     try {
-      validatedInput = helper.loginUserValidator(userNameInput, passwordInput);
+      validatedInput = helper.loginUserValidator(
+        userNameInput.toLowerCase(),
+        passwordInput,
+      );
     } catch (e) {
       return res.status(400).render("login", { title: "Login", error: e });
     }

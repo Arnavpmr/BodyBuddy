@@ -1,9 +1,9 @@
 import helper from "../helpers.js";
-import { challenges, exercises } from "../config/mongoCollections.js";
+import { challenges } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
-import { challengeObject } from "./index.js";
+import { challengeObject, userData } from "./index.js";
+import { challengeQueue, exercises } from "../config/mongoCollections.js";
 import storageFirebase from "../firebase.js";
-import challengeObjectFunctions from "./challengeObject.js";
 
 let challengeDataFunctions = {
   async createChallenge(exerciseList, title, reward, description) {
@@ -15,14 +15,16 @@ let challengeDataFunctions = {
     );
 
     const exerciseCollections = await exercises();
-    const exercises = await exerciseCollections.find({});
+    const exercisesList = await exerciseCollections.find({}).toArray();
     const exerciseIds = new Set(
-      exercises.map((exercise) => exercise._id.toString()),
+      exercisesList.map((exercise) => exercise._id.toString()),
     );
 
     exerciseList.forEach((exercise) => {
       if (!exerciseIds.has(exercise.id)) throw "Exercise id is not valid";
     });
+
+    newChallenge.leaderboard = [];
 
     const challengesCollections = await challenges();
     const entry = await challengesCollections.insertOne(newChallenge);
@@ -31,7 +33,7 @@ let challengeDataFunctions = {
       throw "Unable to add challenge";
     }
 
-    await challengeObject.pushChallenge(entry.insertedId);
+    await challengeObject.pushChallenge(entry.insertedId.toString());
 
     return entry;
   },
@@ -129,6 +131,93 @@ let challengeDataFunctions = {
     return updatedChallenge;
   },
 
+  async pushToCurrentLeaderboards(userName) {
+    await userData.getUserByUsername(userName);
+
+    const challengeCollections = await challenges();
+    const queueCollection = await challengeQueue();
+    const challengesObject = (await queueCollection.find({}).toArray())[0];
+
+    const baseReward = 25;
+    const extraReward = 0;
+
+    const curChallenge = await challengeCollections.findOne({
+      _id: challengesObject.current,
+    });
+
+    if (!curChallenge) throw "Current challenge not found";
+
+    const localLeaderboard = curChallenge.leaderboard;
+    const foundEntry = localLeaderboard.find(
+      (entry) => entry.userName === userName,
+    );
+
+    if (foundEntry) throw "User already exists on leaderboard";
+
+    const length = localLeaderboard.length;
+
+    if (length < 100) extraReward = 100 - length;
+
+    const pushToLeaderboard = await challengeCollections.updateOne(
+      {
+        _id: challengesObject.current,
+      },
+      {
+        $push: {
+          leaderboard: {
+            $each: [{ userName: userName, time: new Date() }],
+            $sort: { time: 1 },
+          },
+        },
+      },
+    );
+
+    if (pushToLeaderboard.nMatched === 0 || pushToLeaderboard.nModified === 0)
+      throw "There was an issue adding user to leaderboard";
+
+    const globalLeaderBoard = challengesObject.leaderboard;
+
+    const foundGlobalEntry = globalLeaderBoard.find(
+      (entry) => entry.userName === userName,
+    );
+
+    if (foundGlobalEntry) {
+      const totalReward = foundGlobalEntry.reward + baseReward + extraReward;
+
+      const resDB = await queueCollection.updateOne(
+        {
+          "leaderboard.userName": userName,
+        },
+        {
+          $set: { "leaderboard.$.reward": totalReward },
+        },
+      );
+
+      return resDB;
+    }
+
+    const resDB = await queueCollection.updateOne(
+      {
+        _id: challengesObject._id,
+      },
+      {
+        $push: {
+          leaderboard: {
+            $each: [
+              {
+                userName: userName,
+                reward: baseReward + extraReward,
+              },
+            ],
+            $sort: { reward: -1 },
+          },
+        },
+      },
+    );
+
+    return resDB;
+  },
+
   async uploadSubmissionImages(userName, imageList) {
     userName = helper.inputValidator(userName);
 
@@ -140,7 +229,7 @@ let challengeDataFunctions = {
     let alreadySubmitted = false;
     let prevSubmission = {};
 
-    await challengeObjectFunctions.removeSubmissionIfPresent(userName);
+    await challengeObject.removeSubmissionIfPresent(userName);
 
     const links = [];
 
@@ -151,7 +240,7 @@ let challengeDataFunctions = {
       links.push(await helper.uploadImageToFirebase(path, element.buffer));
     }
 
-    const newSubmission = await challengeObjectFunctions.createSubmission(
+    const newSubmission = await challengeObject.createSubmission(
       userName,
       links,
     );

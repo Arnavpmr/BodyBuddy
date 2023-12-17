@@ -14,11 +14,13 @@ let challengeObjectFunctions = {
     let queue = [];
     let pastChallenges = [];
     let submissions = [];
+    let globalLeaderBoard = [];
     let staticObject = {
       current: current,
       queue: queue,
       pastChallenges: pastChallenges,
       submissions: submissions,
+      leaderboard: globalLeaderBoard,
     };
 
     const queueCollection = await challengeQueue();
@@ -35,12 +37,15 @@ let challengeObjectFunctions = {
 
   async pushChallenge(id) {
     const queueCollection = await challengeQueue();
-    let challengesObject = await queueCollection.find({}).toArray();
+
+    const challengesObject = await queueCollection.find({}).toArray();
+
     let pushToQueue = await queueCollection.findOneAndUpdate(
       { _id: challengesObject[0]._id },
       { $push: { queue: id } },
       { returnDocument: "after" },
     );
+
     return pushToQueue;
   },
 
