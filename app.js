@@ -27,14 +27,14 @@ app.use(
 
 app.use(mw.rewriteUnsupportedBrowserMethods);
 
-app.use("/", mw.root);
-app.use("/login", mw.login);
-app.use("/register", mw.register);
-app.use("/home", mw.home);
-app.use("/logout", mw.logout);
-app.use("/workouts", mw.workouts);
-app.use("/exercises", mw.exercises);
-app.use("/challenges", mw.challenges);
+// app.use("/", mw.root);
+// app.use("/login", mw.login);
+// app.use("/register", mw.register);
+// app.use("/home", mw.home);
+// app.use("/logout", mw.logout);
+// app.use("/workouts", mw.workouts);
+// app.use("/exercises", mw.exercises);
+// app.use("/challenges", mw.challenges);
 
 configRoutes(app);
 

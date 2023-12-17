@@ -5,6 +5,7 @@ import aboutRoute from "./about.js";
 import homeRoute from "./home.js";
 import profileRoutes from "./profile.js";
 import workoutsRoutes from "./workouts.js";
+import exerciseRoutes from "./exercises.js";
 
 const constructorMethod = (app) => {
   app.use("/", authRoutes);
@@ -13,6 +14,7 @@ const constructorMethod = (app) => {
   app.use("/challenges", challengesRoutes);
   app.use("/user", profileRoutes);
   app.use("/workouts", workoutsRoutes);
+  app.use("/exercises", exerciseRoutes);
 
   app.use("*", (req, res) => {
     return res.status(404).render("error", {

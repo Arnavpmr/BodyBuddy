@@ -1,10 +1,10 @@
 <div id='workout_container' class='center'>
-    <label for='workoutSearch'>Search for Workouts:</label>
+    <label for='workoutSearch' style="color: var(--light-text);">Search for Workouts:</label>
     <input
         type='text'
         placeholder='Search for workouts...'
         id='workoutSearch'
-        onkeyup='filterWorkouts()'
+        name="workoutSearch"
     />
     <br />
     <div id='element_container'>
@@ -44,8 +44,80 @@
     <button
         class='about_button'
         style='background-color: var(--dark-grey);color: green;'
-        onclick='createWorkout()'
+        id="create_workout"
     >Create your Own Workout!</button>
 </div>
+
+<div id="create_workout_popup" class="center" style="display: none;">
+    <form action="/workouts/workout" style="color: var(--light-text);" id="submitWorkout">
+
+    <label for="nameInput">
+        Input a workout name
+        <input type="text" name="nameInput" id="nameInput" required>
+    </label>
+    <br>
+        <p>Input workout type(s)</p>
+        <br>
+        <label for="aerobicInput">
+            <input type="checkbox" value="aerobic" name="aerobicInput" id="aerobicInput">
+            Aerobic
+        </label>    <br>
+        <label for="anaerobicInput">
+            <input type="checkbox" value="anaerobic" name="anaerobicInput" id="anaerobicInput">
+            Anerobic
+        </label>  <br>
+        <label for="strengthInput">
+            <input type="checkbox" value="strength" name="strengthInput" id="strengthInput">
+            Strength
+        </label>  <br>
+        <label for="stretchingInput">
+            <input type="checkbox" value="stretching" name="stretchingInput" id="stretchingInput">
+            Stretching
+        </label>  <br>
+        <label for="balanceInput">
+            <input type="checkbox" value="balance" name="balanceInput" id="balanceInput">
+            Balance
+        </label>
+    <br><br>
+    <label for="notes">
+        General notes <br>
+        <textarea name="notes" id="notes" cols="30" rows="10"></textarea>
+    </label><br>
+    <p style="color: red;" id="submitError"></p>
+
+        <div class="center" id="curPlan">
+            <h3>Current Workout Plan:</h3>
+            <ol id="planList">
+
+            </ol>
+        </div>
+    <button id="addExercises">Add Exercises</button><button id="saveWorkout">Save Workout</button>
+    <br>
+    <br>
+    </form>
+
+
+    <div  class="center"  id="bodyDiagram" hidden>
+        <div class="center" style="position: relative;width: 50%;" >
+            <img src="./public/res/muscle_groups_blank.png" alt="Muscle groups" style="width: 720px;">
+            <button class="muscle_group_button" id="shoulders" style="transform: translate(-190%, -360%);">Shoulders</button>
+            <button class="muscle_group_button" id="chest" style="transform: translate(-420%, -320%);">Chest</button>
+            <button class="muscle_group_button" id="obliques" style="transform: translate(-240%, -160%);">Obliques</button>
+            <button class="muscle_group_button" id="quadricepts" style="  transform: translate(-220%, 140%);">Quadriceps</button>
+            <button class="muscle_group_button" id="biceps" style="  transform: translate(170%, -250%);">Biceps</button>
+            <button class="muscle_group_button" id="abdominals" style="transform: translate(110%, -110%);">Abdominals</button>
+            <button class="muscle_group_button" id="adductors" style="  transform: translate(120%, 60%);">Adductors</button>
+        </div>
+        <div>
+            <h3>Available Exercises:</h3>
+            <div id="availableList">
+
+            </div>
+        </div>
+    </div>
+</div>  
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
 
 <script src='../public/js/workouts.js'></script>
