@@ -5,7 +5,6 @@ import configRoutes from "./routes/index.js";
 import exphbs from "express-handlebars";
 import * as mw from "./routes/middleware.js";
 
-
 const app = express();
 
 app.use("/public", express.static("public"));
@@ -23,7 +22,9 @@ app.use(
     saveUninitialized: false,
   }),
 );
-
+Handlebars.registerHelper("dateToString", function (date) {
+  return new Handlebars.SafeString(date.toISOString());
+});
 
 // app.use(mw.rewriteUnsupportedBrowserMethods);
 
