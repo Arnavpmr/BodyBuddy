@@ -18,6 +18,7 @@ let userDataFunctions = {
     let friendsList = [];
     let incomingRequests = [];
     let outgoingRequests = [];
+    let defaultProfilePicture = "../public/res/defaultAvatar.jpeg";
     // console.log(role)
     try {
       validatedInput = helper.createUserValidator(
@@ -54,7 +55,11 @@ let userDataFunctions = {
 
     let saltRounds = 10;
     const hash = await bcrypt.hash(validatedInput.password, saltRounds);
-    const newUser = { ...validatedInput, password: hash };
+    const newUser = {
+      ...validatedInput,
+      password: hash,
+      profilePicture: defaultProfilePicture,
+    };
 
     const entry = await userCollections.insertOne(newUser);
     if (!entry.acknowledged || !entry.insertedId) {
@@ -87,6 +92,26 @@ let userDataFunctions = {
       throw "User does not exist.";
     }
     user._id = user._id.toString();
+    return user;
+  },
+  async checkUserByUsername(userName) {
+    try {
+      userName = helper.inputValidator(userName);
+    } catch (e) {
+      throw `${userName} not valid.`;
+    }
+    const userCollections = await users();
+    let user = await userCollections.findOne({ userName: userName });
+    return user;
+  },
+  async checkUserByEmail(emailAddress) {
+    try {
+      emailAddress = helper.emailValidator(emailAddress);
+    } catch (e) {
+      throw `${emailAddress} not valid.`;
+    }
+    const userCollections = await users();
+    let user = await userCollections.findOne({ emailAddress: emailAddress });
     return user;
   },
   async getAllUsers() {

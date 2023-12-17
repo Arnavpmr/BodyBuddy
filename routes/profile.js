@@ -131,11 +131,9 @@ router.get("/:userName", async (req, res) => {
       return res.status(400).render("error", { error: "Invalid username." });
     }
 
-    return res
-      .status(500)
-      .render("error", {
-        error: "An error occurred while fetching the profile.",
-      });
+    return res.status(500).render("error", {
+      error: "An error occurred while fetching the profile.",
+    });
   }
 });
 
@@ -150,6 +148,7 @@ router.patch("/:userName", async (req, res) => {
     }
 
     let updatedUserData = {};
+    let userOrPasswordChanged = false;
     if (updatedData.firstName)
       updatedUserData.firstName = helper.inputValidator(
         updatedData.firstName,
@@ -165,17 +164,22 @@ router.patch("/:userName", async (req, res) => {
         updatedData.userName,
         "userName",
       );
+    if (updatedData.userName && updatedData.userName !== user.userName) {
+      userOrPasswordChanged = true;
+    }
     if (updatedData.emailAddress)
       updatedUserData.emailAddress = helper.emailValidator(
         updatedData.emailAddress,
       );
     if (updatedData.password)
       updatedUserData.password = helper.passwordValidator(updatedData.password);
-    if (user.password !== updatedUserData.password)
+    if (user.password !== updatedUserData.password) {
       updatedUserData.password = await bcrypt.hash(
         updatedUserData.password,
         10,
       );
+      userOrPasswordChanged = true;
+    }
     if (updatedData.description)
       updatedUserData.description = updatedData.description.trim();
     if (updatedData.age !== undefined) {
@@ -184,12 +188,37 @@ router.patch("/:userName", async (req, res) => {
       else throw new Error("Age is invalid");
     }
 
+    if (updatedData.userName !== user.userName) {
+      const existingUser = await userDataFunctions.checkUserByUsername(
+        updatedUserData.userName,
+      );
+      if (existingUser !== null) {
+        throw new Error("Username already exists");
+      }
+    }
+
+    if (updatedData.emailAddress !== user.emailAddress) {
+      const existingUser = await userDataFunctions.checkUserByEmail(
+        updatedUserData.emailAddress,
+      );
+      if (existingUser !== null) {
+        throw new Error("Email already in use");
+      }
+    }
+
     const updateResult = await userDataFunctions.updateUser(
       userName,
       updatedUserData,
     );
     if (!updateResult) {
       throw new Error("Update failed");
+    }
+
+    if (userOrPasswordChanged) {
+      req.session.destroy(); // Destroy the session
+      return res
+        .status(200)
+        .json({ message: "Profile updated, please log in again." });
     }
 
     return res.status(200).json({ message: "Profile updated successfully" });
