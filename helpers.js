@@ -97,6 +97,7 @@ let helper = {
     }
     return id;
   },
+
   passwordValidator(password) {
     if (!password) {
       throw `You have input an invalid password`;
@@ -144,17 +145,12 @@ let helper = {
     outgoingRequests,
     role,
   ) {
-    try {
-      firstName = this.inputValidator(firstName, "firstName");
-      lastName = this.inputValidator(lastName, "lastName");
-      userName = this.inputValidator(userName, "userName");
-      emailAddress = this.emailValidator(emailAddress);
-      password = this.passwordValidator(password);
-    } catch (e) {
-      throw `${e}`;
-    }
-    // console.log(role);
-    // if(!["admin", "owner","user"].includes(role)) throw "Role must be either admin, user, or owner";
+    firstName = this.inputValidator(firstName, "firstName");
+    lastName = this.inputValidator(lastName, "lastName");
+    userName = this.inputValidator(userName, "userName");
+    emailAddress = this.emailValidator(emailAddress);
+    password = this.passwordValidator(password);
+
     description = description.trim();
 
     if (age && age < 0) throw "Age cannot be a negative number";
@@ -176,14 +172,8 @@ let helper = {
   },
 
   loginUserValidator(userName, password) {
-    userName = userName.trim();
-
-    try {
-      userName = this.inputValidator(userName, "userName");
-      password = this.passwordValidator(password);
-    } catch (e) {
-      throw e;
-    }
+    userName = this.inputValidator(userName, "userName");
+    password = this.passwordValidator(password);
 
     return {
       userName: userName,
@@ -193,40 +183,40 @@ let helper = {
 
   exerciseValidator(
     exerciseName,
-    targetMuscle,
+    targetMuscles,
     exerciseDescription,
     instructions,
-    sets,
-    reps,
     equipment,
     difficulty,
     image,
   ) {
-    try {
-      exerciseName = this.inputValidator(exerciseName, "exerciseName");
-      exerciseDescription = this.inputValidator(
-        exerciseDescription,
-        "exerciseDescription",
-      );
-      instructions = this.inputValidator(instructions, "instructions");
-      difficulty = this.inputValidator(difficulty, "difficulty");
-      image = this.inputValidator(image, "image");
-    } catch (e) {
-      throw `${e}`;
+    exerciseName = this.inputValidator(exerciseName, "exerciseName");
+    exerciseDescription = this.inputValidator(
+      exerciseDescription,
+      "exerciseDescription",
+    );
+    instructions = this.inputValidator(instructions, "instructions");
+    difficulty = this.inputValidator(difficulty, "difficulty");
+    image = this.inputValidator(image, "image");
+
+    if (!Array.isArray(targetMuscles)) {
+      throw "TargetMuscle must be an array.";
+    }
+    if (!Array.isArray(equipment)) {
+      throw "Equiment must be an array.";
     }
 
     return {
       name: exerciseName,
-      targetMuscles: targetMuscle,
+      targetMuscles: targetMuscles,
       description: exerciseDescription,
       instructions: instructions,
-      sets: sets,
-      reps: reps,
       equipment: equipment,
       difficulty: difficulty,
       image: image,
     };
   },
+
   exerciseComponentValidator(exercise) {
     if (
       isNaN(exercise.sets) ||
@@ -250,14 +240,11 @@ let helper = {
       reps: exercise.reps,
     };
   },
+
   workoutValidator(name, workoutTypes, notes, exercises) {
     const definedWorkoutTypes = [];
 
-    try {
-      name = helper.inputValidator(name, "name");
-    } catch (e) {
-      throw `${e}`;
-    }
+    name = helper.inputValidator(name, "name");
 
     if (typeof notes !== "string") {
       throw "Notes must be a valid string";
@@ -287,27 +274,41 @@ let helper = {
       exercises: exercises,
     };
   },
+
   challengeValidator(title, description, exercises, reward) {
-    try {
-      title = helper.inputValidator(title, "title");
-      description = helper.inputValidator(description, "description");
-      reward = helper.inputValidator(reward, "reward");
+    title = helper.inputValidator(title, "title");
+    description = helper.inputValidator(description, "description");
 
-      if (isNaN(reward) || reward <= 0 || !Number.isInteger(reward))
-        throw "Reward is not a valid number";
+    if (isNaN(reward) || reward <= 0 || !Number.isInteger(reward))
+      throw "Reward is not a valid number";
 
-      exercises = exercises.map((exercise) =>
-        this.exerciseComponentValidator(exercise),
-      );
-    } catch (e) {
-      throw `${e}`;
-    }
+    if (description.trim() === "") throw "Description cannot be empty";
+
+    if (!Array.isArray(exercises)) throw "Exercises must be an array";
+    if (exercises.length === 0) throw "Exercises cannot be empty";
+
+    exercises = exercises.map((exercise) =>
+      this.exerciseComponentValidator(exercise),
+    );
 
     return {
       title: title,
       description: description,
       exercises: exercises,
       reward: reward,
+    };
+  },
+
+  submissionValidator(userName, imageUrls) {
+    userName = this.inputValidator(userName, "userName");
+
+    if (!Array.isArray(imageUrls)) throw "Image urls must be an array";
+
+    if (imageUrls.some((url) => url.trim() === "")) throw "Url cannot be empty";
+
+    return {
+      userName: userName,
+      images: imageUrls,
     };
   },
 };

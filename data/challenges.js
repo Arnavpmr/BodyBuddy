@@ -1,35 +1,37 @@
 import helper from "../helpers.js";
-import { challenges } from "../config/mongoCollections.js";
+import { challenges, exercises } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
+import { challengeObject } from "./index.js";
 import storageFirebase from "../firebase.js";
 
 let challengeDataFunctions = {
   async createChallenge(exerciseList, title, reward, description) {
-    title = helper.inputValidator(title, "title");
-    description = helper.inputValidator(description, "description");
+    const newChallenge = helper.challengeValidator(
+      title,
+      description,
+      exerciseList,
+      reward,
+    );
 
-    if (!Array.isArray(exerciseList)) {
-      throw "ExerciseList must be an array";
-    }
-    if (isNaN(reward)) {
-      throw "Reward must be a valid number";
-    }
-    if (reward < 1) {
-      throw "Reward cannot be negative.";
-    }
+    const exerciseCollections = await exercises();
+    const exercises = await exerciseCollections.find({});
+    const exerciseIds = new Set(
+      exercises.map((exercise) => exercise._id.toString()),
+    );
 
-    let newChallenge = {
-      title: title,
-      description: description,
-      exercises: exerciseList,
-      reward: reward,
-    };
+    exerciseList.forEach((exercise) => {
+      if (!exerciseIds.has(exercise.id)) throw "Exercise id is not valid";
+    });
 
     const challengesCollections = await challenges();
     const entry = await challengesCollections.insertOne(newChallenge);
+
     if (!entry.acknowledged || !entry.insertedId) {
       throw "Unable to add challenge";
     }
+
+    await challengeObject.pushChallenge(entry.insertedId);
+
     return entry;
   },
 
@@ -58,48 +60,71 @@ let challengeDataFunctions = {
     id = helper.idValidator(id, "challengeId");
 
     const challengeCollections = await challenges();
+    const queueCollection = await challengeQueue();
+    const challengesObject = (await queueCollection.find({}).toArray())[0];
+
+    if (!challengesObject.queue.includes(id))
+      throw "Challenge must be in the queue in order to be removed";
+
     let challengeRemoved = await challengeCollections.findOneAndDelete({
       _id: new ObjectId(id),
     });
+
     if (!challengeRemoved) {
       throw "Challenge does not exist.";
     }
-    let myObj = { _id: challengeRemoved._id.toString(), deleted: true };
+
+    await challengeObject.removeChallengeFromQueue(id);
+
+    let myObj = { deleted: true };
+
     return myObj;
   },
 
   async updateChallenge(id, exerciseList, title, reward, description) {
-    title = helper.inputValidator;
-    description = helper.inputValidator;
+    const newChallenge = helper.challengeValidator(
+      title,
+      description,
+      exerciseList,
+      reward,
+    );
 
-    if (!Array.isArray(exerciseList)) {
-      throw "ExerciseList must be an array";
-    }
-    if (isNaN(reward)) {
-      throw "Reward must be a valid number";
-    }
-    if (reward < 1) {
-      throw "Reward cannot be negative.";
-    }
-    let challenge = await challengeCollections.find({
+    const exerciseCollections = await exercises();
+    const exercises = await exerciseCollections.find({});
+    const exerciseIds = new Set(
+      exercises.map((exercise) => exercise._id.toString()),
+    );
+
+    exerciseList.forEach((exercise) => {
+      if (!exerciseIds.has(exercise.id)) throw "Exercise id is not valid";
+    });
+
+    const challengeCollection = await challenges();
+    const queueCollection = await challengeQueue();
+    let challengesObject = (await queueCollection.find({}).toArray())[0];
+
+    const challenge = await challengeCollection.find({
       _id: new ObjectId(id),
     });
-    if (!challenge) {
-      throw `Challenge does not exist.`;
-    }
 
-    let updatedChallenge = await challengeCollections.findOneAndUpdate(
+    if (!challenge) throw `Challenge does not exist.`;
+
+    if (!challengesObject.queue.includes(id))
+      throw "Challenge must be in the queue in order to be updated";
+
+    let updatedChallenge = await challengeCollection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       {
         $set: {
-          title: title,
-          description: description,
-          exercises: exerciseList,
-          reward: reward,
+          title: newChallenge.title,
+          description: newChallenge.description,
+          exercises: newChallenge.exerciseList,
+          reward: newChallenge.reward,
         },
       },
       { returnDocument: "after" },
     );
+
     return updatedChallenge;
   },
 
@@ -127,8 +152,6 @@ let challengeDataFunctions = {
       });
     });
   },
-
-  async createSubmission(userName, images) {},
 };
 
 export default challengeDataFunctions;

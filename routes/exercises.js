@@ -43,7 +43,7 @@ router.route("/exercise").post(async (req, res) => {
   } = newExercise;
 
   try {
-    newExerciseDB = exercises.createExercise(
+    newExerciseDB = await exercises.createExercise(
       name,
       targetMuscles,
       description,
@@ -102,7 +102,7 @@ router
     } = newExercise;
 
     try {
-      newExerciseDB = exercises.updateExercise(
+      newExerciseDB = await exercises.updateExercise(
         exerciseId,
         name,
         targetMuscles,

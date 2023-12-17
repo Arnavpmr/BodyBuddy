@@ -1,5 +1,4 @@
 import { challengeQueue } from "../config/mongoCollections.js";
-import user from "./user.js";
 import helper from "../helpers.js";
 
 let challengeObjectFunctions = {
@@ -33,21 +32,37 @@ let challengeObjectFunctions = {
     return entry;
   },
 
-  async pushChallenge(challengeID) {
+  async pushChallenge(id) {
     const queueCollection = await challengeQueue();
     let challengesObject = await queueCollection.find({}).toArray();
     let pushToQueue = await queueCollection.findOneAndUpdate(
       { _id: challengesObject[0]._id },
-      { $push: { queue: challengeID } },
+      { $push: { queue: id } },
       { returnDocument: "after" },
     );
     return pushToQueue;
   },
 
-  async popChallenge() {
+  async removeChallengeFromQueue(id) {
     const queueCollection = await challengeQueue();
     let challengesObject = await queueCollection.find({}).toArray()[0];
-    challengesObject.queue.dequeue();
+
+    const newQueue = challengesObject.queue.filter(
+      (challengeId) => challengeId !== id,
+    );
+
+    if (newQueue.length === challengesObject.queue.length)
+      throw "Challenge not found in queue";
+
+    const resDB = await queueCollection.updateOne(
+      { _id: challengesObject[0]._id },
+      { $set: { queue: newQueue } },
+      { returnDocument: "after" },
+    );
+
+    if (resDB.nModified === 0) throw "Challenge not found in queue";
+
+    return resDB;
   },
 
   async updateCurrent() {
@@ -78,18 +93,13 @@ let challengeObjectFunctions = {
   },
 
   async createSubmission(userName, images) {
-    let userDB = null;
+    if (!Array.isArray(images)) throw "Images is not valid";
 
-    try {
-      userDB = await user.getUserByUsername(userName);
-
-      if (!Array.isArray(images)) throw "Images is not valid";
-    } catch (e) {
-      throw e;
-    }
+    if (images.some((image) => image.trim() === ""))
+      throw "Image url cannot be empty";
 
     const queueCollection = await challengeQueue();
-    let challengesObject = await queueCollection.find({}).toArray()[0];
+    let challengesObject = (await queueCollection.find({}).toArray())[0];
 
     const curSubmission = {
       userName: userName,
@@ -97,7 +107,7 @@ let challengeObjectFunctions = {
       status: "pending",
     };
 
-    const newSubmissionDB = await queueCollection.findOneAndUpdate(
+    await queueCollection.updateOne(
       {
         _id: challengesObject._id,
       },
@@ -105,22 +115,18 @@ let challengeObjectFunctions = {
       { returnDocument: "after" },
     );
 
-    return newSubmissionDB;
+    return { inserted: true };
   },
 
   async updateSubmissionByUser(userName, status) {
-    try {
-      userName = helper.inputValidator(userName, "userName");
+    userName = helper.inputValidator(userName, "userName");
 
-      if (status !== "approved" && status !== "denied")
-        throw "Status is not valid";
-    } catch (e) {
-      throw e;
-    }
+    if (status !== "approved" && status !== "denied")
+      throw "Status is not valid";
 
     const queueCollection = await challengeQueue();
 
-    const updatedQueue = await queueCollection.updateOne(
+    const resDB = await queueCollection.updateOne(
       {
         "submissions.userName": userName,
       },
@@ -129,15 +135,13 @@ let challengeObjectFunctions = {
       },
     );
 
-    return updatedQueue;
+    if (resDB.nModified === 0) throw "Submission not found for user";
+
+    return resDB;
   },
 
   async getSubmissionByUserName(userName) {
-    try {
-      userName = helper.inputValidator(userName, "userName");
-    } catch (e) {
-      throw e;
-    }
+    userName = helper.inputValidator(userName, "userName");
 
     const queueCollection = await challengeQueue();
     const challengesObject = (await queueCollection.find({}).toArray())[0];
@@ -150,6 +154,32 @@ let challengeObjectFunctions = {
     if (!foundSubmission) throw "Submission not found for user";
 
     return foundSubmission;
+  },
+
+  async removeSubmissionByUser(userName) {
+    userName = helper.inputValidator(userName, "userName");
+
+    const queueCollection = await challengeQueue();
+    const challengesObject = (await queueCollection.find({}).toArray())[0];
+    const submissions = challengesObject.submissions;
+
+    const newSubmissions = submissions.filter(
+      (submission) => submission.userName !== userName,
+    );
+
+    if (newSubmissions.length === submissions.length)
+      throw "Submission not found for user";
+
+    const updatedQueue = await queueCollection.updateOne(
+      {
+        _id: challengesObject._id,
+      },
+      {
+        $set: { submissions: newSubmissions },
+      },
+    );
+
+    return { deleted: true };
   },
 
   toggleUpdate(status) {

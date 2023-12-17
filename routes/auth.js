@@ -31,8 +31,8 @@ router
       validatedInput = helper.createUserValidator(
         firstNameInput,
         lastNameInput,
-        userNameInput,
-        emailAddressInput,
+        userNameInput.toLowerCase(),
+        emailAddressInput.toLowerCase(),
         passwordInput,
         descriptionInput,
         ageInput,
