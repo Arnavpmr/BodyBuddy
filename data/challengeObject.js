@@ -1,5 +1,6 @@
 import { challengeQueue } from "../config/mongoCollections.js";
 import helper from "../helpers.js";
+import storageFirebase from "../firebase.js";
 
 let challengeObjectFunctions = {
   job: {
@@ -156,30 +157,48 @@ let challengeObjectFunctions = {
     return foundSubmission;
   },
 
-  async removeSubmissionByUser(userName) {
-    userName = helper.inputValidator(userName, "userName");
+  async removeSubmissionIfPresent(username) {
+    let isFound = false;
+    try {
+      const res = await this.getSubmissionByUserName(username);
+      const queueCollection = await challengeQueue();
+      const challengesObject = (await queueCollection.find({}).toArray())[0];
 
-    const queueCollection = await challengeQueue();
-    const challengesObject = (await queueCollection.find({}).toArray())[0];
-    const submissions = challengesObject.submissions;
+      const newSubmissions = [];
+      for (
+        let index = 0;
+        index < challengesObject.submissions.length;
+        index++
+      ) {
+        const submission = challengesObject.submissions[index];
 
-    const newSubmissions = submissions.filter(
-      (submission) => submission.userName !== userName,
-    );
+        if (submission.userName === username) {
+          const bucket = storageFirebase.bucket();
+          for (let i = 0; i < res.images.length; i++) {
+            const element = res.images[i];
+            const file = bucket.file(element.relPath);
+            await file.delete();
+          }
+        } else {
+          newSubmissions.push(submission);
+        }
+      }
 
-    if (newSubmissions.length === submissions.length)
-      throw "Submission not found for user";
+      await queueCollection.updateOne(
+        { _id: challengesObject._id },
+        {
+          $set: {
+            submissions: newSubmissions,
+          },
+        },
+      );
 
-    const updatedQueue = await queueCollection.updateOne(
-      {
-        _id: challengesObject._id,
-      },
-      {
-        $set: { submissions: newSubmissions },
-      },
-    );
-
-    return { deleted: true };
+      return true;
+    } catch (error) {
+      const strErr = error.toString();
+      if (strErr !== "Submission not found for user") throw strErr;
+      else return false;
+    }
   },
 
   toggleUpdate(status) {

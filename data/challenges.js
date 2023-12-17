@@ -3,6 +3,7 @@ import { challenges, exercises } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import { challengeObject } from "./index.js";
 import storageFirebase from "../firebase.js";
+import challengeObjectFunctions from "./challengeObject.js";
 
 let challengeDataFunctions = {
   async createChallenge(exerciseList, title, reward, description) {
@@ -128,30 +129,37 @@ let challengeDataFunctions = {
     return updatedChallenge;
   },
 
-  async uploadSubmissionToFirebase(userName, challengeId, imageList) {
-    userId = helper.inputValidator(userName);
-    challengeId = helper.idValidator(challengeId);
+  async uploadSubmissionImages(userName, imageList) {
+    userName = helper.inputValidator(userName);
 
     const bucket = storageFirebase.bucket();
 
-    ("challenges/challengeId/userId/(pictures)");
-
     if (!Array.isArray(imageList)) throw "imageList must be an array";
-
     if (imageList.length === 0) throw "imageList must not be an empty list";
 
-    imageList.forEach((fileData) => {
-      const name = fileData.originalname;
+    let alreadySubmitted = false;
+    let prevSubmission = {};
 
-      const file = bucket.file(`${name}`, {
-        uploadType: { resumeable: false },
-      });
+    await challengeObjectFunctions.removeSubmissionIfPresent(userName);
 
-      file.save(fileData.buffer, (err) => {
-        if (err) throw err;
-      });
-    });
+    const links = [];
+
+    for (let i = 0; i < imageList.length; i++) {
+      const element = imageList[i];
+      const path = `challenges/${userName}/${element.originalname}`;
+
+      links.push(await helper.uploadImageToFirebase(path, element.buffer));
+    }
+
+    const newSubmission = await challengeObjectFunctions.createSubmission(
+      userName,
+      links,
+    );
+    if (!newSubmission) throw "Submission failed";
+    return links;
   },
 };
+
+// const t = storageFirebase.listAll();
 
 export default challengeDataFunctions;
