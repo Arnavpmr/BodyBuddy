@@ -47,6 +47,12 @@ export const challenges = (req, res, next) => {
   next();
 };
 
+export const profile = (req, res, next) => {
+  if (!req.session.user) return res.redirect("/login");
+
+  next();
+};
+
 export const exercises = (req, res, next) => {
   if (!req.session.user)
     return res.status(403).json({

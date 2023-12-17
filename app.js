@@ -33,6 +33,7 @@ app.use("/logout", mw.logout);
 app.use("/workouts", mw.workouts);
 app.use("/exercises", mw.exercises);
 app.use("/challenges", mw.challenges);
+app.use("/user", mw.profile);
 
 configRoutes(app);
 

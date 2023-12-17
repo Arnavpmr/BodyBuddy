@@ -1,1 +1,80 @@
-<p>This is the Profile page</p>
+<div id="profile">
+  <h1>
+    <img src="{{profile.profilePicture}}" alt="Profile Photo" />
+    {{profile.userName}}
+  </h1>
+
+  <div id="userSearch">
+    <div class="searchContainer">
+      <form id="searchForm">
+        <input type="text" id="searchInput" placeholder="Search for users..." />
+        <button type="submit">Search</button>
+      </form>
+      <div id="searchResults" class="dropdown-content"></div>
+    </div>
+  </div>
+
+  {{#if isMe}}
+    <form id="profileForm">
+      <input type="text" name="firstName" value="{{profile.firstName}}" id="firstNameInput" disabled />
+      <input type="text" name="lastName" value="{{profile.lastName}}" id="lastNameInput" disabled />
+      <input type="text" name="userName" value="{{profile.userName}}" id="userNameInput" disabled />
+      <input type="email" name="emailAddress" value="{{profile.emailAddress}}" id="emailAddressInput" disabled />
+      <input type="password" name="password" value="{{profile.password}}" id="passwordInput" disabled />
+      <textarea name="description" id="descriptionInput" disabled>{{profile.aboutMe.description}}</textarea>
+      <input type="number" name="age" value="{{profile.aboutMe.age}}" id="ageInput" disabled />
+    </form>
+    <button type="submit" id="saveChangesButton" hidden>Save Changes</button>
+    <button id="editProfileButton">Edit Profile</button>
+
+    <div id="friendsList">
+      <h2>My Friends</h2>
+      {{#if profile.friends.friendsList.length}}
+        <ul>
+          {{#each profile.friends.friendsList}}
+            <li><a href="/user/{{this}}">{{this}}</a></li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p>You have no friends added.</p>
+      {{/if}}
+    </div>
+
+    <div id="friendRequests">
+      <h2>Incoming Friend Requests</h2>
+      {{#each profile.friends.incomingRequests}}
+        <div class="friendRequest">
+          <span>{{this}}</span>
+          <button class="acceptRequestBtn" data-username="{{this}}">Accept</button>
+          <button class="denyRequestBtn" data-username="{{this}}">Deny</button>
+        </div>
+      {{/each}}
+      {{#unless profile.friends.incomingRequests.length}}
+        <p>No incoming friend requests.</p>
+      {{/unless}}
+    </div>
+  {{else}}
+    <div class="otherUserProfile">
+      <img src="{{profile.profilePicture}}" alt="Profile Photo" />
+      <h2>{{profile.userName}}</h2>
+      <div class="profileFirstName">
+        First Name:
+        {{profile.firstName}}
+      </div>
+      <div class="profileAboutMe">
+        About Me:
+        {{profile.aboutMe.description}}
+      </div>
+      <div class="profileAge">
+        Age:
+        {{profile.aboutMe.age}}
+      </div>
+
+      <button class="sendFriendRequestBtn" data-username="{{profile.userName}}">Send Friend Request</button>
+      <div id="friendRequestStatus" class="friend-request-status"></div>
+
+    </div>
+  {{/if}}
+</div>
+
+<script src="../public/js/profile.js"></script>
