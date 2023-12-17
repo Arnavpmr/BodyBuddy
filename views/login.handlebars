@@ -1,24 +1,21 @@
 <div class='center' style='padding: 2rem;'>
     <form action='/login' method='POST' id='loginForm'>
+        <script type='text/javascript' src='/public/js/login.js'></script>
         <table>
             <tr>
                 <td>
-                    <label for='emailInput'>
-                        Enter your Email
+                    <label for='userNameInput'>
+                        Username:
                     </label>
                 </td>
                 <td>
-                    <input type='email' name='emailInput' id='emailInput' />
-                    {{#if emailError}}
-                        <span id='emailError' class='errorMsg'>X
-                            {{emailError}}</span>
-                    {{/if}}
+                    <input type='text' name='userNameInput' id='userNameInput' />
                 </td>
             </tr>
             <tr>
                 <td>
                     <label for='passwordInput'>
-                        Enter your Password
+                        Password:
                     </label>
                 </td>
                 <td>
@@ -27,10 +24,6 @@
                         name='passwordInput'
                         id='passwordInput'
                     />
-                    {{#if passwordError}}
-                        <span id='passwordError' class='errorMsg'>X
-                            {{passwordError}}</span>
-                    {{/if}}
                 </td>
             </tr>
             <tr>
@@ -42,6 +35,16 @@
             </tr>
         </table>
     </form>
+
+    <span id='errorSpan' class='errorMsg'>
+        <ul id='errorList'>
+            {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        </ul>
+    </span>
     <a href='/register' style='text-align: left;'>Don't have an account?
         Register Here</a>
 </div>
