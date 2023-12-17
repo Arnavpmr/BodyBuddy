@@ -37,7 +37,7 @@ router.route("/").get(async (req, res) => {
   });
 });
 
-router.route("/current/toggleupdates").post(async (req, res) => {
+router.route("/challenge/toggleupdates").post(async (req, res) => {
   const { status } = req.body;
 
   if (status !== "on" && status !== "off")
@@ -73,33 +73,54 @@ router.post(
 
 router.route("/challenge/submissions").get(async (req, res) => {
   const queueCollection = await challengeQueue();
-  const challengesObject = await queueCollection.find({}).toArray()[0];
+  const challengesObject = await queueCollection.find({}).toArray();
 
-  return res.status(200).json(challengesObject.submissions);
+  return res.status(200).json(challengesObject[0].submissions);
 });
 
-router.route("/challenge/:userName").post(async (req, res) => {
-  const status = req.body;
+router
+  .route("/challenge/submissions/submission/:userName")
+  .get(async (req, res) => {
+    let userName = null;
+    let resDB = null;
 
-  let userName = null;
-  let resDB = null;
+    try {
+      userName = helper.inputValidator(req.params.userName, "userName");
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
 
-  try {
-    if (status !== "approved" && status !== "denied") throw "Status is invalid";
+    try {
+      resDB = await challengeObject.getSubmissionByUserName(userName);
+    } catch (e) {
+      return res.status(500).json({ error: e });
+    }
 
-    userName = helper.idValidator(req.params.userName);
-  } catch (e) {
-    return res.status(400).json({ error: e });
-  }
+    return res.status(200).json(resDB);
+  })
+  .post(async (req, res) => {
+    const status = req.body;
 
-  try {
-    resDB = await challengeQueue.updateSubmission(userName, status);
-  } catch (e) {
-    return res.status(500).json({ error: e });
-  }
+    let userName = null;
+    let resDB = null;
 
-  return resDB;
-});
+    try {
+      if (status !== "approved" && status !== "denied")
+        throw "Status is invalid";
+
+      userName = helper.idValidator(req.params.userName);
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
+
+    try {
+      resDB = await challengeObject.updateSubmissionByUser(userName, status);
+    } catch (e) {
+      return res.status(500).json({ error: e });
+    }
+
+    return resDB;
+  });
 
 router.route("/challenge").post(async (req, res) => {
   const { titleInput, descriptionInput, exercisesInput, rewardInput } =
