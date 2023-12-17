@@ -16,6 +16,13 @@
 
   {{#if isMe}}
     <form id="profileForm">
+      <button id="editProfilePictureButton">Edit Profile Picture</button>
+
+      <div id="avatarSelection" style="display: none;">
+        <h3>Choose an Avatar:</h3>
+        <div id="avatarList">
+        </div>
+      </div>
       <input type="text" name="firstName" value="{{profile.firstName}}" id="firstNameInput" disabled />
       <input type="text" name="lastName" value="{{profile.lastName}}" id="lastNameInput" disabled />
       <input type="text" name="userName" value="{{profile.userName}}" id="userNameInput" disabled />
@@ -55,8 +62,6 @@
     </div>
   {{else}}
     <div class="otherUserProfile">
-      <img src="{{profile.profilePicture}}" alt="Profile Photo" />
-      <h2>{{profile.userName}}</h2>
       <div class="profileFirstName">
         First Name:
         {{profile.firstName}}

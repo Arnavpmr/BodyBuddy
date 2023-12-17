@@ -18,7 +18,7 @@ let userDataFunctions = {
     let friendsList = [];
     let incomingRequests = [];
     let outgoingRequests = [];
-    let defaultProfilePicture = "../public/res/defaultAvatar.jpeg";
+    let defaultProfilePicture = "../public/res/avatars/defaultAvatar.jpeg";
     // console.log(role)
     try {
       validatedInput = helper.createUserValidator(
@@ -396,6 +396,25 @@ let userDataFunctions = {
     );
 
     return { status: "Friend request sent" };
+  },
+  async updateUserProfilePicture(userName, newPictureUrl) {
+    try {
+      helper.inputValidator(userName, "userName");
+    } catch (e) {
+      throw new Error(e);
+    }
+
+    const userCollection = await users();
+    const updateInfo = await userCollection.updateOne(
+      { userName: userName },
+      { $set: { profilePicture: newPictureUrl } },
+    );
+
+    if (updateInfo.modifiedCount === 0) {
+      throw new Error("Could not update user profile picture.");
+    }
+
+    return { profileUpdated: true };
   },
 };
 

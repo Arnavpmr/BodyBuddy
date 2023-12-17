@@ -139,8 +139,7 @@ router.get("/:userName", async (req, res) => {
 
 router.patch("/:userName", async (req, res) => {
   const updatedData = req.body;
-  const { userName } = req.params;
-
+  const { userName } = req.session.user;
   try {
     const user = await userDataFunctions.getUserByUsername(userName);
     if (!user) {
@@ -215,7 +214,7 @@ router.patch("/:userName", async (req, res) => {
     }
 
     if (userOrPasswordChanged) {
-      req.session.destroy(); // Destroy the session
+      req.session.destroy();
       return res
         .status(200)
         .json({ message: "Profile updated, please log in again." });
@@ -227,6 +226,42 @@ router.patch("/:userName", async (req, res) => {
       error.message === "User not found" || error.message === "Update failed"
         ? 404
         : 400;
+    return res.status(statusCode).json({ error: error.message });
+  }
+});
+
+router.patch("/:userName/updateProfilePicture", async (req, res) => {
+  const userName = req.session.user.userName;
+  const { profilePicture: newProfilePictureUrl } = req.body;
+
+  try {
+    helper.inputValidator(userName, "userName");
+
+    const user = await userDataFunctions.getUserByUsername(userName);
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!newProfilePictureUrl || typeof newProfilePictureUrl !== "string") {
+      console.log("Invalid profile picture URL");
+      return res.status(400).json({ error: "Invalid profile picture URL" });
+    }
+
+    const updateResult = await userDataFunctions.updateUserProfilePicture(
+      userName,
+      newProfilePictureUrl,
+    );
+    if (!updateResult) {
+      throw new Error("Failed to update profile picture");
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Profile picture updated successfully" });
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    const statusCode = error.message === "User not found" ? 404 : 400;
     return res.status(statusCode).json({ error: error.message });
   }
 });

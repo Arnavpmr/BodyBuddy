@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     editButton.addEventListener("click", () => {
       fields.forEach((field) => (field.disabled = false));
       saveButton.hidden = false;
+      avatarSelection.style.display = "block";
     });
   } else {
     console.error("Edit button or profile form fields not found!");
@@ -116,6 +117,58 @@ document.addEventListener("DOMContentLoaded", (event) => {
     sendRequestBtn.addEventListener("click", function () {
       const targetUserName = this.getAttribute("data-username");
       sendFriendRequest(targetUserName);
+    });
+  }
+  const editProfilePictureButton = document.getElementById(
+    "editProfilePictureButton",
+  );
+  const avatarList = document.getElementById("avatarList");
+  const avatarSelection = document.getElementById("avatarSelection");
+  function populateAvatars() {
+    const avatars = [
+      "../public/res/avatars/defaultAvatar.jpeg",
+      "../public/res/avatars/Screenshot 2023-12-17 at 4.17.47 PM.png",
+      "../public/res/avatars/Screenshot 2023-12-17 at 4.17.54 PM.png",
+    ];
+
+    avatarList.innerHTML = "";
+
+    avatars.forEach((url) => {
+      const avatarButton = document.createElement("button");
+      avatarButton.className = "avatar-option";
+      avatarButton.innerHTML = `<img src="${url}" alt="Avatar">`;
+      avatarButton.addEventListener("click", (e) => {
+        updateProfilePicture(url);
+      });
+      avatarList.appendChild(avatarButton);
+    });
+  }
+
+  function updateProfilePicture(avatarUrl) {
+    console.log("Updating profile picture to:", avatarUrl);
+    fetch(`/user/${username}/updateProfilePicture`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profilePicture: avatarUrl }),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to update profile picture");
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Profile picture updated:", data);
+      })
+      .catch((error) => {
+        console.error("Error updating profile picture:", error);
+      });
+  }
+
+  if (editProfilePictureButton) {
+    editProfilePictureButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      populateAvatars();
+      avatarSelection.style.display =
+        avatarSelection.style.display === "none" ? "block" : "none";
     });
   }
 });
