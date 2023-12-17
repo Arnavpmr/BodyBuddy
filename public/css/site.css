@@ -1,118 +1,161 @@
-:root{
-    --dark-grey: rgb(41, 38, 38);
-    --light-grey: #555;
-    --light-text: rgb(190, 190, 190);
+:root {
+  --dark-grey: rgb(41, 38, 38);
+  --light-grey: #555;
+  --light-text: rgb(190, 190, 190);
 }
 
-body{
-    margin: 0;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+body {
+  margin: 0;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  background-color: var(--light-grey);
 }
 
-.errorMsg{
-    color: red;
+.errorMsg {
+  color: red;
 }
 
-.navbar{
-    /* text-align: right; */
-    background-color: var(--dark-grey);
-    width: 100%;
-    position: sticky;
-    margin: 0;
-    display: block;
-    padding: 1rem;
-    height: 5vh;
-    height: max-content;
+.navbar {
+  /* text-align: right; */
+  background-color: var(--dark-grey);
+  width: 98.75%;
+  margin: 0;
+  display: block;
+  padding: 1rem;
+  height: 5vh;
+  height: max-content;
 }
 
-#navbar_logo{
-    width: 5%;
+#navbar_logo {
+  width: 5%;
 }
 
-#navbar_item_list{
-    text-align: right;
-    width: 92%;
-    font-size: 200%;
-    float: right;
-    padding: 1rem;
-    padding-top: 4vh;
+#navbar_item_list {
+  display: inline-block;
+  text-align: right;
+  width: 90%;
+  font-size: 200%;
+  padding: 1rem;
 }
 
-.navbar_items{
-    margin-right: 5rem;
-    text-decoration: none;
-    color: white;
-    transition: translate ease-in-out 100ms;
-    height: 60px;
-    border-bottom: 0px;
+.navbar_items {
+  margin-right: 5rem;
+  text-decoration: none;
+  color: white;
+  transition: translate ease-in-out 100ms;
+  height: 60px;
+  border-bottom: 0px;
 }
 
-.navbar_items:hover{
-    translate: 0 -200px;
-    border-bottom: 5px solid orange;
+.navbar_items:hover {
+  translate: 0 -200px;
+  border-bottom: 5px solid orange;
 }
 
-#about_screen{
-    width: 100vw;
-    height: 80vh;
-    position: relative;
-    border: none;
-    background-color: var(--dark-grey);
+/* About Page */
+
+#about_screen {
+  width: 100vw;
+  height: 80vh;
+  position: relative;
+  border: none;
+  background-color: var(--dark-grey);
 }
 
-#about_screen_div{
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    font-size: 20px;
-    padding: 12px 24px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    width: 50%;
-
+#about_screen_div {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  font-size: 20px;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 50%;
 }
 
-#about_button_div{
-    margin: 0 auto;
-    width: 50%;
-    padding: 10px;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    left: 50%;
-    cursor:default;
+#about_button_div {
+  margin: 0 auto;
+  width: 50%;
+  padding: 10px;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  left: 50%;
+  cursor: default;
 }
 
-.about_button{
-    padding: .75rem 1rem;
-    background-color: var(--light-grey);
-    color: var(--light-text);
-    border-radius: 5px;
-    border: none;
-    font-size: 24px;
-    cursor:pointer;
+.about_button {
+  padding: 0.75rem 1rem;
+  background-color: var(--light-grey);
+  color: var(--light-text);
+  border-radius: 5px;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  text-decoration: none;
 }
 
-#about_screen button:hover{
-    background-color: var(--dark-grey);
+#about_screen button:hover {
+  background-color: var(--dark-grey);
 }
 
-#about_us_div{
-    padding: 2rem;
-    color: var(--light-text);
+#about_us_div {
+  padding: 2rem;
+  color: var(--light-text);
 }
 
-.center{
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    margin: 0 auto;
+.center {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
-#loginForm td, #registerForm td{
-    text-align: left;
+#loginForm td,
+#registerForm td {
+  text-align: left;
 }
 
+footer {
+  background-color: red;
+}
+
+/* Home Page */
+#home_container {
+  background-color: var(--light-grey);
+  width: 100%;
+  height: 90vh;
+  color: var(--light-text);
+  padding: 0rem;
+  margin: 0;
+}
+
+.widget {
+  border: 1rem solid var(--dark-grey);
+  height: 720px;
+  overflow-y: scroll;
+  margin: -5px;
+}
+
+.favoriteWorkoutElement {
+  background-color: var(--dark-grey);
+  border-radius: 5px;
+  width: 90%;
+  margin: 0 auto;
+  text-align: left;
+  padding: 0.5px 1rem;
+  display: table;
+}
+
+/* Workout Page */
+
+#workout_container {
+  padding: 2rem;
+}
+
+#workoutSearch {
+  width: 25%;
+}

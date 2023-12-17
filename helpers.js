@@ -120,13 +120,13 @@ let helper = {
     let numberRegex = /[0-9]+/g;
     let symbolRegex = /[~`!@#\$%^&*()_+\-=[\]{}|\\;:'",<.>\/?]+/g;
     if (!password.match(uppercaseRegex)) {
-      throw "Password must have atleast 1 UPPERCASE character";
+      throw "Password must have at least 1 UPPERCASE character";
     }
     if (!password.match(numberRegex)) {
-      throw "Password must have atleast 1 NUMBER";
+      throw "Password must have at least 1 NUMBER";
     }
     if (!password.match(symbolRegex)) {
-      throw "Password must have atleast 1 SPECIAL character";
+      throw "Password must have at least 1 SPECIAL character";
     }
     return password;
   },

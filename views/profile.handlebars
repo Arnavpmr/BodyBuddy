@@ -1,1 +1,25 @@
-<p>This is the Profile page</p>
+<div id="profile">
+    <h1>
+        <img src="USER PROFILE URL" alt="{{}}" style="border-radius: 100%;">
+        {{userName}}
+    </h1>
+    {{#if isMe}}
+
+    <form action="UPDATE USER URL HERE" id="profileForm">
+        {{#each userField}}
+        <label for="{{fieldId}}Input">{{fieldName}}</label>
+        <input type="text" placeholder="{{fieldValue}}" value="{{fieldValue}}" id="{{fieldId}}Input" disabled="disabled">
+        {{/each}}
+        <button style="display: none;" type="submit">Save Changes</button>
+    </form>
+    <button onclick="editProfile()">Edit Profile</button>
+    {{else}}
+
+    {{#each userField}}
+        <span style="font-weight: bold;font-size: 16px;">{{fieldName}}</span>
+        {{fieldValue}}
+    {{/each}}
+
+    {{/if}}
+    <script src="../public/js/profile.js"></script>
+</div>

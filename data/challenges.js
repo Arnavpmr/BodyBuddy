@@ -1,6 +1,16 @@
 import helper from "../helpers.js";
 import { challenges } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
+import admin from "firebase-admin";
+import { getDownloadURL } from "firebase-admin/storage";
+import firebaseKey from "../firebaseKey.json" assert { type: "json" };
+
+const storageLink = "gs://bodybuddy-2bcc5.appspot.com";
+
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseKey),
+  storageBucket: storageLink,
+});
 
 let challengeDataFunctions = {
   async createChallenge(exerciseList, timeLimit, reward, deadline) {
@@ -53,7 +63,7 @@ let challengeDataFunctions = {
 
   async getChallengeById(challengeId) {
     try {
-      helper.idValidator(challengeId, "challengeId");
+      challengeId = helper.idValidator(challengeId, "challengeId");
     } catch (e) {
       throw `Error in getChallengeById: ${challengeId} not valid.`;
     }
@@ -69,7 +79,7 @@ let challengeDataFunctions = {
 
   async removeChallenge(challengeId) {
     try {
-      helper.idValidator(challengeId, "challengeId");
+      challengeId = helper.idValidator(challengeId, "challengeId");
     } catch (e) {
       throw `Error in removeChallenge: ${challengeId} not valid.`;
     }
@@ -94,7 +104,7 @@ let challengeDataFunctions = {
     let challenge = null;
     const challengeCollections = await challenges();
     try {
-      helper.idValidator(challengeId);
+      challengeId = helper.idValidator(challengeId);
     } catch (e) {
       throw `Error in updateChallenge: ${challengeId} not valid.`;
     }
@@ -133,6 +143,43 @@ let challengeDataFunctions = {
       { returnDocument: "after" },
     );
     return updatedChallenge;
+  },
+
+  async uploadImage(firebasePath, imageBuffer) {
+    const bucket = admin.storage().bucket();
+    if (typeof firebasePath !== "string") throw "firebasePath must be a String";
+    const path = firebasePath.trim();
+    if (!Array.isArray(imageBuffer)) throw "imageBuffer must be an arry";
+
+    let link = "";
+    const file = bucket.file(path, { uploadType: { resumeable: false } });
+    file.save(imageBuffer, async (err) => {
+      if (err) throw err;
+      else {
+        link = await getDownloadURL(file);
+      }
+    });
+    return link;
+  },
+
+  async uploadChallengeImages(userId, challengeId, imageList) {
+    userId = helper.idValidator(userId);
+    challengeId = helper.idValidator(challengeId);
+
+    //File structure: challenges/challengeId/userId/(pictures)
+
+    if (!Array.isArray(imageList)) throw "imageList must be an array";
+    if (imageList.length === 0) throw "imageList must not be an empty list";
+    const imageUrls = [];
+    imageList.forEach(async (fileData) => {
+      const name = fileData.originalname;
+      const path = `challenges/${challengeId}/${userId}/${name}`;
+      imageUrls.push(await this.uploadImage(path, fileData.buffer));
+    });
+
+    //TODO: Upload to mongo
+
+    return imageUrls;
   },
 };
 
