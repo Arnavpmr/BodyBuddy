@@ -263,7 +263,8 @@ router.patch("/:userName", async (req, res) => {
 
 router.patch("/:userName/updateProfilePicture", async (req, res) => {
   const userName = req.session.user.userName;
-  const { profilePicture: newProfilePictureUrl } = req.body;
+  let { profilePicture: newProfilePictureUrl } = req.body;
+  newProfilePictureUrl = xss(newProfilePictureUrl);
 
   try {
     helper.inputValidator(userName, "userName");
