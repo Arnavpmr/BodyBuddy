@@ -677,4 +677,5 @@ for (const user of seedUsers) {
   }
 }
 
+console.log("Seed file complete!");
 await closeConnection();
