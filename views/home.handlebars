@@ -5,32 +5,53 @@
                 <!-- Challenge Widget -->
                 <div class='widget'>
                     <div style='display: table-cell;padding-left: 5rem;'>
-                        <h1>Current Challenge</h1>
+                        <h1 class='challenge-component-title'>Current Challenge</h1>
                         {{#with currentChallenge}}
-                            <h2>{{title}}</h2>
-                            <p>{{description}}</p>
-                            <p>The base reward for this challenge is
+                            <h2 class='challenge-component-title'>{{title}}</h2>
+                            <p class='challenge-information'>{{description}}</p>
+                            <p class='challenge-information'>The reward for this
+                                challenge is
                                 {{reward}}
-                                points. (more points can be earned through
-                                ranking high on the leaderboard)</p>
+                                points (more points can be earned through
+                                ranking high on the leaderboard).</p>
                         {{/with}}
                     </div>
-                    <div style='display: table;'>
+                    <div class='challenge-component-bottom'>
                         <!-- Leaderboard -->
-                        <div style='display: table-cell;'>
-                            {{#each currentChallenge.leaderboard}}
-                                <div
-                                    class='favoriteWorkoutElement center'
-                                    style='width: 100%;'
-                                >
-                                    <h3>{{@Index}}</h3><span
-                                        style='display: table-cell;'
-                                    >{{userName}}
-                                        <span>{{dateTo24HRFormat time}}</span>
-                                        <br />
-                                    </span>
+                        <div class='leaderboard-flex-item'>
+                            <h1 class='challenge-component-title'>💪 Leaderboard
+                                💪</h1>
+                            <div style='display: table;'>
+                                <div style='display: table-cell;'>
+                                    <div class='leaderboard-item-flex'>
+                                        <span>Rank</span>
+                                        <span>Username</span>
+                                        <span>Time</span>
+                                    </div>
+                                    {{#each currentChallenge.leaderboard}}
+                                        <div class='leaderboard-item-flex'>
+                                            <span>{{incrementIndex @index}})
+                                            </span>
+                                            <a href='/user/{{userName}}'>
+                                                <span>{{userName}}</span>
+                                            </a>
+                                            <span>{{dateTo24HRFormat
+                                                    time
+                                                }}</span>
+                                        </div>
+                                    {{/each}}
                                 </div>
-                            {{/each}}
+                            </div>
+                        </div>
+                        <!-- Submission Component -->
+                        <div class='submission-flex-item'>
+                            <h1>Challenge Submission Status</h1>
+                            {{#if submission}}
+                                <p>Your submitted some shit</p>
+                            {{else}}
+                                <p>Participate in the challenge you lazy piece
+                                    of shit!</p>
+                            {{/if}}
                         </div>
                     </div>
                 </div>

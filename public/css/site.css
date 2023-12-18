@@ -276,9 +276,43 @@ footer {
 
 .widget {
   border: 1rem solid var(--dark-grey);
+  display: flex;
+  flex-direction: column;
   height: 720px;
   overflow-y: scroll;
   margin: -5px;
+}
+
+.leaderboard-item-flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.leaderboard-flex-item {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 2;
+}
+
+.submission-flex-item {
+  flex-grow: 1;
+}
+
+.challenge-component-title {
+  text-align: center;
+}
+
+.challenge-information {
+  text-align: center;
+}
+
+.challenge-component-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .favoriteWorkoutElement {

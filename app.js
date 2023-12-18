@@ -4,9 +4,8 @@ import session from "express-session";
 import configRoutes from "./routes/index.js";
 import exphbs from "express-handlebars";
 import configMiddlewares from "./middlewares/index.js";
-import * as hbhelpers from "./handlebarhelpers.js";
 import { challengeObject } from "./data/index.js";
-import Handlebars from "handlebars";
+import { registerHandlebarHelpers } from "./handlebars/index.js";
 
 const app = express();
 
@@ -28,7 +27,7 @@ app.use(
 
 configMiddlewares(app);
 configRoutes(app);
-Handlebars.registerHelper("dateTo24HRFormat", hbhelpers.dateTo24HRFormat);
+registerHandlebarHelpers();
 
 try {
   await challengeObject.initializeQueue();
