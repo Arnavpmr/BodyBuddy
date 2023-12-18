@@ -27,19 +27,8 @@ app.use(
 );
 
 configMiddlewares(app);
-Handlebars.registerHelper("dateToString", hbhelpers.dateToString);
-
-// app.use(mw.rewriteUnsupportedBrowserMethods);
-
-// app.use("/", mw.root);
-// app.use("/login", mw.login);
-// app.use("/register", mw.register);
-// app.use("/home", mw.home);
-// app.use("/logout", mw.logout);
-// app.use("/workouts", mw.workouts);
-// app.use("/challenges", mw.challenges);
-
 configRoutes(app);
+Handlebars.registerHelper("dateTo24HRFormat", hbhelpers.dateTo24HRFormat);
 
 try {
   await challengeObject.initializeQueue();

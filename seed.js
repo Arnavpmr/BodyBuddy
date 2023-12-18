@@ -323,6 +323,7 @@ const seedWorkouts = [
   {
     name: "Upper Body Blast",
     types: ["Strength", "Upper Body"],
+    workoutType: ["Anerobic", "Strength"],
     notes: "A high-intensity workout to sculpt your upper body.",
     exercises: [
       { id: exerciseIdMap["Push-Up"], sets: 3, reps: 12 },
@@ -655,17 +656,21 @@ for (const challenge of seedChallenges) {
   }
 }
 
-for (const users of seedUsers) {
+for (let i = 0; i < 6; i++) {
+  await challengeObject.updateCurrent();
+}
+
+for (const user of seedUsers) {
   try {
     const created = await userData.createUser(
-      users.firstName,
-      users.lastName,
-      users.userName,
-      users.emailAddress,
-      users.password,
-      users.aboutMe.description,
-      users.aboutMe.age,
-      users.role,
+      user.firstName,
+      user.lastName,
+      user.userName,
+      user.emailAddress,
+      user.password,
+      user.aboutMe.description,
+      user.aboutMe.age,
+      user.role,
     );
   } catch (e) {
     console.log(e);

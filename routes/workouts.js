@@ -7,10 +7,27 @@ import xss from "xss";
 const router = Router();
 
 router.route("/").get(async (req, res) => {
+  const userWorkouts = await users.getUserWorkouts(req.session.user.userName);
+  const workoutList = (await workouts.getAllWorkouts()).map((el) => {
+    return {
+      ...el,
+      _id: el._id.toString(),
+      userCreated: !el.isPreset,
+    };
+  });
+  const retLst = [];
+  for (let i = 0; i < workoutList.length; i++) {
+    const element = workoutList[i];
+    if (element.isPreset || userWorkouts.includes(element._id))
+      element["string"] = JSON.stringify(element);
+    retLst.push(element);
+  }
+
   let user = xss(req.session.user);
   return res.status(200).render("workouts", {
     title: "Workouts",
-    userData: user,
+    userData: req.session.user,
+    workouts: retLst,
   });
 });
 

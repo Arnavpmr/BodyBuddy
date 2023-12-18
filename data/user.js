@@ -13,7 +13,7 @@ let userDataFunctions = {
     password,
     description,
     age,
-    role,
+    role = "user",
   ) {
     let validatedInput = undefined;
     let friendsList = [];
@@ -127,6 +127,7 @@ let userDataFunctions = {
     }
     return allUsers;
   },
+
   async removeUser(userId) {
     try {
       helper.idValidator(userId);
@@ -216,6 +217,11 @@ let userDataFunctions = {
     );
 
     return usersFound;
+  },
+
+  async getUserWorkouts(username) {
+    const userData = await this.getUserByUsername(username);
+    return userData.workouts;
   },
 
   async loginUser(userName, password) {
@@ -431,10 +437,6 @@ let userDataFunctions = {
       { userName: userName },
       { $set: { profilePicture: newPictureUrl } },
     );
-
-    if (updateInfo.modifiedCount === 0) {
-      throw new Error("Could not update user profile picture.");
-    }
 
     return { profileUpdated: true };
   },

@@ -20,17 +20,18 @@
         <div class='submission-widget' style='padding: 2rem;'>
             {{#unless userSubmission}}
                 <h2>Submit to Challenge</h2>
-                <form action='/submit' method='POST'>
+                <form action='/challenges/submit' method='POST' enctype="multipart/form-data">
                     <input
-                        type='text'
+                        multiple
+                        type='file'
+                        accept="image/png, image/jpeg, image/jpg"
                         name='submissionInput'
                         placeholder='Your Submission Here'
                     />
                     <button type='submit'>Submit</button>
                 </form>
             {{else}}
-                <h2>Your Submission</h2>
-                <p>Status: {{userSubmission.status}}</p>
+                <h2>Your submission is in!</h2>
             {{/unless}}
         </div>
     </div>

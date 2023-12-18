@@ -1,6 +1,5 @@
 import { challengeQueue } from "../config/mongoCollections.js";
-import { challengeObject } from "../data/index.js";
-import challenges from "../data/challenges.js";
+import { challengeObject, challengeData } from "../data/index.js";
 import { Router } from "express";
 import helper from "../helpers.js";
 import multer from "multer";
@@ -30,6 +29,12 @@ router.route("/").get(async (req, res) => {
   const queueCollection = await challengeQueue();
   const challengesObject = (await queueCollection.find({}).toArray())[0];
 
+  const curChallenge = await challengeData.getChallengeById(
+    challengesObject.current,
+  );
+  const globalLeaderboard = challengesObject.leaderboard;
+  const curUser = await userData.getUserByUsername(req.session.user.userName);
+
   return res.status(200).render("challenges", {
     curChallenge: challengesObject.current,
     pastChallenges: challengeQueue.pastChallenges,
@@ -49,14 +54,9 @@ router.route("/challenge/toggleupdates").post(async (req, res) => {
 });
 
 router.post(
-  "/challenge/submit",
-  upload.array("user_submission", 10),
+  "/submit",
+  upload.array("submissionInput", 10),
   async (req, res) => {
-    // TODO store the images in firebase and get all the urls and place them in the images field in new object
-    // if everythings good, then check if user made a prev submission and remove all those images from firebase
-    // then check if user made a prev submission and remove it from mongo and prepare to replace it with the new submission
-    // set the status of new submission to "pending" and push it to the db
-
     try {
       const files = xss(req.files);
       const links = await challenges.uploadSubmissionImages(
