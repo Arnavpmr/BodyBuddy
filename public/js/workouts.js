@@ -216,12 +216,15 @@
         element.on("submit", (e) => {
           e.preventDefault();
           const target = e.currentTarget;
-
-          currentExercises.push({
+          const temp = {
             ...el,
             reps: target[2].valueAsNumber,
             sets: target[3].valueAsNumber,
-          });
+          };
+
+          temp["id"] = temp._id;
+          delete temp._id;
+          currentExercises.push(temp);
           renderExercises();
         });
         availableList.append(element);
