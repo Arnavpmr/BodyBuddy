@@ -339,25 +339,24 @@ let helper = {
     });
     return { link: link, relPath: path };
   },
+};
 
-  xssSafe(input) {
-    if (!input) throw new Error("No/null input provided to xssSafe");
-    console.log(
-      `DEBUG: xssSafe called with input ${input} and type ${typeof input}`,
-    );
-    if (typeof input === "object") {
-      if (Array.isArray(input)) {
-        let parsed = input.map((e) => helper.xssSafe(e));
-        return parsed;
-      } else {
-        let parsed = xss(JSON.stringify(input));
-        return JSON.parse(parsed);
-      }
-    } else {
-      let parsed = xss(input);
+export const xssSafe = (input) => {
+  console.log(
+    `DEBUG: xssSafe called with input ${input} and type ${typeof input}`,
+  );
+  if (typeof input === "object") {
+    if (Array.isArray(input)) {
+      let parsed = input.map((e) => helper.xssSafe(e));
       return parsed;
+    } else {
+      let parsed = xss(JSON.stringify(input));
+      return JSON.parse(parsed);
     }
-  },
+  } else {
+    let parsed = xss(input);
+    return parsed;
+  }
 };
 
 export default helper;
