@@ -285,6 +285,16 @@ const seedExercises = [
     image:
       "https://firebasestorage.googleapis.com/v0/b/bodybuddy-2bcc5.appspot.com/o/res%2Fexercises%2Fmuscleup.jpg?alt=media&token=d0dfde9c-0402-4017-bddd-3e04bb7f0884",
   },
+  {
+    name: "Lateral Lunges",
+    targetMuscles: ["Adductors"],
+    description:
+      "Lunge with them lengths to strength them adductors! Yes this image is correct, I couldn't find a good one for lunges.",
+    equipment: ["Spirit", "Legs"],
+    difficulty: "Beginner",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/bodybuddy-2bcc5.appspot.com/o/res%2Fexercises%2Fmuscleup.jpg?alt=media&token=d0dfde9c-0402-4017-bddd-3e04bb7f0884",
+  },
 ];
 
 const exerciseIdMap = {};
