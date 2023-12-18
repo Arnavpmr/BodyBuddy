@@ -58,9 +58,9 @@ router.post(
   upload.array("submissionInput", 10),
   async (req, res) => {
     try {
-      const files = xssSafe(req.files);
+      const files = req.files;
       const links = await challengeData.uploadSubmissionImages(
-        xssSafe(req.body.username),
+        xssSafe(req.session.user.userName),
         files,
       );
 
