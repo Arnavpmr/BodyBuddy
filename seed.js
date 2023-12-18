@@ -289,7 +289,9 @@ const seedExercises = [
     name: "Lateral Lunges",
     targetMuscles: ["Adductors"],
     description:
-      "Lunge with them lengths to strength them adductors! Yes this image is correct, I couldn't find a good one for lunges.",
+      "Lunge with them length to strength them adductors! Yes this image is correct, I couldn't find a good one for lunges.",
+    instructions:
+      "I put my right hand in\nI put my right hand out\nIn out, in out\nShake it all about. ",
     equipment: ["Spirit", "Legs"],
     difficulty: "Beginner",
     image:
