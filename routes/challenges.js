@@ -5,7 +5,7 @@ import { Router } from "express";
 import helper from "../helpers.js";
 import multer from "multer";
 import storageFirebase from "../firebase.js";
-
+import xss from "xss";
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
@@ -33,12 +33,12 @@ router.route("/").get(async (req, res) => {
   return res.status(200).render("challenges", {
     curChallenge: challengesObject.current,
     pastChallenges: challengeQueue.pastChallenges,
-    user: req.session.user,
+    user: xss(req.session.user),
   });
 });
 
 router.route("/challenge/toggleupdates").post(async (req, res) => {
-  const { status } = req.body;
+  const { status } = xss(req.body);
 
   if (status !== "on" && status !== "off")
     return res.status(400).json({ error: "Status is invalid" });
@@ -58,9 +58,9 @@ router.post(
     // set the status of new submission to "pending" and push it to the db
 
     try {
-      const files = req.files;
+      const files = xss(req.files);
       const links = await challenges.uploadSubmissionImages(
-        req.body.username,
+        xss(req.body.username),
         files,
       );
 
@@ -85,7 +85,7 @@ router
     let resDB = null;
 
     try {
-      userName = helper.inputValidator(req.params.userName, "userName");
+      userName = helper.inputValidator(xss(req.params.userName), "userName");
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -99,7 +99,7 @@ router
     return res.status(200).json(resDB);
   })
   .post(async (req, res) => {
-    const status = req.body;
+    const status = xss(req.body);
 
     let userName = null;
     let resDB = null;
@@ -108,7 +108,7 @@ router
       if (status !== "approved" && status !== "denied")
         throw "Status is invalid";
 
-      userName = helper.idValidator(req.params.userName);
+      userName = helper.idValidator(xss(req.params.userName));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -123,8 +123,12 @@ router
   });
 
 router.route("/challenge").post(async (req, res) => {
-  const { titleInput, descriptionInput, exercisesInput, rewardInput } =
-    req.body;
+  let { titleInput, descriptionInput, exercisesInput, rewardInput } = req.body;
+
+  titleInput = xss(titleInput);
+  descriptionInput = xss(descriptionInput);
+  exercisesInput = xss(exercisesInput);
+  rewardInput = xss(rewardInput);
 
   let newChallenge = null;
   let newChallengeDB = null;
@@ -159,15 +163,20 @@ router.route("/challenge").post(async (req, res) => {
 router
   .route("/challenge/:challengeId")
   .put(async (req, res) => {
-    const { titleInput, descriptionInput, exercisesInput, rewardInput } =
+    let { titleInput, descriptionInput, exercisesInput, rewardInput } =
       req.body;
+
+    titleInput = xss(titleInput);
+    descriptionInput = xss(descriptionInput);
+    exercisesInput = xss(exercisesInput);
+    rewardInput = xss(rewardInput);
 
     let challengeId = null;
     let newChallenge = null;
     let newChallengeDB = null;
 
     try {
-      challengeId = helper.idValidator(req.params.challengeId);
+      challengeId = helper.idValidator(xss(req.params.challengeId));
       newChallenge = helper.challengeValidator(
         titleInput,
         descriptionInput,
@@ -199,7 +208,7 @@ router
     let challengeDB = null;
 
     try {
-      challengeId = helper.idValidator(req.params.challengeId);
+      challengeId = helper.idValidator(xss(req.params.challengeId));
     } catch (e) {
       return res.status(400).json({ error: e });
     }

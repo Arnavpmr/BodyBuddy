@@ -1,6 +1,7 @@
 import userDataHelpers from "../data/user.js";
 import helper from "../helpers.js";
 import { Router } from "express";
+import xss from "xss";
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router
   })
   .post(async (req, res) => {
     let validatedInput = undefined;
-    const {
+    let {
       firstNameInput,
       lastNameInput,
       userNameInput,
@@ -25,6 +26,13 @@ router
       passwordInput,
       confirmPasswordInput,
     } = req.body;
+
+    firstNameInput = xss(firstNameInput);
+    lastNameInput = xss(lastNameInput);
+    userNameInput = xss(userNameInput);
+    emailInput = xss(emailInput);
+    passwordInput = xss(passwordInput);
+    confirmPasswordInput = xss(confirmPasswordInput);
 
     try {
       validatedInput = helper.registerUserValidator(
@@ -78,7 +86,9 @@ router
   .post(async (req, res) => {
     let validatedInput = undefined;
     let errors = [];
-    const { userNameInput, passwordInput } = req.body;
+    let { userNameInput, passwordInput } = req.body;
+    userNameInput = xss(userNameInput);
+    passwordInput = xss(passwordInput);
 
     try {
       validatedInput = helper.loginUserValidator(
