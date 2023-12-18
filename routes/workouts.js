@@ -7,9 +7,25 @@ import helper from "../helpers.js";
 const router = Router();
 
 router.route("/").get(async (req, res) => {
+  const userWorkouts = await users.getUserWorkouts(req.session.user.userName);
+  const workoutList = (await workouts.getAllWorkouts()).map((el) => {
+    return {
+      ...el,
+      _id: el._id.toString(),
+      userCreated: !el.isPreset,
+    };
+  });
+  const retLst = [];
+  for (let i = 0; i < workoutList.length; i++) {
+    const element = workoutList[i];
+    if (element.isPreset || userWorkouts.includes(element._id))
+      retLst.push(element);
+  }
+
   return res.status(200).render("workouts", {
     title: "Workouts",
     userData: req.session.user,
+    workouts: retLst,
   });
 });
 

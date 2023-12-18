@@ -127,6 +127,7 @@ let userDataFunctions = {
     }
     return allUsers;
   },
+
   async removeUser(userId) {
     try {
       helper.idValidator(userId);
@@ -216,6 +217,11 @@ let userDataFunctions = {
     );
 
     return usersFound;
+  },
+
+  async getUserWorkouts(username) {
+    const userData = await this.getUserByUsername(username);
+    return userData.workouts;
   },
 
   async loginUser(userName, password) {

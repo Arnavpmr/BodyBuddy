@@ -9,6 +9,13 @@
   const saveWorkout = $("#submitWorkout");
   const submitError = $("#submitError");
 
+  $("#clear_filter").on("click", (e) => {
+    const allChildren = $("#element_container").find(".favoriteWorkoutElement");
+    for (let i = 0; i < allChildren.length; i++) {
+      allChildren[i].style.display = "none";
+    }
+  });
+
   let currentExercises = [];
 
   saveWorkout.on("submit", (e) => {
@@ -121,7 +128,18 @@
   }
 
   createButton.on("click", (e) => {
-    createPopup.css("display", "");
+    const curDisplay = createPopup.css("display");
+    curDisplay === "none"
+      ? createPopup.css("display", "")
+      : createPopup.css("display", "none");
+    if (curDisplay === "none") {
+      createButton.html("Hide Creation");
+      createPopup.css("display", "");
+      saveWorkout[0].reset();
+    } else {
+      createButton.html("Create your Own Workout!");
+      createPopup.css("display", "none");
+    }
   });
 
   addExercises.on("click", (e) => {
