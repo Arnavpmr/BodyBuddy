@@ -347,7 +347,7 @@ export const xssSafe = (input) => {
   );
   if (typeof input === "object") {
     if (Array.isArray(input)) {
-      let parsed = input.map((e) => helper.xssSafe(e));
+      let parsed = input.map((e) => xssSafe(e));
       return parsed;
     } else {
       let parsed = xss(JSON.stringify(input));
