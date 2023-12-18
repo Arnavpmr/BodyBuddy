@@ -51,6 +51,18 @@ router.route("/").get(async (req, res) => {
 
   curChallenge.exercises = newExercises;
 
+  if (workouts.length > 5) {
+    //Get random 5
+    let copy = [...workouts];
+    const temp = [];
+    while (temp.length < 5) {
+      const index = Math.floor(Math.random() * copy.length);
+      temp.push(copy[index]);
+      copy = copy.slice(0, index).concat(copy.slice(index + 1));
+    }
+    workouts = temp;
+  }
+
   return res.status(200).render("home", {
     title: "Home",
     userData: curUser,
