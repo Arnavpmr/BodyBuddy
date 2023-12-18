@@ -15,7 +15,7 @@ const configMiddlewares = (app) => {
 
   app.use("/home", homeR.home);
 
-  app.use("/profile", profile.profile);
+  app.use("/user", profile.profile);
 
   app.use("/workouts", workouts.workouts);
   app.use("/workouts/workout", workouts.workout);

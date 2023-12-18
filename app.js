@@ -6,6 +6,7 @@ import exphbs from "express-handlebars";
 import configMiddlewares from "./middlewares/index.js";
 import * as hbhelpers from "./handlebarhelpers.js";
 import { challengeObject } from "./data/index.js";
+import Handlebars from "handlebars";
 
 const app = express();
 

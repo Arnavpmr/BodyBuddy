@@ -183,6 +183,31 @@ let helper = {
     };
   },
 
+  registerUserValidator(
+    firstName,
+    lastName,
+    userName,
+    emailAddress,
+    password,
+    confirmPassword,
+  ) {
+    firstName = this.inputValidator(firstName, "firstName");
+    lastName = this.inputValidator(lastName, "lastName");
+    userName = this.inputValidator(userName, "userName");
+    emailAddress = this.emailValidator(emailAddress);
+    password = this.passwordValidator(password);
+
+    if (password !== confirmPassword) throw "Passwords do not match";
+
+    return {
+      firstName: firstName,
+      lastName: lastName,
+      userName: userName,
+      emailAddress: emailAddress,
+      password: password,
+    };
+  },
+
   exerciseValidator(
     exerciseName,
     targetMuscles,

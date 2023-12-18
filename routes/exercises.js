@@ -144,7 +144,6 @@ router.route("/target/:muscle_target").get(async (req, res) => {
     );
     res.json({ match: exerciseLst });
   } catch (error) {
-    console.log(error.toString());
     res.status(500).json({ error: error.toString() });
   }
 });

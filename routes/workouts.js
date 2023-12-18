@@ -36,7 +36,6 @@ router.route("/workout").post(async (req, res) => {
 
     return res.status(200).json(newWorkoutDB);
   } catch (e) {
-    console.log(e.toString());
     return res.status(500).json({ error: e });
   }
 });

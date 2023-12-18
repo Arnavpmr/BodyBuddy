@@ -156,6 +156,8 @@ if (registerForm) {
       errors.push("Passwords do not match");
     }
 
+    console.log(errors);
+
     if (errors.length > 0) {
       console.log("Errors found!");
       for (let error of errors) {
