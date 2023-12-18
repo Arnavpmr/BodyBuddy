@@ -5,7 +5,7 @@ export const exercises = (req, res, next) => {
         "Cannot perform this operation without being authenticated as an admin",
     });
 
-  if (req.session.user.role === "user")
+  if (req.session.user.role === "user" && req.method !== "GET")
     return res.status(403).json({
       error: "A user cannot perform this operation",
     });

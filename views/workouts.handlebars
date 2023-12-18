@@ -3,7 +3,7 @@
         class='about_button'
         style='background-color: var(--dark-grey);color: green;'
         id="create_workout"
-    >Create your Own Workout!</button><br>
+    >Create your Own Workout!</button><br><br>
     <label for='workoutSearch' style="color: var(--light-text);">Search for Workouts:</label>
     <input
         type='text'
@@ -13,23 +13,26 @@
     />
     <input type="button" value="Hide List" id="clear_filter">
     <br />
-    <div id='element_container'>
+    <br>
+    <div id='element_container' style="overflow-y: scroll;">
         {{#each workouts}}
             <div
                 class='favoriteWorkoutElement'
                 style='width: 25%;color: var(--light-text);padding: 1rem;display: "";'
                 aria-label='{{name}}'
             >
-                <div style='display: table;'>
-                    <div style='display: table-cell;'>{{name}}</div>
+                <div style='display: table;width: 100%'>
+                    <span style='display: table-cell;width: 25%;'>{{name}}</span>
                     <div
                         style='display: table-cell;text-align: right;width: 100%;'
                     >
+                        {{#if isPreset}}
                         <button
                             class='about_button'
                             style='font-size: 16px;'
                             value="{{string}}"
                         >Add</button>
+                        {{/if}}
                         {{#if userCreated}}
                         <button
                                 class='about_button'
@@ -39,6 +42,7 @@
                         {{/if}}
                     </div>
                 </div>
+            <br>
             </div>
         {{/each}}
     </div>

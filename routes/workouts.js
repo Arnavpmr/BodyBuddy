@@ -3,7 +3,7 @@ import { Router } from "express";
 import workouts from "../data/workouts.js";
 import users from "../data/user.js";
 import helper from "../helpers.js";
-import xss from "xss";
+import { xssSafe } from "../helpers.js";
 const router = Router();
 
 router.route("/").get(async (req, res) => {
@@ -18,26 +18,28 @@ router.route("/").get(async (req, res) => {
   const retLst = [];
   for (let i = 0; i < workoutList.length; i++) {
     const element = workoutList[i];
-    if (element.isPreset || userWorkouts.includes(element._id))
+    if (element.isPreset || userWorkouts.includes(element._id)) {
       element["string"] = JSON.stringify(element);
-    retLst.push(element);
+      retLst.push(element);
+    }
   }
 
-  let user = xss(req.session.user);
+  let user = xssSafe(req.session.user);
   return res.status(200).render("workouts", {
     title: "Workouts",
     userData: req.session.user,
     workouts: retLst,
+    user: user,
   });
 });
 
 router.route("/workout").post(async (req, res) => {
-  const username = xss(req.session.user.userName);
+  const username = xssSafe(req.session.user.userName);
   let { name, workoutTypes, notes, exercises } = req.body;
-  name = xss(name);
-  workoutTypes = xss(workoutTypes);
-  notes = xss(notes);
-  exercises = xss(exercises);
+  name = xssSafe(name);
+  workoutTypes = xssSafe(workoutTypes);
+  notes = xssSafe(notes);
+  exercises = xssSafe(exercises);
 
   let newWorkout = null;
   let newWorkoutDB = null;
@@ -75,10 +77,10 @@ router
   .put(async (req, res) => {
     const { name, workoutTypes, notes, exercises } = req.body;
 
-    name = xss(name);
-    workoutTypes = xss(workoutTypes);
-    notes = xss(notes);
-    exercises = xss(exercises);
+    name = xssSafe(name);
+    workoutTypes = xssSafe(workoutTypes);
+    notes = xssSafe(notes);
+    exercises = xssSafe(exercises);
 
     let workoutId = null;
     let newWorkout = null;
@@ -121,7 +123,7 @@ router
     } catch (e) {
       return res.status(400).json({ error: e });
     }
-    workoutId = xss(workoutId);
+    workoutId = xssSafe(workoutId);
     try {
       workout = await workouts.removeWorkout(workoutId);
     } catch (e) {

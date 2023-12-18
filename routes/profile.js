@@ -2,8 +2,7 @@ import { Router } from "express";
 import userDataFunctions from "../data/user.js";
 import helper from "../helpers.js";
 import bcrypt from "bcrypt";
-import xss from "xss";
-
+import { xssSafe } from "../helpers.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
@@ -69,8 +68,8 @@ router.post("/resolverequest", async (req, res) => {
   let { decision, userName } = req.body;
   const currentUser = req.session.user.userName;
 
-  decision = xss(decision);
-  userName = xss(userName);
+  decision = xssSafe(decision);
+  userName = xssSafe(userName);
 
   if (!currentUser) {
     return res.status(401).json({ error: "User must be logged in." });
@@ -99,7 +98,7 @@ router.post("/createrequest", async (req, res) => {
   let targetUserName = req.body.targetUserName;
   const currentUserName = req.session.user.userName;
 
-  targetUserName = xss(targetUserName);
+  targetUserName = xssSafe(targetUserName);
 
   if (!currentUserName) {
     return res.status(401).json({ error: "User must be logged in." });
@@ -137,9 +136,12 @@ router.get("/:userName", async (req, res) => {
       }
     }
 
-    return res
-      .status(200)
-      .render("profile", { profile: user, isMe, friendRequests });
+    return res.status(200).render("profile", {
+      profile: user,
+      isMe,
+      friendRequests,
+      user: req.session.user,
+    });
   } catch (error) {
     if (error && error.message && error.message.includes("not valid")) {
       return res.status(400).render("error", { error: "Invalid username." });
@@ -167,21 +169,21 @@ router.patch("/:userName", async (req, res) => {
         updatedData.firstName,
         "firstName",
       );
-      updatedUserData.firstName = xss(updatedData.firstName);
+      updatedUserData.firstName = xssSafe(updatedData.firstName);
     }
     if (updatedData.lastName) {
       updatedUserData.lastName = helper.inputValidator(
         updatedData.lastName,
         "lastName",
       );
-      updatedUserData.lastName = xss(updatedData.lastName);
+      updatedUserData.lastName = xssSafe(updatedData.lastName);
     }
     if (updatedData.userName) {
       updatedUserData.userName = helper.inputValidator(
         updatedData.userName,
         "userName",
       );
-      updatedUserData.userName = xss(updatedData.userName);
+      updatedUserData.userName = xssSafe(updatedData.userName);
     }
     if (updatedData.userName && updatedData.userName !== user.userName) {
       userOrPasswordChanged = true;
@@ -190,11 +192,11 @@ router.patch("/:userName", async (req, res) => {
       updatedUserData.emailAddress = helper.emailValidator(
         updatedData.emailAddress,
       );
-      updatedUserData.emailAddress = xss(updatedData.emailAddress);
+      updatedUserData.emailAddress = xssSafe(updatedData.emailAddress);
     }
     if (updatedData.password) {
       updatedUserData.password = helper.passwordValidator(updatedData.password);
-      updatedUserData.password = xss(updatedData.password);
+      updatedUserData.password = xssSafe(updatedData.password);
     }
     if (user.password !== updatedUserData.password) {
       updatedUserData.password = await bcrypt.hash(
@@ -205,10 +207,10 @@ router.patch("/:userName", async (req, res) => {
     }
     if (updatedData.description) {
       updatedUserData.description = updatedData.description.trim();
-      updatedUserData.description = xss(updatedUserData.description);
+      updatedUserData.description = xssSafe(updatedUserData.description);
     }
     if (updatedData.age) {
-      updatedUserData.age = xss(updatedData.age);
+      updatedUserData.age = xssSafe(updatedData.age);
       if (updatedData.age.length !== 0) {
         updatedUserData.age = parseInt(updatedData.age);
         if (isNaN(updatedUserData.age) || updatedUserData.age < 0) {
@@ -264,7 +266,7 @@ router.patch("/:userName", async (req, res) => {
 router.patch("/:userName/updateProfilePicture", async (req, res) => {
   const userName = req.session.user.userName;
   let { profilePicture: newProfilePictureUrl } = req.body;
-  newProfilePictureUrl = xss(newProfilePictureUrl);
+  newProfilePictureUrl = xssSafe(newProfilePictureUrl);
 
   try {
     helper.inputValidator(userName, "userName");

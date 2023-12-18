@@ -61,11 +61,20 @@
     });
   });
 
-  $("#clear_filter").on("click", (e) => {
-    const allChildren = $("#element_container").find(".favoriteWorkoutElement");
-    for (let i = 0; i < allChildren.length; i++) {
-      allChildren[i].style.display = "none";
+  const clearButton = $("#clear_filter");
+
+  function toggleClearButton(turnOff) {
+    if (turnOff || clearButton.val() === "Hide List") {
+      $("#element_container").css("display", "none");
+      clearButton.val("Show list or search for a workout");
+    } else {
+      $("#element_container").css("display", "");
+      clearButton.val("Hide List");
     }
+  }
+
+  clearButton.on("click", (e) => {
+    toggleClearButton();
   });
 
   let currentExercises = [];
@@ -134,6 +143,8 @@
   });
 
   searchBar.on("keyup", (e) => {
+    $("#element_container").css("display", "");
+    clearButton.val("Hide List");
     runFilter();
   });
 

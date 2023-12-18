@@ -1,7 +1,7 @@
 import { Router } from "express";
 import helper from "../helpers.js";
 import exercises from "../data/exercises.js";
-import xss from "xss";
+import { xssSafe } from "../helpers.js";
 const router = Router();
 
 router.route("/").post(async (req, res) => {
@@ -15,13 +15,13 @@ router.route("/").post(async (req, res) => {
     imageInput,
   } = req.body;
 
-  exerciseNameInput = xss(exerciseNameInput);
-  targetMusclesInput = xss(targetMusclesInput);
-  exerciseDescriptionInput = xss(exerciseDescriptionInput);
-  instructionsInput = xss(instructionsInput);
-  equipmentInput = xss(equipmentInput);
-  difficultyInput = xss(difficultyInput);
-  imageInput = xss(imageInput);
+  exerciseNameInput = xssSafe(exerciseNameInput);
+  targetMusclesInput = xssSafe(targetMusclesInput);
+  exerciseDescriptionInput = xssSafe(exerciseDescriptionInput);
+  instructionsInput = xssSafe(instructionsInput);
+  equipmentInput = xssSafe(equipmentInput);
+  difficultyInput = xssSafe(difficultyInput);
+  imageInput = xssSafe(imageInput);
 
   let newExercise = null;
   let newExerciseDB = null;
@@ -80,13 +80,13 @@ router
       imageInput,
     } = req.body;
 
-    exerciseNameInput = xss(exerciseNameInput);
-    targetMusclesInput = xss(targetMusclesInput);
-    exerciseDescriptionInput = xss(exerciseDescriptionInput);
-    instructionsInput = xss(instructionsInput);
-    equipmentInput = xss(equipmentInput);
-    difficultyInput = xss(difficultyInput);
-    imageInput = xss(imageInput);
+    exerciseNameInput = xssSafe(exerciseNameInput);
+    targetMusclesInput = xssSafe(targetMusclesInput);
+    exerciseDescriptionInput = xssSafe(exerciseDescriptionInput);
+    instructionsInput = xssSafe(instructionsInput);
+    equipmentInput = xssSafe(equipmentInput);
+    difficultyInput = xssSafe(difficultyInput);
+    imageInput = xssSafe(imageInput);
 
     let newExercise = null;
     let newExerciseDB = null;
@@ -102,7 +102,7 @@ router
         difficultyInput,
         imageInput,
       );
-      exerciseId = helper.idValidator(xss(req.params.exerciseId));
+      exerciseId = helper.idValidator(xssSafe(req.params.exerciseId));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -139,11 +139,11 @@ router
     let exercise = null;
 
     try {
-      exerciseId = helper.idValidator(xss(req.params.exerciseId));
+      exerciseId = helper.idValidator(xssSafe(req.params.exerciseId));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
-    exerciseId = xss(exerciseId);
+    exerciseId = xssSafe(exerciseId);
 
     try {
       exercise = await exercises.removeExercise(exerciseId);
@@ -155,7 +155,7 @@ router
   });
 
 router.route("/target/:muscle_target").get(async (req, res) => {
-  muscleTarget = xss(req.params.muscle_target);
+  const muscleTarget = xssSafe(req.params.muscle_target);
   try {
     const exerciseLst = await exercises.getAllExercisesByTarget(muscleTarget);
     res.json({ match: exerciseLst });

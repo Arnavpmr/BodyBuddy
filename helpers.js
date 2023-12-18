@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import storageFirebase from "./firebase.js";
 import { getDownloadURL } from "firebase-admin/storage";
+import xss from "xss";
 
 let helper = {
   inputValidator(input, inputName) {
@@ -338,6 +339,24 @@ let helper = {
     });
     return { link: link, relPath: path };
   },
+};
+
+export const xssSafe = (input) => {
+  console.log(
+    `DEBUG: xssSafe called with input ${input} and type ${typeof input}`,
+  );
+  if (typeof input === "object") {
+    if (Array.isArray(input)) {
+      let parsed = input.map((e) => xssSafe(e));
+      return parsed;
+    } else {
+      let parsed = xss(JSON.stringify(input));
+      return JSON.parse(parsed);
+    }
+  } else {
+    let parsed = xss(input);
+    return parsed;
+  }
 };
 
 export default helper;

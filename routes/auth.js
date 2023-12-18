@@ -1,7 +1,7 @@
 import userDataHelpers from "../data/user.js";
 import helper from "../helpers.js";
 import { Router } from "express";
-import xss from "xss";
+import { xssSafe } from "../helpers.js";
 
 const router = Router();
 
@@ -27,12 +27,12 @@ router
       confirmPasswordInput,
     } = req.body;
 
-    firstNameInput = xss(firstNameInput);
-    lastNameInput = xss(lastNameInput);
-    userNameInput = xss(userNameInput);
-    emailInput = xss(emailInput);
-    passwordInput = xss(passwordInput);
-    confirmPasswordInput = xss(confirmPasswordInput);
+    firstNameInput = xssSafe(firstNameInput);
+    lastNameInput = xssSafe(lastNameInput);
+    userNameInput = xssSafe(userNameInput);
+    emailInput = xssSafe(emailInput);
+    passwordInput = xssSafe(passwordInput);
+    confirmPasswordInput = xssSafe(confirmPasswordInput);
 
     try {
       validatedInput = helper.registerUserValidator(
@@ -87,8 +87,8 @@ router
     let validatedInput = undefined;
     let errors = [];
     let { userNameInput, passwordInput } = req.body;
-    userNameInput = xss(userNameInput);
-    passwordInput = xss(passwordInput);
+    userNameInput = xssSafe(userNameInput);
+    passwordInput = xssSafe(passwordInput);
 
     try {
       validatedInput = helper.loginUserValidator(
