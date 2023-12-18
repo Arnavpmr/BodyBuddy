@@ -1,1 +1,58 @@
-<p>This is the Login page!</p>
+<div class='center' style='padding: 2rem;'>
+    <form action='/login' method='POST' id='loginForm'>
+        <script type='text/javascript' src='/public/js/login.js'></script>
+        <table>
+            <tr>
+                <td>
+                    <label for='userNameInput'>
+                        Enter your Username
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='text'
+                        name='userNameInput'
+                        id='userNameInput'
+                    />
+                    {{#if emailError}}
+                        <span id='emailError' class='errorMsg'>X
+                            {{emailError}}</span>
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='passwordInput'>
+                        Password:
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='password'
+                        name='passwordInput'
+                        id='passwordInput'
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td colspan='1'>
+                    <label for='submitButton'>
+                        <button type='submit' id='submitButton'>Submit</button>
+                    </label>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <span id='errorSpan' class='errorMsg'>
+        <ul id='errorList'>
+            {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        </ul>
+    </span>
+    <a href='/register' style='text-align: left;'>Don't have an account?
+        Register Here</a>
+</div>

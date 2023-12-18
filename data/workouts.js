@@ -3,37 +3,44 @@ import { workouts, exercises } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 
 let workoutDataFunctions = {
-  async createWorkout(name, workoutType, notes, exercises) {
+  async createWorkout(name, workoutTypes, notes, exercises, isPreset) {
     try {
       name = helper.inputValidator(name, "name");
     } catch (e) {
-      throw `Error in createWorkout: ${e}`;
+      throw `${e}`;
     }
 
+    if (typeof isPreset != "boolean") {
+      throw "isPreset must be a boolean";
+    }
     //optional
     notes = notes.trim();
     if (typeof notes != "string") {
-      throw "Error in createWorkout: notes must be a valid string";
+      throw "Notes must be a valid string";
     }
 
-    if (!Array.isArray(workoutType)) {
-      throw "Error in createWorkout: workoutType must be an array.";
+    if (!Array.isArray(workoutTypes)) {
+      throw "WorkoutType must be an array.";
     }
     if (!Array.isArray(exercises)) {
-      throw "Error in createWorkout: exercises must be an array.";
+      throw "Exercises must be an array.";
+    }
+    if (exercises.length < 1) {
+      throw "There must be atleast one exercise selected";
     }
 
     let newWorkout = {
       name: name,
-      type: workoutType,
+      type: workoutTypes,
       notes: notes,
       exercises: exercises,
+      isPreset: isPreset,
     };
 
     const workoutCollections = await workouts();
     const entry = await workoutCollections.insertOne(newWorkout);
     if (!entry.acknowledged || !entry.insertedId) {
-      throw "Error in createWorkout: Unable to add workout";
+      throw "Unable to add workout";
     }
     const newWorkoutId = entry.insertedId.toString();
     const workout = await this.getWorkoutById(newWorkoutId.toString());
@@ -45,7 +52,7 @@ let workoutDataFunctions = {
     let allWorkouts = await workoutCollections.find({}).toArray();
 
     if (!allWorkouts) {
-      throw "Error in getAllWorkouts: No workouts in database.";
+      throw "No workouts in database.";
     }
     return allWorkouts;
   },
@@ -57,7 +64,7 @@ let workoutDataFunctions = {
       type: { $elemMatch: workoutType },
     });
     if (!workoutList) {
-      throw `Error in getWorkoutsByType: No workouts of type '${workoutType}' exist.`;
+      throw `No workouts of type '${workoutType}' exist.`;
     }
     return exercises.toArray();
   },
@@ -66,42 +73,23 @@ let workoutDataFunctions = {
     try {
       helper.idValidator(workoutId);
     } catch (e) {
-      throw `Error in getWorkoutById: ${e}`;
+      throw `${e}`;
     }
     const workoutCollections = await workouts();
     let workout = await workoutCollections.findOne({
       _id: new ObjectId(workoutId),
     });
     if (!workout) {
-      throw `Error in getWorkoutById: No workout with the ID of ${workoutId} exists`;
+      throw `No workout with the ID of ${workoutId} exists`;
     }
     workout._id = workout._id.toString();
     return workout;
   },
-
-  async pushExerciseToWorkout(workoutId, exerciseId) {
-    try {
-      workoutId = helper.idValidator(workoutId, "WorkoutId");
-      exerciseId = helper.idValidator(exerciseId, "ExerciseId");
-    } catch (e) {
-      throw `Error in pushExerciseToWorkout: ${e}`;
-    }
-    const workoutCollections = await workouts();
-    const entry = await workoutCollections.findOneAndUpdate(
-      { _id: new ObjectId(workoutId) },
-      {
-        $push: { exercises: new ObjectId(exerciseId) },
-      },
-      { returnDocument: "after" },
-    );
-    return entry;
-  },
-
   async pullExerciseFromWorkout(workoutId, exerciseId) {
     try {
       workoutId = helper.idValidator(workoutId, "WorkoutId");
     } catch (e) {
-      throw `Error in pullExerciseFromWorkout: ${e}`;
+      throw `${e}`;
     }
 
     const workoutCollections = await workouts();
@@ -119,17 +107,66 @@ let workoutDataFunctions = {
     try {
       helper.idValidator(workoutId);
     } catch (e) {
-      throw `Error in removeWorkout: ${workoutId} not valid`;
+      throw `${workoutId} not valid`;
     }
     const workoutCollections = await workouts();
     let workoutRemoved = await workoutCollections.findOneAndDelete({
       _id: new ObjectId(workoutId),
     });
     if (!workoutRemoved) {
-      throw "Error in removeWorkout: Workout does not exist.";
+      throw "Workout does not exist.";
     }
     let myObj = { name: workoutRemoved.name, deleted: true };
     return myObj;
+  },
+
+  async updateWorkout(
+    workoutId,
+    workoutName,
+    workoutTypes,
+    notes,
+    exercises,
+    isPreset,
+  ) {
+    try {
+      workoutName = helper.inputValidator(workoutName, "workoutName");
+    } catch (e) {
+      throw `${e}`;
+    }
+
+    if (typeof isPreset != "boolean") {
+      throw "isPreset must be a boolean";
+    }
+    //optional
+    notes = notes.trim();
+    if (typeof notes != "string") {
+      throw "Notes must be a valid string";
+    }
+
+    if (!Array.isArray(workoutTypes)) {
+      throw "WorkoutType must be an array.";
+    }
+    if (!Array.isArray(exercises)) {
+      throw "Exercises must be an array.";
+    }
+    if (exercises.length < 1) {
+      throw "There must be atleast one exercise selected";
+    }
+    const workoutCollections = await workouts();
+    let updatedWorkout = await workoutCollections.findOneAndUpdate(
+      { _id: new ObjectId(workoutId) },
+      {
+        $set: {
+          name: workoutName,
+          workoutType: workoutTypes,
+          notes: notes,
+          exercises: exercises,
+          isPreset: isPreset,
+        },
+      },
+      { returnDocument: "after" },
+    );
+    return updatedWorkout;
   },
 };
 

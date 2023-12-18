@@ -1,1 +1,47 @@
-<p>This is the Challenges page</p>
+<div class='challenge-dashboard' style='padding: 2rem;'>
+    <div class='challenge-top-widgets' style='padding: 2rem;'>
+        <div class='current-challenge-widget' style='padding: 2rem;'>
+            <h2>Current Challenge</h2>
+            {{#with currentChallenge}}
+                <p>{{exercises}}</p>
+                <p>Reward (points): {{reward}}</p>
+                <p>Time limit (sec): {{timeLimit}}</p>
+                <p>Deadline: {{deadline}}</p>
+            {{/with}}
+        </div>
+        <div class='leaderboard-widget' style='padding: 2rem;'>
+            <h2>Leaderboard</h2>
+            <ul>
+                {{#each leaderboard}}
+                    <li>{{@index}} - {{dateToString time}} - {{username}}</li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class='submission-widget' style='padding: 2rem;'>
+            {{#unless userSubmission}}
+                <h2>Submit to Challenge</h2>
+                <form action='/submit' method='POST'>
+                    <input
+                        type='text'
+                        name='submissionInput'
+                        placeholder='Your Submission Here'
+                    />
+                    <button type='submit'>Submit</button>
+                </form>
+            {{else}}
+                <h2>Your Submission</h2>
+                <p>Status: {{userSubmission.status}}</p>
+            {{/unless}}
+        </div>
+    </div>
+    <div class='bottom-widgets' style='padding: 2rem;'>
+        <div class='global-leaderboard-widget' style='padding: 2rem;'>
+            <h2>Global Leaderboard</h2>
+            <ul>
+                {{#each globalLeaderboard}}
+                    <li>{{@index}} - {{name}}: {{score}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>

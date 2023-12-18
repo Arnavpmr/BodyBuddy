@@ -1,16 +1,18 @@
 import { ObjectId } from "mongodb";
+import storageFirebase from "./firebase.js";
+import { getDownloadURL } from "firebase-admin/storage";
 
 let helper = {
   inputValidator(input, inputName) {
     if (!input) {
-      throw `Error: ${input} is not a valid ${inputName}`;
+      throw `${input} is not a valid ${inputName}`;
     }
     if (typeof input != "string") {
-      throw `Error: ${input} is not a valid string`;
+      throw `${input} is not a valid string`;
     }
     input = input.trim();
     if (input === "") {
-      throw `Error: ${inputName} cannot be an empty string`;
+      throw `${inputName} cannot be an empty string`;
     }
 
     return input;
@@ -18,7 +20,7 @@ let helper = {
 
   emailValidator(email) {
     if (!email) {
-      throw `You have input an invalid email address`;
+      throw `Invalid email`;
     }
     email = email.toLowerCase().trim();
 
@@ -35,40 +37,40 @@ let helper = {
     let preRegexTwo = /[._-](?!\w+|\d+)/g;
 
     if (!email.includes("@") || !email.includes(".")) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     if (email.match(/@/g).length != 1) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
 
     const [prefix, domain] = email.split("@");
     if (!prefix | !domain) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     const [domainName, com] = domain.split(".");
     if (prefix.length < 1 || domainName.length < 1) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
 
     let invalidChars = prefix.match(preRegex);
     if (invalidChars != null) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
 
     invalidChars = prefix.match(preRegexTwo);
     if (invalidChars != null) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     invalidChars = domainName.match(domRegex);
     if (invalidChars != null) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     invalidChars = domainName.match(domRegexTwo);
     if (invalidChars != null) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     if (com.length < 2) {
-      throw "Error: Invalid email.";
+      throw "Invalid email.";
     }
     return email;
   },
@@ -76,27 +78,28 @@ let helper = {
   dateValidator(date) {
     let temp = new Date(date);
     if (isNaN(temp)) {
-      throw "Error: Invalid date";
+      throw "Invalid date";
     }
     return true;
   },
 
   idValidator(id) {
     if (!id) {
-      throw "Error: No id was provided";
+      throw "No id was provided";
     }
     if (typeof id != "string") {
-      throw "Error: id must be a string!";
+      throw "Id must be a string!";
     }
     id = id.trim();
     if (id.length === 0) {
-      throw "Error: id can't be an empty string.";
+      throw "Id can't be an empty string.";
     }
     if (!ObjectId.isValid(id)) {
-      throw "Error: id is invalid.";
+      throw "Id is invalid.";
     }
     return id;
   },
+
   passwordValidator(password) {
     if (!password) {
       throw `You have input an invalid password`;
@@ -120,13 +123,13 @@ let helper = {
     let numberRegex = /[0-9]+/g;
     let symbolRegex = /[~`!@#\$%^&*()_+\-=[\]{}|\\;:'",<.>\/?]+/g;
     if (!password.match(uppercaseRegex)) {
-      throw "Password must have atleast 1 UPPERCASE character";
+      throw "Password must have at least 1 UPPERCASE character";
     }
     if (!password.match(numberRegex)) {
-      throw "Password must have atleast 1 NUMBER";
+      throw "Password must have at least 1 NUMBER";
     }
     if (!password.match(symbolRegex)) {
-      throw "Password must have atleast 1 SPECIAL character";
+      throw "Password must have at least 1 SPECIAL character";
     }
     return password;
   },
@@ -142,16 +145,13 @@ let helper = {
     friendsList,
     incomingRequests,
     outgoingRequests,
+    role,
   ) {
-    try {
-      firstName = this.inputValidator(firstName, "firstName");
-      lastName = this.inputValidator(lastName, "lastName");
-      userName = this.inputValidator(userName, "userName");
-      emailAddress = this.emailValidator(emailAddress);
-      password = this.passwordValidator(password);
-    } catch (e) {
-      throw `${e}`;
-    }
+    firstName = this.inputValidator(firstName, "firstName");
+    lastName = this.inputValidator(lastName, "lastName");
+    userName = this.inputValidator(userName, "userName");
+    emailAddress = this.emailValidator(emailAddress);
+    password = this.passwordValidator(password);
 
     description = description.trim();
 
@@ -169,23 +169,174 @@ let helper = {
         incomingRequests: incomingRequests,
         outgoingRequests: outgoingRequests,
       },
+      role: role,
     };
   },
 
   loginUserValidator(userName, password) {
-    userName = userName.trim();
-
-    try {
-      userName = this.inputValidator(userName, "userName");
-      password = this.passwordValidator(password);
-    } catch (e) {
-      throw e;
-    }
+    userName = this.inputValidator(userName, "userName");
+    password = this.passwordValidator(password);
 
     return {
       userName: userName,
       password: password,
     };
+  },
+
+  registerUserValidator(
+    firstName,
+    lastName,
+    userName,
+    emailAddress,
+    password,
+    confirmPassword,
+  ) {
+    firstName = this.inputValidator(firstName, "firstName");
+    lastName = this.inputValidator(lastName, "lastName");
+    userName = this.inputValidator(userName, "userName");
+    emailAddress = this.emailValidator(emailAddress);
+    password = this.passwordValidator(password);
+
+    if (password !== confirmPassword) throw "Passwords do not match";
+
+    return {
+      firstName: firstName,
+      lastName: lastName,
+      userName: userName,
+      emailAddress: emailAddress,
+      password: password,
+    };
+  },
+
+  exerciseValidator(
+    exerciseName,
+    targetMuscles,
+    exerciseDescription,
+    instructions,
+    equipment,
+    difficulty,
+    image,
+  ) {
+    exerciseName = this.inputValidator(exerciseName, "exerciseName");
+    exerciseDescription = this.inputValidator(
+      exerciseDescription,
+      "exerciseDescription",
+    );
+    instructions = this.inputValidator(instructions, "instructions");
+    difficulty = this.inputValidator(difficulty, "difficulty");
+    image = this.inputValidator(image, "image");
+
+    if (!Array.isArray(targetMuscles)) {
+      throw "TargetMuscle must be an array.";
+    }
+    if (!Array.isArray(equipment)) {
+      throw "Equiment must be an array.";
+    }
+
+    return {
+      name: exerciseName,
+      targetMuscles: targetMuscles,
+      description: exerciseDescription,
+      instructions: instructions,
+      equipment: equipment,
+      difficulty: difficulty,
+      image: image,
+    };
+  },
+
+  exerciseComponentValidator(exercise) {
+    const sets = Number(exercise.sets);
+    const reps = Number(exercise.reps);
+    const test_id = exercise._id;
+    if (isNaN(sets) || sets <= 0 || !Number.isInteger(sets))
+      throw "Sets is invalid";
+
+    if (isNaN(reps) || reps <= 0 || !Number.isInteger(reps))
+      throw "Reps is invalid";
+
+    const id = this.idValidator(test_id);
+
+    return {
+      id: id,
+      sets: sets,
+      reps: reps,
+    };
+  },
+
+  workoutValidator(name, workoutTypes, notes, exercises) {
+    const definedWorkoutTypes = [];
+
+    name = helper.inputValidator(name, "name");
+
+    if (typeof notes !== "string") {
+      throw "Notes must be a valid string";
+    }
+    notes = notes.trim();
+
+    if (
+      !Array.isArray(workoutTypes) ||
+      workoutTypes.some(
+        (workout) =>
+          workout.trim() === "" && definedWorkoutTypes.includes(workout.trim()),
+      )
+    ) {
+      throw "workoutType must be a valid array.";
+    }
+
+    if (!Array.isArray(exercises)) throw "Exercises must be an array.";
+
+    exercises = exercises.map((exercise) =>
+      this.exerciseComponentValidator(exercise),
+    );
+
+    return {
+      newName: name,
+      newWorkoutTypes: workoutTypes,
+      newNotes: notes,
+      newExercises: exercises,
+    };
+  },
+
+  challengeValidator(title, description, exercises, reward) {
+    title = helper.inputValidator(title, "title");
+    description = helper.inputValidator(description, "description");
+
+    if (isNaN(reward) || reward <= 0 || !Number.isInteger(reward))
+      throw "Reward is not a valid number";
+
+    if (description.trim() === "") throw "Description cannot be empty";
+
+    if (!Array.isArray(exercises)) throw "Exercises must be an array";
+    if (exercises.length === 0) throw "Exercises cannot be empty";
+
+    exercises = exercises.map((exercise) =>
+      this.exerciseComponentValidator(exercise),
+    );
+
+    return {
+      title: title,
+      description: description,
+      exercises: exercises,
+      reward: reward,
+    };
+  },
+  async uploadImageToFirebase(firebasePath, imageBuffer) {
+    const bucket = storageFirebase.bucket();
+    if (typeof firebasePath !== "string") throw "firebasePath must be a String";
+    const path = firebasePath.trim();
+
+    let link = "";
+    const file = bucket.file(path, { uploadType: { resumeable: false } });
+    await new Promise((res) => {
+      file.save(imageBuffer, async (err) => {
+        if (err) throw err;
+        else {
+          link = await getDownloadURL(file);
+          res();
+        }
+      });
+    });
+    return { link: link, relPath: path };
   },
 };
 

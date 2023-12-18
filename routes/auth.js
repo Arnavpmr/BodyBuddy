@@ -21,21 +21,19 @@ router
       firstNameInput,
       lastNameInput,
       userNameInput,
-      emailAddressInput,
+      emailInput,
       passwordInput,
-      descriptionInput,
-      ageInput,
+      confirmPasswordInput,
     } = req.body;
 
     try {
-      validatedInput = helper.createUserValidator(
+      validatedInput = helper.registerUserValidator(
         firstNameInput,
         lastNameInput,
-        userNameInput,
-        emailAddressInput,
+        userNameInput.toLowerCase(),
+        emailInput.toLowerCase(),
         passwordInput,
-        descriptionInput,
-        ageInput,
+        confirmPasswordInput,
       );
     } catch (e) {
       return res
@@ -52,11 +50,13 @@ router
         validatedInput.userName,
         validatedInput.emailAddress,
         validatedInput.password,
-        validatedInput.aboutMe.description,
-        validatedInput.aboutMe.age,
+        "",
+        null,
       );
     } catch (e) {
       const status = 400;
+
+      console.log(e);
 
       if (e === "Internal Server Error") status = 500;
 
@@ -77,12 +77,16 @@ router
   })
   .post(async (req, res) => {
     let validatedInput = undefined;
+    let errors = [];
     const { userNameInput, passwordInput } = req.body;
 
     try {
-      validatedInput = helper.loginUserValidator(userNameInput, passwordInput);
+      validatedInput = helper.loginUserValidator(
+        userNameInput.toLowerCase(),
+        passwordInput,
+      );
     } catch (e) {
-      return res.status(400).render("login", { title: "Login", error: e });
+      errors.push(e);
     }
 
     let resDB = null;
@@ -93,13 +97,16 @@ router
         validatedInput.password,
       );
     } catch (e) {
-      const status = 400;
-
-      if (e === "Internal Server Error") status = 500;
-
-      return res.status(status).render("login", { title: "Login", error: e });
+      errors.push(e);
     }
 
+    if (errors.length > 0) {
+      return res.status(400).render("login", {
+        title: "Login",
+        errors: errors,
+        errorFlag: true,
+      });
+    }
     req.session.user = resDB;
 
     return res.redirect("/home");

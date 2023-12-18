@@ -3,7 +3,10 @@ import express from "express";
 import session from "express-session";
 import configRoutes from "./routes/index.js";
 import exphbs from "express-handlebars";
-import * as mw from "./routes/middleware.js";
+import configMiddlewares from "./middlewares/index.js";
+import * as hbhelpers from "./handlebarhelpers.js";
+import { challengeObject } from "./data/index.js";
+import Handlebars from "handlebars";
 
 const app = express();
 
@@ -23,17 +26,26 @@ app.use(
   }),
 );
 
-app.use(mw.rewriteUnsupportedBrowserMethods);
+configMiddlewares(app);
+Handlebars.registerHelper("dateToString", hbhelpers.dateToString);
 
-app.use("/", mw.root);
-app.use("/login", mw.login);
-app.use("/register", mw.register);
-app.use("/home", mw.home);
-app.use("/logout", mw.logout);
-app.use("/workouts", mw.workouts);
-app.use("/challenges", mw.challenges);
+// app.use(mw.rewriteUnsupportedBrowserMethods);
+
+// app.use("/", mw.root);
+// app.use("/login", mw.login);
+// app.use("/register", mw.register);
+// app.use("/home", mw.home);
+// app.use("/logout", mw.logout);
+// app.use("/workouts", mw.workouts);
+// app.use("/challenges", mw.challenges);
 
 configRoutes(app);
+
+try {
+  await challengeObject.initializeQueue();
+} catch (e) {
+  console.log(e);
+}
 
 app.listen(3000, () => {
   console.log("We've now got a server!");

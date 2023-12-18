@@ -1,1 +1,107 @@
-<p>This is the Register page</p>
+<div class='center' style='padding: 2rem;'>
+    <form action='/register' method='POST' id='registerForm'>
+        <script type='text/javascript' src='/public/js/register.js'></script>
+        <table>
+            <tr>
+                <td>
+                    <label for='firstNameInput'>
+                        First Name:
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='text'
+                        name='firstNameInput'
+                        id='firstNameInput'
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='lastNameInput'>
+                        Last Name:
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='text'
+                        name='lastNameInput'
+                        id='lastNameInput'
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='userNameInput'>
+                        Username:
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='text'
+                        name='userNameInput'
+                        id='userNameInput'
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='emailInput'>
+                        Email Address:
+                    </label>
+                </td>
+                <td>
+                    <input type='email' name='emailInput' id='emailInput' />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for='passwordInput'>
+                        Password:
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='password'
+                        name='passwordInput'
+                        id='passwordInput'
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td style='width: 300px'>
+                    <label for='confirmPasswordInput'>
+                        Confirm Password:
+                    </label>
+                </td>
+                <td>
+                    <input
+                        type='password'
+                        name='confirmPasswordInput'
+                        id='confirmPasswordInput'
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td colspan='1'>
+                    <label for='submitButton'>
+                        <button type='submit' id='submitButton'>Submit</button>
+                    </label>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <span id='errorSpan' class='errorMsg'>
+        <ul id='errorList'>
+            {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        </ul>
+    </span>
+
+    <a href='/login' style='text-align: left;'>Already have an account? Login
+        here</a>
+</div>
