@@ -13,3 +13,7 @@ export const dateTo24HRFormat = (date) => {
 
   return new Handlebars.SafeString(formattedTime);
 };
+
+export const incrementIndex = (value) => {
+  return parseInt(value) + 1;
+};
