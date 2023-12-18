@@ -14,6 +14,7 @@ let userDataFunctions = {
     description,
     age,
     role = "user",
+    unitMeasure = "lb",
   ) {
     let validatedInput = undefined;
     let friendsList = [];
@@ -34,6 +35,7 @@ let userDataFunctions = {
         incomingRequests,
         outgoingRequests,
         role,
+        unitMeasure,
       );
     } catch (e) {
       throw e;
@@ -189,6 +191,17 @@ let userDataFunctions = {
         throw "Age is invalid";
       }
     }
+    if (updatedFields.unitMeasure !== undefined) {
+      if (
+        typeof updatedFields.unitMeasure === "string" &&
+        (updatedFields.unitMeasure === "lb" ||
+          updatedFields.unitMeasure === "kg")
+      ) {
+        fieldsToUpdate.unitMeasure = updatedFields.unitMeasure;
+      } else {
+        throw "Unit of measurement is invalid";
+      }
+    }
     const updatedUser = await userCollections.findOneAndUpdate(
       { userName: currentUserName },
       { $set: fieldsToUpdate },
@@ -258,9 +271,10 @@ let userDataFunctions = {
           age: user.aboutMe.age,
         },
         role: user.role,
+        unitMeasure: user.unitMeasure,
       };
     } else {
-      throw "Either the Username or password is invalid";
+      throw "Either the username or password is invalid";
     }
 
     return userObj;

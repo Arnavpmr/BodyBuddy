@@ -40,6 +40,8 @@ router.route("/workout").post(async (req, res) => {
   workoutTypes = xssSafe(workoutTypes);
   notes = xssSafe(notes);
   exercises = xssSafe(exercises);
+  const user = await users.getUserByUsername(username);
+  const unitMeasure = user.unitMeasure;
 
   let newWorkout = null;
   let newWorkoutDB = null;
@@ -60,6 +62,7 @@ router.route("/workout").post(async (req, res) => {
       newNotes,
       newExercises,
       false,
+      unitMeasure,
     );
     const added = await users.addWorkoutToUser(
       username,
@@ -81,6 +84,8 @@ router
     workoutTypes = xssSafe(workoutTypes);
     notes = xssSafe(notes);
     exercises = xssSafe(exercises);
+    const user = await users.getUserByUsername(username);
+    const unitMeasure = user.unitMeasure;
 
     let workoutId = null;
     let newWorkout = null;
@@ -107,6 +112,7 @@ router
         newWorkoutTypes,
         newNotes,
         newExercises,
+        unitMeasure,
       );
 
       return res.status(200).json(newWorkoutDB);

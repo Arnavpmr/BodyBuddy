@@ -3,7 +3,14 @@ import { workouts, exercises } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 
 let workoutDataFunctions = {
-  async createWorkout(name, workoutTypes, notes, exercises, isPreset) {
+  async createWorkout(
+    name,
+    workoutTypes,
+    notes,
+    exercises,
+    isPreset,
+    unitMeasure,
+  ) {
     try {
       name = helper.inputValidator(name, "name");
     } catch (e) {
@@ -28,7 +35,29 @@ let workoutDataFunctions = {
     if (exercises.length < 1) {
       throw "There must be atleast one exercise selected";
     }
-
+    for (let exercise of exercises) {
+      if (typeof exercise.weightGoal !== "number") {
+        if (!unitMeasure) throw "No unit measurement specified";
+        const LB_TO_KG = 1 / 2.205;
+        if (unitMeasure === "lb") {
+          exercise.weightGoal.kg = exercise.weightGoal.lb * LB_TO_KG;
+        } else if (unitMeasure === "kg") {
+          exercise.weightGoal.lb = exercise.weightGoal.kg / LB_TO_KG;
+        } else {
+          throw "Invalid unit measurement specified";
+        }
+      }
+      if (exercise.difficulty) {
+        exercise.difficulty = parseInt(exercise.difficulty);
+        if (exercise.difficulty < 1 || exercise.difficulty > 10)
+          throw "Difficulty must be between 1 and 10";
+      }
+      if (exercise.restTime) {
+        exercise.restTime = parseInt(exercise.restTime);
+        if (exercise.restTime < 1 || exercise.restTime > 300)
+          throw "Rest time must be between 1 and 300 seconds";
+      }
+    }
     let newWorkout = {
       name: name,
       type: workoutTypes,
@@ -127,6 +156,7 @@ let workoutDataFunctions = {
     notes,
     exercises,
     isPreset,
+    unitMeasure,
   ) {
     try {
       workoutName = helper.inputValidator(workoutName, "workoutName");
@@ -152,6 +182,29 @@ let workoutDataFunctions = {
     if (exercises.length < 1) {
       throw "There must be atleast one exercise selected";
     }
+    for (let exercise of exercises) {
+      if (typeof exercise.weightGoal !== "number") {
+        if (!unitMeasure) throw "No unit measurement specified";
+        const LB_TO_KG = 1 / 2.205;
+        if (unitMeasure === "lb") {
+          exercise.weightGoal.kg = exercise.weightGoal.lb * LB_TO_KG;
+        } else if (unitMeasure === "kg") {
+          exercise.weightGoal.lb = exercise.weightGoal.kg / LB_TO_KG;
+        } else {
+          throw "Invalid unit measurement specified";
+        }
+      }
+      if (exercise.difficulty) {
+        exercise.difficulty = parseInt(exercise.difficulty);
+        if (exercise.difficulty < 1 || exercise.difficulty > 10)
+          throw "Difficulty must be between 1 and 10";
+      }
+      if (exercise.restTime) {
+        exercise.restTime = parseInt(exercise.restTime);
+        if (exercise.restTime < 1 || exercise.restTime > 300)
+          throw "Rest time must be between 1 and 300 seconds";
+      }
+    }
     const workoutCollections = await workouts();
     let updatedWorkout = await workoutCollections.findOneAndUpdate(
       { _id: new ObjectId(workoutId) },
@@ -162,6 +215,9 @@ let workoutDataFunctions = {
           notes: notes,
           exercises: exercises,
           isPreset: isPreset,
+          weightGoal: weightGoal,
+          difficulty: difficulty,
+          restTime: restTime,
         },
       },
       { returnDocument: "after" },

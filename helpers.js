@@ -147,6 +147,7 @@ let helper = {
     incomingRequests,
     outgoingRequests,
     role,
+    unitMeasure,
   ) {
     firstName = this.inputValidator(firstName, "firstName");
     lastName = this.inputValidator(lastName, "lastName");
@@ -157,6 +158,8 @@ let helper = {
     description = description.trim();
 
     if (age && age < 0) throw "Age cannot be a negative number";
+    if (unitMeasure && unitMeasure !== "lb" && unitMeasure !== "kg")
+      throw "Invalid unit of measure";
 
     return {
       firstName: firstName,
@@ -171,6 +174,7 @@ let helper = {
         outgoingRequests: outgoingRequests,
       },
       role: role,
+      unitMeasure: unitMeasure,
     };
   },
 

@@ -219,6 +219,17 @@ router.patch("/:userName", async (req, res) => {
       }
     }
 
+    if (updatedData.userMeasure) {
+      updatedUserData.userMeasure = xssSafe(updatedData.userMeasure);
+      updatedUserData.userMeasure = updatedUserData.userMeasure.trim();
+      if (
+        updatedUserData.userMeasure !== "lb" &&
+        updatedUserData.userMeasure !== "kg"
+      ) {
+        throw new Error("Unit of measurement can only be lb or kg");
+      }
+    }
+
     if (updatedData.userName !== user.userName) {
       const existingUser = await userDataFunctions.checkUserByUsername(
         updatedUserData.userName,
