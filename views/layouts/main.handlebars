@@ -23,6 +23,9 @@
                     <a href='/workouts' class='navbar_items'>Workouts</a>
                     <a href='/challenges' class='navbar_items'>Challenges</a>
                     <a href='/user' class='navbar_items'>My Profile</a>
+                    {{#if user}}
+                    <a href='/logout' class='navbar_items'>Logout</a>
+                    {{/if}}
             </div>
         </header>
         {{{body}}}

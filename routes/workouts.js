@@ -18,9 +18,10 @@ router.route("/").get(async (req, res) => {
   const retLst = [];
   for (let i = 0; i < workoutList.length; i++) {
     const element = workoutList[i];
-    if (element.isPreset || userWorkouts.includes(element._id))
+    if (element.isPreset || userWorkouts.includes(element._id)) {
       element["string"] = JSON.stringify(element);
-    retLst.push(element);
+      retLst.push(element);
+    }
   }
 
   let user = xssSafe(req.session.user);
@@ -28,6 +29,7 @@ router.route("/").get(async (req, res) => {
     title: "Workouts",
     userData: req.session.user,
     workouts: retLst,
+    user: user,
   });
 });
 

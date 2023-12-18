@@ -138,7 +138,12 @@ router.get("/:userName", async (req, res) => {
 
     return res
       .status(200)
-      .render("profile", { profile: user, isMe, friendRequests });
+      .render("profile", {
+        profile: user,
+        isMe,
+        friendRequests,
+        user: req.session.user,
+      });
   } catch (error) {
     if (error && error.message && error.message.includes("not valid")) {
       return res.status(400).render("error", { error: "Invalid username." });
