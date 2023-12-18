@@ -35,11 +35,9 @@ router.route("/workout").post(async (req, res) => {
   const username = xss(req.session.user.userName);
   let { name, workoutTypes, notes, exercises } = req.body;
   name = xss(name);
-  workoutTypes = xss(workoutTypes);
+  workoutTypes = helper.xssSafe(workoutTypes);
   notes = xss(notes);
-  exercises = xss(exercises);
-
-  workoutTypes = workoutTypes.split(",");
+  exercises = helper.xssSafe(exercises);
 
   let newWorkout = null;
   let newWorkoutDB = null;
