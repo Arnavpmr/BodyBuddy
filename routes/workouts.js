@@ -3,7 +3,7 @@ import { Router } from "express";
 import workouts from "../data/workouts.js";
 import users from "../data/user.js";
 import helper from "../helpers.js";
-
+import xss from "xss";
 const router = Router();
 
 router.route("/").get(async (req, res) => {
@@ -23,6 +23,7 @@ router.route("/").get(async (req, res) => {
     retLst.push(element);
   }
 
+  let user = xss(req.session.user);
   return res.status(200).render("workouts", {
     title: "Workouts",
     userData: req.session.user,
@@ -31,8 +32,13 @@ router.route("/").get(async (req, res) => {
 });
 
 router.route("/workout").post(async (req, res) => {
-  const username = req.session.user.userName;
-  const { name, workoutTypes, notes, exercises } = req.body;
+  const username = xss(req.session.user.userName);
+  let { name, workoutTypes, notes, exercises } = req.body;
+  name = xss(name);
+  workoutTypes = xss(workoutTypes);
+  notes = xss(notes);
+  exercises = xss(exercises);
+
   let newWorkout = null;
   let newWorkoutDB = null;
 
@@ -68,6 +74,11 @@ router
   .route("/workout/:workoutId")
   .put(async (req, res) => {
     const { name, workoutTypes, notes, exercises } = req.body;
+
+    name = xss(name);
+    workoutTypes = xss(workoutTypes);
+    notes = xss(notes);
+    exercises = xss(exercises);
 
     let workoutId = null;
     let newWorkout = null;
@@ -110,7 +121,7 @@ router
     } catch (e) {
       return res.status(400).json({ error: e });
     }
-
+    workoutId = xss(workoutId);
     try {
       workout = await workouts.removeWorkout(workoutId);
     } catch (e) {
