@@ -9,6 +9,58 @@
   const saveWorkout = $("#submitWorkout");
   const submitError = $("#submitError");
 
+  function runFilter() {
+    const input = $("#workoutSearch");
+    const filterVal = input.val().toUpperCase();
+    const allChildren = $("#element_container").find(".favoriteWorkoutElement");
+    for (let i = 0; i < allChildren.length; i++) {
+      const txt = allChildren[i].ariaLabel;
+      if (txt.toUpperCase().indexOf(filterVal) > -1) {
+        allChildren[i].style.display = "";
+      } else {
+        allChildren[i].style.display = "none";
+      }
+    }
+  }
+
+  const deleteWorkouts = Array.from(
+    $("#element_container").find(".about_button"),
+  ).filter((el) => {
+    return el.innerHTML === "Delete";
+  });
+
+  const addWorkouts = Array.from(
+    $("#element_container").find(".about_button"),
+  ).filter((el) => {
+    return el.innerHTML === "Add";
+  });
+
+  addWorkouts.map((item) => {
+    item.addEventListener("click", () => {
+      const body = JSON.parse(item.value);
+      body["workoutTypes"] = body.type;
+      body.isPreset = false;
+      console.log(body);
+      $.post(`/workouts/workout/`, body, (res) => {
+        console.log("Workout made!");
+        location.reload();
+      });
+    });
+  });
+
+  deleteWorkouts.map((item) => {
+    item.addEventListener("click", () => {
+      const id = item.value;
+      $.ajax({
+        url: `/workouts/workout/${id}`,
+        type: "DELETE",
+      }).then((res) => {
+        console.log(res);
+        location.reload();
+      });
+    });
+  });
+
   $("#clear_filter").on("click", (e) => {
     const allChildren = $("#element_container").find(".favoriteWorkoutElement");
     for (let i = 0; i < allChildren.length; i++) {
@@ -82,17 +134,7 @@
   });
 
   searchBar.on("keyup", (e) => {
-    const input = $("#workoutSearch");
-    const filterVal = input.val().toUpperCase();
-    const allChildren = $("#element_container").find(".favoriteWorkoutElement");
-    for (let i = 0; i < allChildren.length; i++) {
-      const txt = allChildren[i].ariaLabel;
-      if (txt.toUpperCase().indexOf(filterVal) > -1) {
-        allChildren[i].style.display = "";
-      } else {
-        allChildren[i].style.display = "none";
-      }
-    }
+    runFilter();
   });
 
   function renderExercises() {

@@ -52,11 +52,6 @@ router.post(
   "/challenge/submit",
   upload.array("user_submission", 10),
   async (req, res) => {
-    // TODO store the images in firebase and get all the urls and place them in the images field in new object
-    // if everythings good, then check if user made a prev submission and remove all those images from firebase
-    // then check if user made a prev submission and remove it from mongo and prepare to replace it with the new submission
-    // set the status of new submission to "pending" and push it to the db
-
     try {
       const files = req.files;
       const links = await challenges.uploadSubmissionImages(

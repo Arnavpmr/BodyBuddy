@@ -28,12 +28,7 @@
                         <button
                             class='about_button'
                             style='font-size: 16px;'
-                            onclick='expandWorkout({{id}})'
-                        >View</button>
-                        <button
-                            class='about_button'
-                            style='font-size: 16px;'
-                            onclick='editWorkout({{id}})'
+                            value="{{string}}"
                         >Add</button>
                         {{#if userCreated}}
                         <button
@@ -59,26 +54,25 @@
     </label>
     <br>
         <p>Input workout type(s)</p>
-        <br>
         <label for="aerobicInput">
-            <input type="checkbox" value="aerobic" name="aerobicInput" id="aerobicInput">
-            Aerobic
+            <input type="checkbox" value="Lower Body" name="aerobicInput" id="aerobicInput">
+            Lower Body
         </label>    <br>
+        <label for="stretchingInput">
+            <input type="checkbox" value="Upper Body" name="stretchingInput" id="stretchingInput">
+            Upper Body
+        </label>  <br>
         <label for="anaerobicInput">
-            <input type="checkbox" value="anaerobic" name="anaerobicInput" id="anaerobicInput">
-            Anerobic
+            <input type="checkbox" value="Endurance" name="anaerobicInput" id="anaerobicInput">
+            Endurance
         </label>  <br>
         <label for="strengthInput">
             <input type="checkbox" value="strength" name="strengthInput" id="strengthInput">
             Strength
         </label>  <br>
-        <label for="stretchingInput">
-            <input type="checkbox" value="stretching" name="stretchingInput" id="stretchingInput">
-            Stretching
-        </label>  <br>
         <label for="balanceInput">
-            <input type="checkbox" value="balance" name="balanceInput" id="balanceInput">
-            Balance
+            <input type="checkbox" value="Core" name="balanceInput" id="balanceInput">
+            Core
         </label>
     <br><br>
     <label for="notes">
