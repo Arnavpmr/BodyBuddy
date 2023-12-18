@@ -247,7 +247,7 @@ let helper = {
   exerciseComponentValidator(exercise) {
     const sets = Number(exercise.sets);
     const reps = Number(exercise.reps);
-    const test_id = exercise._id;
+    const test_id = exercise.id;
     if (isNaN(sets) || sets <= 0 || !Number.isInteger(sets))
       throw "Sets is invalid";
 
