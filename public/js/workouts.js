@@ -65,8 +65,19 @@
       };
       console.log(body);
       $.post(`/workouts/workout/`, body, (res) => {
-        console.log(res);
+        console.log("Workout made!");
       });
+
+      curPlanList.empty();
+      createPopup.css("display", "none");
+      createButton.html("Workout Created!! Press to make another!");
+      setTimeout(() => {
+        if (createPopup.css("display") === "none") {
+          createButton.html("Create your Own Workout!");
+        } else {
+          createButton.html("Hide Creation Menu");
+        }
+      }, 2000);
     }
   });
 
@@ -99,7 +110,6 @@
       } </span>
       <br/>
       <div id="$exercise_done_${i}" style="color: black;">
-          <img src="${ex.image}" alt="${ex.name}">
           <p>${ex.description}</p>
           <p class="expand_title">Required Equipment</p>
           ${ex.equipment.length === 0 ? "None!" : ex.equipment}
@@ -133,9 +143,10 @@
       ? createPopup.css("display", "")
       : createPopup.css("display", "none");
     if (curDisplay === "none") {
-      createButton.html("Hide Creation");
+      createButton.html("Hide Creation Menu");
       createPopup.css("display", "");
       saveWorkout[0].reset();
+      curPlanList.empty();
     } else {
       createButton.html("Create your Own Workout!");
       createPopup.css("display", "none");

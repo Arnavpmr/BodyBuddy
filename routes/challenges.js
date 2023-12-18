@@ -60,7 +60,7 @@ router.post(
     try {
       const files = req.files;
       const links = await challenges.uploadSubmissionImages(
-        req.body.username,
+        req.session.user.userName,
         files,
       );
 
