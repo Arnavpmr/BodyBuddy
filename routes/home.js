@@ -32,6 +32,7 @@ router.route("/").get(async (req, res) => {
   }
 
   let submission = null;
+  let workouts = [];
 
   try {
     submission = await challengeObject.getSubmissionByUserName(
@@ -41,12 +42,32 @@ router.route("/").get(async (req, res) => {
     submission = null;
   }
 
+  try {
+    workouts = await userData.getUserWorkoutData(curUser.userName);
+  } catch (error) {
+    console.log(error.toString());
+    console.log("No workout data found");
+  }
+
   curChallenge.exercises = newExercises;
+
+  if (workouts.length > 5) {
+    //Get random 5
+    let copy = [...workouts];
+    const temp = [];
+    while (temp.length < 5) {
+      const index = Math.floor(Math.random() * copy.length);
+      temp.push(copy[index]);
+      copy = copy.slice(0, index).concat(copy.slice(index + 1));
+    }
+    workouts = temp;
+  }
 
   return res.status(200).render("home", {
     title: "Home",
     userData: curUser,
     user: req.session.user,
+    workouts: workouts,
     submission: submission,
     currentChallenge: curChallenge,
     globalLeaderboard: globalLeaderboard,

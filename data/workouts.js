@@ -1,6 +1,7 @@
 import helper from "../helpers.js";
-import { workouts, exercises } from "../config/mongoCollections.js";
+import { workouts, exercises, users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
+import userDataFunctions from "./user.js";
 
 let workoutDataFunctions = {
   async createWorkout(
@@ -132,9 +133,10 @@ let workoutDataFunctions = {
     return workoutAfterPull;
   },
 
-  async removeWorkout(workoutId) {
+  async removeWorkout(workoutId, username) {
     try {
-      helper.idValidator(workoutId);
+      workoutId = helper.idValidator(workoutId);
+      username = helper.inputValidator(username, "username");
     } catch (e) {
       throw `${workoutId} not valid`;
     }
@@ -145,6 +147,15 @@ let workoutDataFunctions = {
     if (!workoutRemoved) {
       throw "Workout does not exist.";
     }
+
+    const user_info = await userDataFunctions.getUserByUsername(username);
+    const userCollections = await users();
+    let removedFromUser = await userCollections.findOneAndUpdate(
+      { _id: new ObjectId(user_info._id.toString()) },
+      { $pull: { workouts: workoutId } },
+      { returnDocument: "after" },
+    );
+    if (!removedFromUser) throw "Workout could not be removed";
     let myObj = { name: workoutRemoved.name, deleted: true };
     return myObj;
   },

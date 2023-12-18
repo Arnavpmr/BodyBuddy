@@ -60,22 +60,22 @@
                 <!-- 5 Favorite Workout Widget -->
                 <div class='widget' style='text-align: center;'>
                     <h2>Quick Access to Some of Your Workouts</h2>
-                    {{#each userData.workouts}}
-                        <div class='favoriteWorkoutElement center'>
+                    {{#each workouts}}
+                        <div class='favoriteWorkoutElement center' style="padding-bottom: 1rem;">
                             <span style='display: table-cell;'><h3
-                                    style='display: inline-block;'
-                                >Name: {{name}}</h3>
-                                <span>Workout Type: {{type}}</span>
-                                <span>Notes: {{notes}}</span>
+                                    style='display: inline-block;color: var(--light-text)'
+                                >{{name}}</h3><br>
+                                <span><span style="font-weight: bold;">Workout Type:</span> <span style="font-style:italic;">{{type}}</span></span>
                             </span>
                             <div style='display: table-cell;text-align: right;'>
                                 <button
                                     class='about_button'
                                     style='font-size: 16px;white-space: pre-wrap;'
-                                    onclick='location.href={{workoutURL}}'
+                                    onclick='window.location.replace("/workouts")'
                                 >Run Again</button>
                             </div>
                         </div>
+                        <span style="margin: .25rem;"></span>
                     {{/each}}
                 </div>
             </td>

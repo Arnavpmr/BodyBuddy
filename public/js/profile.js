@@ -224,7 +224,8 @@ function sendFriendRequest(targetUserName) {
     .catch((error) => {
       console.error("Error sending friend request:", error);
       const statusElement = document.getElementById("friendRequestStatus");
-      statusElement.textContent = "Error sending friend request";
+      statusElement.textContent =
+        "You cannot send requests to Friends or Pending Friends!";
       statusElement.style.color = "red";
     });
 }
