@@ -184,6 +184,7 @@ router.patch("/:userName", async (req, res) => {
         "userName",
       );
       updatedUserData.userName = xssSafe(updatedData.userName);
+      updatedUserData.userName = updatedUserData.userName.toLowerCase();
     }
     if (updatedData.userName && updatedData.userName !== user.userName) {
       userOrPasswordChanged = true;
@@ -193,6 +194,9 @@ router.patch("/:userName", async (req, res) => {
         updatedData.emailAddress,
       );
       updatedUserData.emailAddress = xssSafe(updatedData.emailAddress);
+    }
+    if (updatedData.password === "") {
+      updatedData.password = user.password;
     }
     if (updatedData.password) {
       updatedUserData.password = helper.passwordValidator(updatedData.password);
