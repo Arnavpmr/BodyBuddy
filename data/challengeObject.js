@@ -100,7 +100,7 @@ let challengeObjectFunctions = {
   async createSubmission(userName, images) {
     if (!Array.isArray(images)) throw "Images is not valid";
 
-    if (images.some((image) => image.trim() === ""))
+    if (images.some((image) => image.link.trim() === ""))
       throw "Image url cannot be empty";
 
     const queueCollection = await challengeQueue();

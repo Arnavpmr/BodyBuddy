@@ -20,7 +20,7 @@
         <div class='submission-widget' style='padding: 2rem;'>
             {{#unless userSubmission}}
                 <h2>Submit to Challenge</h2>
-                <form action='/challenges/submit' method='POST' enctype="multipart/form-data">
+                <form method='POST' enctype="multipart/form-data" id="imageUpload" action="/challenges/submit">
                     <input
                         multiple
                         type='file'
@@ -47,3 +47,6 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="./public/js/challenges.js"></script>

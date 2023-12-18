@@ -59,7 +59,7 @@ router.post(
         files,
       );
 
-      return res.status(200).json({ isUploaded: true });
+      return res.redirect("/challenges");
     } catch (e) {
       return res.status(400).json({ error: e.toString() });
     }
