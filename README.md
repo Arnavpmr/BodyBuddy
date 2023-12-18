@@ -1,6 +1,9 @@
-# CS546-Final-Project-Fitness-Tracker
+# Welcome to BodyBuddy
 
-1. Install packages by running:
+Your personal guide to a healthier, fitter lifestyle. Say goodbye to mundane workouts and hello to personalized fitness journeys tailored to your unique goals, preferences, and fitness levels.
+
+1. Download zip file.
+2. Install packages by running:
    > `npm i`
-2. Start server by running:
+3. Start server by running:
    > `npm start`
