@@ -342,7 +342,6 @@ let helper = {
 };
 
 export const xssSafe = (input) => {
-  if (!input) throw new Error("No/null input provided to xssSafe");
   console.log(
     `DEBUG: xssSafe called with input ${input} and type ${typeof input}`,
   );
