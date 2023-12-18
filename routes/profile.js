@@ -5,6 +5,14 @@ import bcrypt from "bcrypt";
 
 const router = Router();
 
+router.get("/", async (req, res) => {
+  const userName = req.session.user.userName;
+  if (!userName) {
+    return res.status(401).json({ error: "User must be logged in." });
+  }
+  res.redirect(`/user/${userName}`);
+});
+
 router.get("/users", async (req, res) => {
   let prefix = req.query.prefix.trim();
   prefix = prefix.toLowerCase();
@@ -181,10 +189,13 @@ router.patch("/:userName", async (req, res) => {
     }
     if (updatedData.description)
       updatedUserData.description = updatedData.description.trim();
-    if (updatedData.age !== undefined) {
-      const age = parseInt(updatedData.age, 10);
-      if (age > 0) updatedUserData.age = age;
-      else throw new Error("Age is invalid");
+    if (updatedData.age) {
+      if (updatedData.age.length !== 0) {
+        updatedUserData.age = parseInt(updatedData.age);
+        if (isNaN(updatedUserData.age) || updatedUserData.age < 0) {
+          throw new Error("Age must be a (+) number");
+        }
+      }
     }
 
     if (updatedData.userName !== user.userName) {
@@ -222,6 +233,7 @@ router.patch("/:userName", async (req, res) => {
 
     return res.status(200).json({ message: "Profile updated successfully" });
   } catch (error) {
+    console.error("Error updating profile:", error);
     const statusCode =
       error.message === "User not found" || error.message === "Update failed"
         ? 404
