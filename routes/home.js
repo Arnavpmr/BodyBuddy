@@ -32,6 +32,7 @@ router.route("/").get(async (req, res) => {
   }
 
   let submission = null;
+  let workouts = [];
 
   try {
     submission = await challengeObject.getSubmissionByUserName(
@@ -41,12 +42,20 @@ router.route("/").get(async (req, res) => {
     submission = null;
   }
 
+  try {
+    workouts = await userData.getUserWorkoutData(curUser.userName);
+  } catch (error) {
+    console.log(error.toString());
+    console.log("No workout data found");
+  }
+
   curChallenge.exercises = newExercises;
 
   return res.status(200).render("home", {
     title: "Home",
     userData: curUser,
     user: req.session.user,
+    workouts: workouts,
     submission: submission,
     currentChallenge: curChallenge,
     globalLeaderboard: globalLeaderboard,

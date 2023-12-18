@@ -117,6 +117,7 @@ router
   .delete(async (req, res) => {
     let workoutId = null;
     let workout = null;
+    const username = xssSafe(req.session.user.userName);
 
     try {
       workoutId = helper.idValidator(req.params.workoutId);
@@ -125,7 +126,7 @@ router
     }
     workoutId = xssSafe(workoutId);
     try {
-      workout = await workouts.removeWorkout(workoutId);
+      workout = await workouts.removeWorkout(workoutId, username);
     } catch (e) {
       return res.status(500).json({ error: e });
     }

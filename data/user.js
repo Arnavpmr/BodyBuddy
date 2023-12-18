@@ -224,6 +224,17 @@ let userDataFunctions = {
     return userData.workouts;
   },
 
+  async getUserWorkoutData(username) {
+    const idList = await this.getUserWorkouts(username);
+    const res = [];
+    for (let i = 0; i < idList.length; i++) {
+      const workData = await workoutDataFunctions.getWorkoutById(idList[i]);
+      res.push(workData);
+    }
+
+    return res;
+  },
+
   async loginUser(userName, password) {
     let validatedInput = undefined;
 

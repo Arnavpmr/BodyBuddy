@@ -56,7 +56,6 @@
       // }
     }
     //Sort and remount
-    console.log(filteredChildren);
     if (ascending) {
       filteredChildren.sort((x, y) => {
         return x.ariaLabel > y.ariaLabel;
@@ -66,7 +65,6 @@
         return x.ariaLabel < y.ariaLabel;
       });
     }
-    console.log(filteredChildren);
 
     for (let i = 0; i < filteredChildren.length; i++) {
       const element = filteredChildren[i];
@@ -273,7 +271,6 @@
     }).then((res) => {
       availableList.empty();
       const matches = res.match;
-      console.log(matches);
       matches.map((el, i) => {
         const exp_d = `expand_div_${i}`;
         const exp_b = `expand_button_${i}`;
