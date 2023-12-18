@@ -4,7 +4,7 @@ import { Router } from "express";
 import helper from "../helpers.js";
 import multer from "multer";
 import storageFirebase from "../firebase.js";
-import xss from "xss";
+import { xssSafe } from "../helpers.js";
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
@@ -38,12 +38,12 @@ router.route("/").get(async (req, res) => {
   return res.status(200).render("challenges", {
     curChallenge: challengesObject.current,
     pastChallenges: challengeQueue.pastChallenges,
-    user: xss(req.session.user),
+    user: xssSafe(req.session.user),
   });
 });
 
 router.route("/challenge/toggleupdates").post(async (req, res) => {
-  const { status } = xss(req.body);
+  const { status } = xssSafe(req.body);
 
   if (status !== "on" && status !== "off")
     return res.status(400).json({ error: "Status is invalid" });
@@ -58,9 +58,9 @@ router.post(
   upload.array("submissionInput", 10),
   async (req, res) => {
     try {
-      const files = xss(req.files);
-      const links = await challenges.uploadSubmissionImages(
-        xss(req.body.username),
+      const files = xssSafe(req.files);
+      const links = await challengeData.uploadSubmissionImages(
+        xssSafe(req.body.username),
         files,
       );
 
@@ -85,7 +85,10 @@ router
     let resDB = null;
 
     try {
-      userName = helper.inputValidator(xss(req.params.userName), "userName");
+      userName = helper.inputValidator(
+        xssSafe(req.params.userName),
+        "userName",
+      );
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -99,7 +102,7 @@ router
     return res.status(200).json(resDB);
   })
   .post(async (req, res) => {
-    const status = xss(req.body);
+    const status = xssSafe(req.body);
 
     let userName = null;
     let resDB = null;
@@ -108,7 +111,7 @@ router
       if (status !== "approved" && status !== "denied")
         throw "Status is invalid";
 
-      userName = helper.idValidator(xss(req.params.userName));
+      userName = helper.idValidator(xssSafe(req.params.userName));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -125,10 +128,10 @@ router
 router.route("/challenge").post(async (req, res) => {
   let { titleInput, descriptionInput, exercisesInput, rewardInput } = req.body;
 
-  titleInput = xss(titleInput);
-  descriptionInput = xss(descriptionInput);
-  exercisesInput = xss(exercisesInput);
-  rewardInput = xss(rewardInput);
+  titleInput = xssSafe(titleInput);
+  descriptionInput = xssSafe(descriptionInput);
+  exercisesInput = xssSafe(exercisesInput);
+  rewardInput = xssSafe(rewardInput);
 
   let newChallenge = null;
   let newChallengeDB = null;
@@ -147,7 +150,7 @@ router.route("/challenge").post(async (req, res) => {
   const { title, description, exercises, reward } = newChallenge;
 
   try {
-    newChallengeDB = await challenges.createChallenge(
+    newChallengeDB = await challengeData.createChallenge(
       exercises,
       title,
       reward,
@@ -166,17 +169,17 @@ router
     let { titleInput, descriptionInput, exercisesInput, rewardInput } =
       req.body;
 
-    titleInput = xss(titleInput);
-    descriptionInput = xss(descriptionInput);
-    exercisesInput = xss(exercisesInput);
-    rewardInput = xss(rewardInput);
+    titleInput = xssSafe(titleInput);
+    descriptionInput = xssSafe(descriptionInput);
+    exercisesInput = xssSafe(exercisesInput);
+    rewardInput = xssSafe(rewardInput);
 
     let challengeId = null;
     let newChallenge = null;
     let newChallengeDB = null;
 
     try {
-      challengeId = helper.idValidator(xss(req.params.challengeId));
+      challengeId = helper.idValidator(xssSafe(req.params.challengeId));
       newChallenge = helper.challengeValidator(
         titleInput,
         descriptionInput,
@@ -190,7 +193,7 @@ router
     const { title, description, exercises, reward } = newChallenge;
 
     try {
-      newChallengeDB = await challenges.updateChallenge(
+      newChallengeDB = await challengeData.updateChallenge(
         challengeId,
         exercises,
         title,
@@ -208,13 +211,13 @@ router
     let challengeDB = null;
 
     try {
-      challengeId = helper.idValidator(xss(req.params.challengeId));
+      challengeId = helper.idValidator(xssSafe(req.params.challengeId));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
 
     try {
-      challengeDB = await challenges.removeChallenge(challengeId);
+      challengeDB = await challengeData.removeChallenge(challengeId);
     } catch (e) {
       return res.status(500).json({ error: e });
     }
