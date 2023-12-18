@@ -77,6 +77,7 @@ router
   })
   .post(async (req, res) => {
     let validatedInput = undefined;
+    let errors = [];
     const { userNameInput, passwordInput } = req.body;
 
     try {
@@ -85,7 +86,7 @@ router
         passwordInput,
       );
     } catch (e) {
-      return res.status(400).render("login", { title: "Login", error: e });
+      errors.push(e);
     }
 
     let resDB = null;
@@ -96,13 +97,14 @@ router
         validatedInput.password,
       );
     } catch (e) {
-      const status = 400;
-
-      if (e === "Internal Server Error") status = 500;
-
-      return res.status(status).render("login", { title: "Login", error: e });
+      errors.push(e);
     }
 
+    if (errors.length > 0) {
+      return res
+        .status(400)
+        .render("login", { title: "Login", errors: errors, errorFlag: true });
+    }
     req.session.user = resDB;
 
     return res.redirect("/home");

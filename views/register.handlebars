@@ -1,10 +1,11 @@
 <div class='center' style='padding: 2rem;'>
     <form action='/register' method='POST' id='registerForm'>
+        <script type='text/javascript' src='/public/js/register.js'></script>
         <table>
             <tr>
                 <td>
                     <label for='firstNameInput'>
-                        Enter your First Name
+                        First Name:
                     </label>
                 </td>
                 <td>
@@ -13,16 +14,12 @@
                         name='firstNameInput'
                         id='firstNameInput'
                     />
-                    {{#if firstNameError}}
-                        <span id='firstNameError' class='errorMsg'>X
-                            {{firstNameError}}</span>
-                    {{/if}}
                 </td>
             </tr>
             <tr>
                 <td>
                     <label for='lastNameInput'>
-                        Enter your Last Name
+                        Last Name:
                     </label>
                 </td>
                 <td>
@@ -31,48 +28,36 @@
                         name='lastNameInput'
                         id='lastNameInput'
                     />
-                    {{#if lastNameError}}
-                        <span id='lastNameError' class='errorMsg'>X
-                            {{lastNameError}}</span>
-                    {{/if}}
                 </td>
             </tr>
             <tr>
                 <td>
-                    <label for='usernameInput'>
-                        Enter a Username
+                    <label for='userNameInput'>
+                        Username:
                     </label>
                 </td>
                 <td>
                     <input
                         type='text'
-                        name='usernameInput'
-                        id='usernameInput'
+                        name='userNameInput'
+                        id='userNameInput'
                     />
-                    {{#if usernameError}}
-                        <span id='usernameError' class='errorMsg'>X
-                            {{usernameError}}</span>
-                    {{/if}}
                 </td>
             </tr>
             <tr>
                 <td>
                     <label for='emailInput'>
-                        Enter your Email
+                        Email Address:
                     </label>
                 </td>
                 <td>
                     <input type='email' name='emailInput' id='emailInput' />
-                    {{#if emailError}}
-                        <span id='emailError' class='errorMsg'>X
-                            {{emailError}}</span>
-                    {{/if}}
                 </td>
             </tr>
             <tr>
                 <td>
                     <label for='passwordInput'>
-                        Enter your Password
+                        Password:
                     </label>
                 </td>
                 <td>
@@ -81,16 +66,12 @@
                         name='passwordInput'
                         id='passwordInput'
                     />
-                    {{#if passwordError}}
-                        <span id='passwordError' class='errorMsg'>X
-                            {{passwordError}}</span>
-                    {{/if}}
                 </td>
             </tr>
             <tr>
                 <td style='width: 300px'>
                     <label for='confirmPasswordInput'>
-                        Confirm your Password
+                        Confirm Password:
                     </label>
                 </td>
                 <td>
@@ -99,10 +80,6 @@
                         name='confirmPasswordInput'
                         id='confirmPasswordInput'
                     />
-                    {{#if confirmPasswordError}}
-                        <span id='confirmPasswordError' class='errorMsg'>X
-                            {{confirmPasswordError}}</span>
-                    {{/if}}
                 </td>
             </tr>
             <tr>
@@ -114,6 +91,17 @@
             </tr>
         </table>
     </form>
+
+    <span id='errorSpan' class='errorMsg'>
+        <ul id='errorList'>
+            {{#each errors}}
+                <li>
+                    {{this}}
+                </li>
+            {{/each}}
+        </ul>
+    </span>
+
     <a href='/login' style='text-align: left;'>Already have an account? Login
         here</a>
 </div>

@@ -4,7 +4,7 @@ import session from "express-session";
 import configRoutes from "./routes/index.js";
 import exphbs from "express-handlebars";
 import configMiddlewares from "./middlewares/index.js";
-
+import * as hbhelpers from "./handlebarhelpers.js";
 import { challengeObject } from "./data/index.js";
 
 const app = express();
@@ -26,6 +26,18 @@ app.use(
 );
 
 configMiddlewares(app);
+Handlebars.registerHelper("dateToString", hbhelpers.dateToString);
+
+// app.use(mw.rewriteUnsupportedBrowserMethods);
+
+// app.use("/", mw.root);
+// app.use("/login", mw.login);
+// app.use("/register", mw.register);
+// app.use("/home", mw.home);
+// app.use("/logout", mw.logout);
+// app.use("/workouts", mw.workouts);
+// app.use("/challenges", mw.challenges);
+
 configRoutes(app);
 
 try {

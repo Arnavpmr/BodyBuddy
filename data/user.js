@@ -212,6 +212,7 @@ let userDataFunctions = {
       userName: validatedInput.userName,
     });
 
+    console.log(user);
     if (!user) throw "Either the Username or Password is invalid";
 
     let comparePass = await bcrypt.compare(
