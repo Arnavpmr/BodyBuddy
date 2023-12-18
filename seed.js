@@ -655,6 +655,10 @@ for (const challenge of seedChallenges) {
   }
 }
 
+for (let i = 0; i < 6; i++) {
+  await challengeObject.updateCurrent();
+}
+
 for (const users of seedUsers) {
   try {
     const created = await userData.createUser(

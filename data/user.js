@@ -438,10 +438,6 @@ let userDataFunctions = {
       { $set: { profilePicture: newPictureUrl } },
     );
 
-    if (updateInfo.modifiedCount === 0) {
-      throw new Error("Could not update user profile picture.");
-    }
-
     return { profileUpdated: true };
   },
 };

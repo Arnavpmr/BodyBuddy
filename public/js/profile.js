@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const editButton = document.querySelector("#editProfileButton");
   const saveButton = document.querySelector("#saveChangesButton");
   const profileForm = document.querySelector("#profileForm");
+  const updateErrorMessage = document.getElementById("updateErrorMessage");
 
   document.querySelectorAll(".acceptRequestBtn").forEach((button) => {
     button.addEventListener("click", () => {
@@ -59,9 +60,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error(
-              "Network response was not ok: " + response.statusText,
-            );
+            throw new Error("Invalid Input");
           }
           return response.json();
         })
@@ -70,12 +69,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
             console.log(data.message);
             fields.forEach((field) => (field.disabled = true));
             saveButton.hidden = true;
+            updateErrorMessage.textContent = "";
           } else {
             throw new Error(data.error || "Error updating profile");
           }
         })
         .catch((error) => {
           console.error("Error:", error);
+          updateErrorMessage.textContent = error.message;
         });
     });
   } else {
@@ -157,6 +158,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
       })
       .then((data) => {
         console.log("Profile picture updated:", data);
+        // Update the displayed profile picture
+        const currentProfilePic = document.getElementById("currentProfilePic");
+        if (currentProfilePic) {
+          currentProfilePic.src = avatarUrl;
+        }
+        // Optionally, hide the avatar selection div
+        avatarSelection.style.display = "none";
       })
       .catch((error) => {
         console.error("Error updating profile picture:", error);
