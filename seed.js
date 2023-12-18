@@ -323,6 +323,7 @@ const seedWorkouts = [
   {
     name: "Upper Body Blast",
     types: ["Strength", "Upper Body"],
+    workoutType: ["Anerobic", "Strength"],
     notes: "A high-intensity workout to sculpt your upper body.",
     exercises: [
       { id: exerciseIdMap["Push-Up"], sets: 3, reps: 12 },

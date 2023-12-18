@@ -13,7 +13,7 @@ let userDataFunctions = {
     password,
     description,
     age,
-    role,
+    role = "user",
   ) {
     let validatedInput = undefined;
     let friendsList = [];

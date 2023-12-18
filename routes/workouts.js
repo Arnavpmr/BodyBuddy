@@ -19,7 +19,8 @@ router.route("/").get(async (req, res) => {
   for (let i = 0; i < workoutList.length; i++) {
     const element = workoutList[i];
     if (element.isPreset || userWorkouts.includes(element._id))
-      retLst.push(element);
+      element["string"] = JSON.stringify(element);
+    retLst.push(element);
   }
 
   return res.status(200).render("workouts", {

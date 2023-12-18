@@ -9,6 +9,58 @@
   const saveWorkout = $("#submitWorkout");
   const submitError = $("#submitError");
 
+  function runFilter() {
+    const input = $("#workoutSearch");
+    const filterVal = input.val().toUpperCase();
+    const allChildren = $("#element_container").find(".favoriteWorkoutElement");
+    for (let i = 0; i < allChildren.length; i++) {
+      const txt = allChildren[i].ariaLabel;
+      if (txt.toUpperCase().indexOf(filterVal) > -1) {
+        allChildren[i].style.display = "";
+      } else {
+        allChildren[i].style.display = "none";
+      }
+    }
+  }
+
+  const deleteWorkouts = Array.from(
+    $("#element_container").find(".about_button"),
+  ).filter((el) => {
+    return el.innerHTML === "Delete";
+  });
+
+  const addWorkouts = Array.from(
+    $("#element_container").find(".about_button"),
+  ).filter((el) => {
+    return el.innerHTML === "Add";
+  });
+
+  addWorkouts.map((item) => {
+    item.addEventListener("click", () => {
+      const body = JSON.parse(item.value);
+      body["workoutTypes"] = body.type;
+      body.isPreset = false;
+      console.log(body);
+      $.post(`/workouts/workout/`, body, (res) => {
+        console.log("Workout made!");
+        location.reload();
+      });
+    });
+  });
+
+  deleteWorkouts.map((item) => {
+    item.addEventListener("click", () => {
+      const id = item.value;
+      $.ajax({
+        url: `/workouts/workout/${id}`,
+        type: "DELETE",
+      }).then((res) => {
+        console.log(res);
+        location.reload();
+      });
+    });
+  });
+
   $("#clear_filter").on("click", (e) => {
     const allChildren = $("#element_container").find(".favoriteWorkoutElement");
     for (let i = 0; i < allChildren.length; i++) {
@@ -65,23 +117,24 @@
       };
       console.log(body);
       $.post(`/workouts/workout/`, body, (res) => {
-        console.log(res);
+        console.log("Workout made!");
       });
+
+      curPlanList.empty();
+      createPopup.css("display", "none");
+      createButton.html("Workout Created!! Press to make another!");
+      setTimeout(() => {
+        if (createPopup.css("display") === "none") {
+          createButton.html("Create your Own Workout!");
+        } else {
+          createButton.html("Hide Creation Menu");
+        }
+      }, 2000);
     }
   });
 
   searchBar.on("keyup", (e) => {
-    const input = $("#workoutSearch");
-    const filterVal = input.val().toUpperCase();
-    const allChildren = $("#element_container").find(".favoriteWorkoutElement");
-    for (let i = 0; i < allChildren.length; i++) {
-      const txt = allChildren[i].ariaLabel;
-      if (txt.toUpperCase().indexOf(filterVal) > -1) {
-        allChildren[i].style.display = "";
-      } else {
-        allChildren[i].style.display = "none";
-      }
-    }
+    runFilter();
   });
 
   function renderExercises() {
@@ -99,7 +152,6 @@
       } </span>
       <br/>
       <div id="$exercise_done_${i}" style="color: black;">
-          <img src="${ex.image}" alt="${ex.name}">
           <p>${ex.description}</p>
           <p class="expand_title">Required Equipment</p>
           ${ex.equipment.length === 0 ? "None!" : ex.equipment}
@@ -133,9 +185,10 @@
       ? createPopup.css("display", "")
       : createPopup.css("display", "none");
     if (curDisplay === "none") {
-      createButton.html("Hide Creation");
+      createButton.html("Hide Creation Menu");
       createPopup.css("display", "");
       saveWorkout[0].reset();
+      curPlanList.empty();
     } else {
       createButton.html("Create your Own Workout!");
       createPopup.css("display", "none");
