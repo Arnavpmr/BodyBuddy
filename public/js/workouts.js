@@ -278,9 +278,9 @@
 
         const reps_b = `add_reps_${i}`;
         const sets_b = `add_sets_${i}`;
-        const weight_b = `weight_${i}`;
-        const dif_b = `difficulty_${i}`;
-        const rest_b = `rest_time_${i}`;
+        // const weight_b = `weight_${i}`;
+        // const dif_b = `difficulty_${i}`;
+        // const rest_b = `rest_time_${i}`;
 
         const rep_form = `ex_form_${i}`;
 
@@ -317,15 +317,6 @@
                   <label for="${sets_b}">
                   Number of Sets
                   <input type="number" name="${sets_b}" id="${sets_b}" min="1" required><br>
-                  <label for="${weight_b}">
-                  Weight Goal (lb/kg depending on your preferred unit)
-                  <input type="number" name="${weight_b}" id="${weight_b}" min="0" required><br>
-                  <label for="${dif_b}">
-                  Difficulty (1-10)
-                  <input type="number" name="${dif_b}" id="${dif_b}" min="1" max="10" required><br>
-                  <label for="${rest_b}">
-                  Rest time (sec) (1-300)
-                  <input type="number" name="${rest_b}" id="${rest_b}" min="1" max="300" required><br>
                   <label for="confirm_b_${i}">Confirm your submission<input type="submit" value="Confirm" id="confirm_b_${i}" id="confirm_b_${i}"></label>
                 </div>
                 </div>
@@ -365,9 +356,9 @@
             ...el,
             reps: target[2].valueAsNumber,
             sets: target[3].valueAsNumber,
-            weightGoal: target[4].valueAsNumber,
-            difficulty: target[5].valueAsNumber,
-            restTime: target[6].valueAsNumber,
+            // weightGoal: target[4].valueAsNumber,
+            // difficulty: target[5].valueAsNumber,
+            // restTime: target[6].valueAsNumber,
           };
 
           temp["id"] = temp._id;

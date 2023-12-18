@@ -223,12 +223,12 @@ router.patch("/:userName", async (req, res) => {
       }
     }
 
-    if (updatedData.userMeasure) {
-      updatedUserData.userMeasure = xssSafe(updatedData.userMeasure);
-      updatedUserData.userMeasure = updatedUserData.userMeasure.trim();
+    if (updatedData.unitMeasure) {
+      updatedUserData.unitMeasure = xssSafe(updatedData.unitMeasure);
+      updatedUserData.unitMeasure = updatedUserData.unitMeasure.trim();
       if (
-        updatedUserData.userMeasure !== "lb" &&
-        updatedUserData.userMeasure !== "kg"
+        updatedUserData.unitMeasure !== "lb" &&
+        updatedUserData.unitMeasure !== "kg"
       ) {
         throw new Error("Unit of measurement can only be lb or kg");
       }
