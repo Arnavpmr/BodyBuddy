@@ -51,11 +51,11 @@ let challengeDataFunctions = {
     id = helper.idValidator(id, "challengeId");
 
     const challengeCollections = await challenges();
-    let challenge = challengeCollections.findOne({
+    let challenge = await challengeCollections.findOne({
       _id: new ObjectId(id),
     });
 
-    challenge._id = challenge.id.toString();
+    challenge._id = challenge._id.toString();
     return challenge;
   },
 

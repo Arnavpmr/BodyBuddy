@@ -660,17 +660,17 @@ for (let i = 0; i < 6; i++) {
   await challengeObject.updateCurrent();
 }
 
-for (const users of seedUsers) {
+for (const user of seedUsers) {
   try {
     const created = await userData.createUser(
-      users.firstName,
-      users.lastName,
-      users.userName,
-      users.emailAddress,
-      users.password,
-      users.aboutMe.description,
-      users.aboutMe.age,
-      users.role,
+      user.firstName,
+      user.lastName,
+      user.userName,
+      user.emailAddress,
+      user.password,
+      user.aboutMe.description,
+      user.aboutMe.age,
+      user.role,
     );
   } catch (e) {
     console.log(e);

@@ -1,10 +1,8 @@
 import { challengeQueue } from "../config/mongoCollections.js";
-import { challengeObject } from "../data/index.js";
-import challenges from "../data/challenges.js";
+import { challengeObject, challengeData } from "../data/index.js";
 import { Router } from "express";
 import helper from "../helpers.js";
 import multer from "multer";
-import storageFirebase from "../firebase.js";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -30,10 +28,16 @@ router.route("/").get(async (req, res) => {
   const queueCollection = await challengeQueue();
   const challengesObject = (await queueCollection.find({}).toArray())[0];
 
+  const curChallenge = await challengeData.getChallengeById(
+    challengesObject.current,
+  );
+  const globalLeaderboard = challengesObject.leaderboard;
+  const curUser = await userData.getUserByUsername(req.session.user.userName);
+
   return res.status(200).render("challenges", {
-    curChallenge: challengesObject.current,
-    pastChallenges: challengeQueue.pastChallenges,
-    user: req.session.user,
+    curChallenge: curChallenge,
+    globalLeaderboard: globalLeaderboard,
+    user: curUser,
   });
 });
 
