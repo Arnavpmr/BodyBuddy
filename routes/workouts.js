@@ -41,8 +41,6 @@ router.route("/workout").post(async (req, res) => {
   notes = xssSafe(notes);
   exercises = xssSafe(exercises);
 
-  workoutTypes = workoutTypes.split(",");
-
   let newWorkout = null;
   let newWorkoutDB = null;
 
