@@ -28,7 +28,7 @@ app.use(
 
 configMiddlewares(app);
 configRoutes(app);
-Handlebars.registerHelper("dateToString", hbhelpers.dateToString);
+Handlebars.registerHelper("dateTo24HRFormat", hbhelpers.dateTo24HRFormat);
 
 try {
   await challengeObject.initializeQueue();
