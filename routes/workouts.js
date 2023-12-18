@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import workouts from "../data/workouts.js";
+import users from "../data/user.js";
 import helper from "../helpers.js";
 
 const router = Router();
@@ -13,6 +14,7 @@ router.route("/").get(async (req, res) => {
 });
 
 router.route("/workout").post(async (req, res) => {
+  const username = req.session.user.userName;
   const { name, workoutTypes, notes, exercises } = req.body;
   let newWorkout = null;
   let newWorkoutDB = null;
@@ -33,6 +35,10 @@ router.route("/workout").post(async (req, res) => {
       newNotes,
       newExercises,
       false,
+    );
+    const added = await users.addWorkoutToUser(
+      username,
+      newWorkoutDB._id.toString(),
     );
 
     return res.status(200).json(newWorkoutDB);

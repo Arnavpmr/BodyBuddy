@@ -2,6 +2,7 @@ import helper from "../helpers.js";
 import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
+import workoutDataFunctions from "./workouts.js";
 
 let userDataFunctions = {
   async createUser(
@@ -59,6 +60,7 @@ let userDataFunctions = {
       ...validatedInput,
       password: hash,
       profilePicture: defaultProfilePicture,
+      workouts: [],
     };
 
     const entry = await userCollections.insertOne(newUser);
@@ -196,6 +198,24 @@ let userDataFunctions = {
     }
 
     return updatedUser;
+  },
+
+  async addWorkoutToUser(username, workoutId) {
+    const userData = await this.getUserByUsername(username);
+    const isWorkout = await workoutDataFunctions.getWorkoutById(workoutId);
+
+    const usersCollection = await users();
+    const usersFound = await usersCollection.findOneAndUpdate(
+      { _id: new ObjectId(userData._id.toString()) },
+      {
+        $push: {
+          workouts: isWorkout._id.toString(),
+        },
+      },
+      { returnDocument: "after" },
+    );
+
+    return usersFound;
   },
 
   async loginUser(userName, password) {
