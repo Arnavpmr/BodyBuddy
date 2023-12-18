@@ -9,14 +9,5 @@ export const workouts = (req, res, next) => {
 export const workout = (req, res, next) => {
   const { isPreset } = req.body;
 
-  if (
-    isPreset &&
-    ["POST", "PUT", "DELETE"].includes(req.method) &&
-    req.session.user.role === "user"
-  )
-    return res.status(403).json({
-      error: "A user cannot perform this operation",
-    });
-
   next();
 };

@@ -1,5 +1,5 @@
 import { challengeQueue } from "../config/mongoCollections.js";
-import { challengeObject, challengeData } from "../data/index.js";
+import { challengeObject, challengeData, userData } from "../data/index.js";
 import { Router } from "express";
 import helper from "../helpers.js";
 import multer from "multer";

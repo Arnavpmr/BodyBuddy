@@ -155,7 +155,7 @@ router
   });
 
 router.route("/target/:muscle_target").get(async (req, res) => {
-  muscleTarget = xss(req.params.muscle_target);
+  const muscleTarget = xss(req.params.muscle_target);
   try {
     const exerciseLst = await exercises.getAllExercisesByTarget(muscleTarget);
     res.json({ match: exerciseLst });
