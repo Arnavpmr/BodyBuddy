@@ -4,6 +4,7 @@ import session from "express-session";
 import configRoutes from "./routes/index.js";
 import exphbs from "express-handlebars";
 import * as mw from "./routes/middleware.js";
+import * as hbhelpers from "./handlebarhelpers.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(
     saveUninitialized: false,
   }),
 );
+Handlebars.registerHelper("dateToString", hbhelpers.dateToString);
 
 // app.use(mw.rewriteUnsupportedBrowserMethods);
 
