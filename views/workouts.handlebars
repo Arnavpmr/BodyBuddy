@@ -12,6 +12,19 @@
         name="workoutSearch"
     />
     <input type="button" value="Hide List" id="clear_filter">
+    <input type="button" value="Sort by Name (Ascending)" id="alpha_sort">
+    <br>
+    <br>
+    <div id="list1" class="dropdown-check-list" tabindex="100">
+    <span class="anchor">Filter by Workout Type(s)</span>
+    <ul class="items" id="filterCheckList">
+        <li><label for="filterInput1"><input type="checkbox" name="filterInput1" id="filterInput1" value="Lower Body" class="selectCheck">Lower Body</label> </li>
+        <li><label for="filterInput2"><input type="checkbox" name="filterInput2" id="filterInput2" value="Upper Body" class="selectCheck">Upper Body</label> </li>
+        <li><label for="filterInput3"><input type="checkbox" name="filterInput3" id="filterInput3" value="Endurance" class="selectCheck">Endurance</label> </li>
+        <li><label for="filterInput4"><input type="checkbox" name="filterInput4" id="filterInput4" value="Strength" class="selectCheck">Strength</label> </li>
+        <li><label for="filterInput5"><input type="checkbox" name="filterInput5" id="filterInput5" value="Core" class="selectCheck">Core</label> </li>
+    </ul>
+    </div>
     <br />
     <br>
     <div id='element_container' style="overflow-y: scroll;">
@@ -21,6 +34,7 @@
                 style='width: 25%;color: var(--light-text);padding: 1rem;display: "";'
                 aria-label='{{name}}'
             >
+                <span hidden class="data" style="visibility:hidden;display: none;">{{string}}</span>
                 <div style='display: table;width: 100%'>
                     <span style='display: table-cell;width: 25%;'>{{name}}</span>
                     <div
@@ -42,7 +56,6 @@
                         {{/if}}
                     </div>
                 </div>
-            <br>
             </div>
         {{/each}}
     </div>
@@ -57,28 +70,18 @@
         <input type="text" name="nameInput" id="nameInput" required>
     </label>
     <br>
-        <p>Input workout type(s)</p>
-        <label for="aerobicInput">
-            <input type="checkbox" value="Lower Body" name="aerobicInput" id="aerobicInput">
-            Lower Body
-        </label>    <br>
-        <label for="stretchingInput">
-            <input type="checkbox" value="Upper Body" name="stretchingInput" id="stretchingInput">
-            Upper Body
-        </label>  <br>
-        <label for="anaerobicInput">
-            <input type="checkbox" value="Endurance" name="anaerobicInput" id="anaerobicInput">
-            Endurance
-        </label>  <br>
-        <label for="strengthInput">
-            <input type="checkbox" value="strength" name="strengthInput" id="strengthInput">
-            Strength
-        </label>  <br>
-        <label for="balanceInput">
-            <input type="checkbox" value="Core" name="balanceInput" id="balanceInput">
-            Core
-        </label>
-    <br><br>
+    <br>
+    <div id="list2" class="dropdown-check-list" tabindex="100" style="color: black">
+    <span class="anchor">Choose Workout Type(s)</span>
+    <ul class="items">
+        <li><label for="selectType1"><input type="checkbox" name="selectType1" id="selectType1" value="Lower Body">Lower Body</label> </li>
+        <li><label for="selectType2"><input type="checkbox" name="selectType2" id="selectType2" value="Upper Body">Upper Body</label> </li>
+        <li><label for="selectType3"><input type="checkbox" name="selectType3" id="selectType3" value="Endurance">Endurance</label> </li>
+        <li><label for="selectType4"><input type="checkbox" name="selectType4" id="selectType4" value="Strength">Strength</label> </li>
+        <li><label for="selectType5"><input type="checkbox" name="selectType5" id="selectType5" value="Core">Core</label> </li>
+    </ul>
+    </div>
+    <br>
     <label for="notes">
         General notes <br>
         <textarea name="notes" id="notes" cols="30" rows="10"></textarea>
