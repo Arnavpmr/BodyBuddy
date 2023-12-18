@@ -20,6 +20,7 @@ router.route("/workout").post(async (req, res) => {
   try {
     newWorkout = helper.workoutValidator(name, workoutTypes, notes, exercises);
   } catch (e) {
+    console.log(e.toString());
     return res.status(400).json({ error: e });
   }
 
