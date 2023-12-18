@@ -49,8 +49,8 @@ router.route("/challenge/toggleupdates").post(async (req, res) => {
 });
 
 router.post(
-  "/challenge/submit",
-  upload.array("user_submission", 10),
+  "/submit",
+  upload.array("submissionInput", 10),
   async (req, res) => {
     // TODO store the images in firebase and get all the urls and place them in the images field in new object
     // if everythings good, then check if user made a prev submission and remove all those images from firebase
