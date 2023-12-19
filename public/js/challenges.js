@@ -61,7 +61,7 @@
     document.getElementsByClassName("delete_block"),
   );
   deleteBlocks.map((div) => {
-    const id = div.ariaLabel;
+    const id = Array.from(div.getElementsByClassName("data"))[0].innerHTML;
     const delete_button = Array.from(
       div.getElementsByClassName("challenge-delete"),
     )[0];
@@ -74,5 +74,10 @@
         window.location.replace("/challenges");
       });
     });
+  });
+
+  const addChallenge = $("#submitChallenge");
+  addChallenge.addEventListener("submit", (e) => {
+    e.preventDefault();
   });
 })(window.jQuery);
