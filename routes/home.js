@@ -78,7 +78,7 @@ router.route("/").get(async (req, res) => {
     userData: curUser,
     user: req.session.user,
     workouts: workouts,
-    curChallengeWorkouts: curChallengeWorkouts,
+    curChallengeWorkouts: newExercises,
     submission: submission,
     currentChallenge: curChallenge,
   });

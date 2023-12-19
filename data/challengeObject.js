@@ -89,7 +89,7 @@ let challengeObjectFunctions = {
           pastChallenges: challengesObject.pastChallenges,
           current: challengesObject.current,
           queue: challengesObject.queue,
-          submission: [],
+          submissions: [],
         },
       },
       { returnDocument: "after" },
