@@ -522,3 +522,7 @@ footer {
 .workout_expanded {
   text-decoration: underline;
 }
+
+.workouts-list-item {
+  text-align: center;
+}

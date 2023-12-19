@@ -4,6 +4,7 @@ import {
   userData,
   exerciseData,
   challengeObject,
+  workoutData,
 } from "../data/index.js";
 import { challengeQueue } from "../config/mongoCollections.js";
 
@@ -16,9 +17,7 @@ router.route("/").get(async (req, res) => {
   const curChallenge = await challengeData.getChallengeById(
     challengesObject.current,
   );
-  const globalLeaderboard = challengesObject.leaderboard;
   const curUser = await userData.getUserByUsername(req.session.user.userName);
-  const exercises = curChallenge.exercises;
 
   let newExercises = [];
 
@@ -33,10 +32,21 @@ router.route("/").get(async (req, res) => {
 
   let submission = null;
   let workouts = [];
+  let curChallengeWorkouts = undefined;
 
   try {
     submission = await challengeObject.getSubmissionByUserName(
       curUser.userName,
+    );
+    curChallengeWorkouts = await Promise.all(
+      curChallenge.exercises.map(async (exercise) => {
+        const fullExercise = await exerciseData.getExerciseById(exercise.id);
+        return {
+          exercise: fullExercise,
+          reps: exercise.reps,
+          sets: exercise.sets,
+        };
+      }),
     );
   } catch (e) {
     submission = null;
@@ -68,9 +78,9 @@ router.route("/").get(async (req, res) => {
     userData: curUser,
     user: req.session.user,
     workouts: workouts,
+    curChallengeWorkouts: curChallengeWorkouts,
     submission: submission,
     currentChallenge: curChallenge,
-    globalLeaderboard: globalLeaderboard,
   });
 });
 

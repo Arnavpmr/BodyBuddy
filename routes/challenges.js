@@ -43,6 +43,7 @@ router.route("/").get(async (req, res) => {
   let submissions = undefined;
   let challengesQueue = undefined;
   let workouts = undefined;
+  let curChallengeWorkouts = undefined;
 
   try {
     queueCollection = await challengeQueue();
@@ -64,6 +65,16 @@ router.route("/").get(async (req, res) => {
 
     curChallenge = await challengeData.getChallengeById(
       challengesObject.current,
+    );
+    curChallengeWorkouts = await Promise.all(
+      curChallenge.exercises.map(async (exercise) => {
+        const fullExercise = await exerciseData.getExerciseById(exercise.id);
+        return {
+          exercise: fullExercise,
+          reps: exercise.reps,
+          sets: exercise.sets,
+        };
+      }),
     );
     curChallenge.exercises = await Promise.all(
       curChallenge.exercises.map(async (exercise) => {
@@ -104,6 +115,7 @@ router.route("/").get(async (req, res) => {
     workouts: workouts,
     challengesQueue: challengesQueue,
     currentChallenge: curChallenge,
+    curChallengeWorkouts: curChallengeWorkouts,
     curRank: curRank,
   });
 });

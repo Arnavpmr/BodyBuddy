@@ -10,6 +10,18 @@
                 points (more points can be earned through ranking high on the
                 leaderboard).</p>
         {{/with}}
+        <ol class='workouts-list'>
+            {{#each curChallengeWorkouts}}
+                <li class='workouts-list-item'>
+                    <p>{{exercise.name}}
+                        with
+                        {{sets}}
+                        sets of
+                        {{reps}}
+                        reps</p>
+                </li>
+            {{/each}}
+        </ol>
     </div>
     <div class='challenge-component-bottom'>
         <!-- Leaderboard -->
@@ -166,7 +178,7 @@
                         <span>Delete</span>
                     </li>
                     {{#each challengesQueue}}
-                        <div class="delete_block" aria-label="{{_id}}">
+                        <div class='delete_block' aria-label='{{_id}}'>
                             <li class='challenges-list-item'>
                                 <span>{{title}}</span>
                                 <span>{{reward}}</span>

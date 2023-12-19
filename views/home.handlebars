@@ -14,7 +14,21 @@
                                 {{reward}}
                                 points (more points can be earned through
                                 ranking high on the leaderboard).</p>
+                            <h2 class='challenge-component-title'>List of
+                                Workouts to Complete</h2>
                         {{/with}}
+                        <ol class='workouts-list'>
+                            {{#each curChallengeWorkouts}}
+                                <li class='workouts-list-item'>
+                                    <p>{{exercise.name}}
+                                        with
+                                        {{sets}}
+                                        sets of
+                                        {{reps}}
+                                        reps</p>
+                                </li>
+                            {{/each}}
+                        </ol>
                     </div>
                     <div class='challenge-component-bottom'>
                         <!-- Leaderboard -->
@@ -64,16 +78,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Submission Component -->
-                        <div class='submission-flex-item'>
-                            <h1>Challenge Submission Status</h1>
-                            {{#if submission}}
-                                <p>Your submitted some shit</p>
-                            {{else}}
-                                <p>Participate in the challenge you lazy piece
-                                    of shit!</p>
-                            {{/if}}
-                        </div>
                     </div>
                 </div>
             </td>
@@ -82,52 +86,68 @@
                 <div class='widget' style='text-align: center;'>
                     <h2>Quick Access to Some of Your Workouts</h2>
                     {{#each workouts}}
-                        <div class='favoriteWorkoutElement center' style="padding-bottom: 1rem;display: block;">
-                            <div style="display: table;width: 100%;">
-                                    <span style='display: table-cell;'><h3
-                                            style='display: inline-block;color: var(--light-text)'
-                                        >{{name}}</h3><br>
-                                        <span><span style="font-weight: bold;">Workout Type:</span> <span style="font-style:italic;">{{type}}</span></span>
-                                    </span>
-                                    <div style='display: table-cell;text-align: right;'>
-                                        <button
-                                            class='about_button'
-                                            style='font-size: 16px;white-space: pre-wrap;'
-                                            aria-label="expand_button"
-                                        >Expand</button>
-                                    </div>
+                        <div
+                            class='favoriteWorkoutElement center'
+                            style='padding-bottom: 1rem;display: block;'
+                        >
+                            <div style='display: table;width: 100%;'>
+                                <span style='display: table-cell;'><h3
+                                        style='display: inline-block;color: var(--light-text)'
+                                    >{{name}}</h3><br />
+                                    <span><span
+                                            style='font-weight: bold;'
+                                        >Workout Type:</span>
+                                        <span
+                                            style='font-style:italic;'
+                                        >{{type}}</span></span>
+                                </span>
+                                <div
+                                    style='display: table-cell;text-align: right;'
+                                >
+                                    <button
+                                        class='about_button'
+                                        style='font-size: 16px;white-space: pre-wrap;'
+                                        aria-label='expand_button'
+                                    >Expand</button>
                                 </div>
-                            <div class="expanded" style="display: none;">
+                            </div>
+                            <div class='expanded' style='display: none;'>
 
-                                <h4 class="workout_expanded">Exercsises</h4>
+                                <h4 class='workout_expanded'>Exercsises</h4>
                                 {{#each exercises}}
-                                <hr>
-                                    <h5 style="font-weight: bold;font-size: 12pt">{{name}}</h5>
+                                    <hr />
+                                    <h5
+                                        style='font-weight: bold;font-size: 12pt'
+                                    >{{name}}</h5>
 
                                     <p>{{sets}} sets of {{reps}} reps</p>
 
                                     <p>{{instructions}}</p>
 
                                     <p>
-                                        Equipment: 
-                                        <span style="font-style: italic;">{{equipment}}</span>
+                                        Equipment:
+                                        <span
+                                            style='font-style: italic;'
+                                        >{{equipment}}</span>
                                     </p>
 
                                     <p>
-                                        Target Muscles: 
-                                        <span style="font-style: italic;">{{targetMuscles}}</span>
+                                        Target Muscles:
+                                        <span
+                                            style='font-style: italic;'
+                                        >{{targetMuscles}}</span>
                                     </p>
 
                                     <p>{{description}}</p>
                                 {{/each}}
 
                             </div>
-                            </div>
-                        <span style="margin: .25rem;"></span>
+                        </div>
+                        <span style='margin: .25rem;'></span>
                     {{/each}}
                 </div>
             </td>
         </tr>
     </table>
 </div>
-<script src="./public/js/home.js"></script>
+<script src='./public/js/home.js'></script>
