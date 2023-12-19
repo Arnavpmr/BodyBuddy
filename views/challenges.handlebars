@@ -1,5 +1,5 @@
 <!-- Challenge Widget -->
-<div class='widget'>
+<div class='widget' style='color: var(--light-text)'>
     <div style='display: table-cell;padding-left: 5rem;'>
         <h1 class='challenge-component-title'>Current Challenge</h1>
         {{#with currentChallenge}}
@@ -119,27 +119,115 @@
         {{#if (stringEquals user.role 'admin')}}
             <div class='submission-admin-review'>
                 <h1 class='challenge-component-title'>Review Submissions</h1>
-                <ol class='submissions-list'>
-                    <li>
-                        <div class='submission-list-item'>
-                            <span>Username</span>
-                            <span>Time</span>
-                            <span>Expand</span>
-                        </div>
-                    </li>
+                <ol class='submissions-list' id='submissions_box'>
                     {{#each submissions}}
                         <li>
                             <div class='submission-list-item'>
-                                <span>{{userName}}</span>
-                                <span>{{dateTo24HRFormat time}}</span>
-                                <button>Expand</button>
+                                User
+                                <span
+                                    style='font-style: italic;'
+                                >{{userName}}</span>
+                                Submitted at
+                                <span
+                                    style='font-style: italic;'
+                                >{{dateTo24HRFormat time}}</span>
+                                <button
+                                    class='submission-button'
+                                >Expand</button>
+                                <div class='expanded' style='display: none;'>
+                                    <br />
+                                    {{#each images}}
+                                        <a href='{{link}}'>Image {{@index}}</a>
+                                    {{/each}}
+                                    <button
+                                        class='approve_button'
+                                    >Approve</button><button
+                                        class='deny_button'
+                                    >Deny</button>
+                                </div>
                             </div>
                         </li>
                     {{/each}}
+                    {{#unless submissions}}
+                        None!
+                    {{/unless}}
                 </ol>
             </div>
         {{/if}}
     </div>
+    {{#if (stringEquals user.role 'admin')}}
+        <div class='challenge-component-full-bottom'>
+            <div class='challenges-queue-item'>
+                <h1 class='challenge-component-title'>Challenges in Queue</h1>
+                <ul class='challenges-list'>
+                    <li class='challenges-list-item'>
+                        <span>Title</span>
+                        <span>Reward</span>
+                        <span>Delete</span>
+                    </li>
+                    {{#each challengesQueue}}
+                        <div class="delete_block" aria-label="{{_id}}">
+                            <li class='challenges-list-item'>
+                                <span>{{title}}</span>
+                                <span>{{reward}}</span>
+                                <button class='challenge-delete'>Delete</button>
+                            </li>
+                        </div>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class='challenges-queue-form'>
+                <h1 class='challenge-component-title'>Create Challenge</h1>
+
+                <form action='/challenges/challenge' id='submitChallenge'>
+
+                    <label for='titleInput'>
+                        Input a title
+                        <input
+                            type='text'
+                            name='titleInput'
+                            id='titleInput'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='descriptionInput'>
+                        Input a description
+                        <input
+                            type='text'
+                            name='descriptionInput'
+                            id='descriptionInput'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='rewardInput'>
+                        Input a reward
+                        <input
+                            type='number'
+                            name='rewardInput'
+                            id='rewardInput'
+                            min='1'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='exerciseInput'>
+                        Input an exercise
+                        <select>
+                            {{#each workouts}}
+                                <option value='{{name}}'>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </label>
+                    <br />
+                    <label for='submitButton'>
+                        <button type='submit' id='submitButton'>Submit</button>
+                    </label>
+                </form>
+            </div>
+        </div>
+    {{/if}}
 </div>
 
 <script

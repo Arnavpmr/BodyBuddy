@@ -5,15 +5,13 @@ const router = Router();
 
 router.route("/").get(async (req, res) => {
   let user = undefined;
-
   try {
-    user = await userData.getUserByUsername(xssSafe(req.session.userName));
+    user = await userData.getUserByUsername(xssSafe(req.session.user.userName));
   } catch (e) {
     user = null;
   }
-
   return res.status(200).render("about", {
-    userData: user,
+    user: user,
   });
 });
 

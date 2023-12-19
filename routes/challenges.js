@@ -4,6 +4,7 @@ import {
   challengeData,
   userData,
   exerciseData,
+  workoutData,
 } from "../data/index.js";
 import { Router } from "express";
 import helper from "../helpers.js";
@@ -40,6 +41,8 @@ router.route("/").get(async (req, res) => {
   let submission = undefined;
 
   let submissions = undefined;
+  let challengesQueue = undefined;
+  let workouts = undefined;
 
   try {
     queueCollection = await challengeQueue();
@@ -79,18 +82,27 @@ router.route("/").get(async (req, res) => {
   if (curUser.role === "admin") {
     try {
       submissions = challengesObject.submissions;
+
+      challengesQueue = await Promise.all(
+        challengesObject.queue.map(async (id) => {
+          const newChallenge = await challengeData.getChallengeById(id);
+          return newChallenge;
+        }),
+      );
+
+      workouts = await workoutData.getAllWorkouts();
     } catch (e) {
       return res.status(500).json({ error: e });
     }
   }
-
-  console.log(submissions);
 
   return res.status(200).render("challenges", {
     title: "Challenges",
     user: curUser,
     submission: submission,
     submissions: submissions,
+    workouts: workouts,
+    challengesQueue: challengesQueue,
     currentChallenge: curChallenge,
     curRank: curRank,
   });
@@ -156,7 +168,7 @@ router
     return res.status(200).json(resDB);
   })
   .post(async (req, res) => {
-    const status = xssSafe(req.body);
+    const status = xssSafe(req.body.status);
 
     let userName = null;
     let resDB = null;
@@ -165,7 +177,7 @@ router
       if (status !== "approved" && status !== "denied")
         throw "Status is invalid";
 
-      userName = helper.idValidator(xssSafe(req.params.userName));
+      userName = helper.inputValidator(xssSafe(req.params.userName));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -176,7 +188,7 @@ router
       return res.status(500).json({ error: e });
     }
 
-    return resDB;
+    return res.status(200).json(resDB);
   });
 
 router.route("/challenge").post(async (req, res) => {
@@ -215,6 +227,18 @@ router.route("/challenge").post(async (req, res) => {
   }
 
   return res.status(200).json(newChallengeDB);
+});
+
+router.route("/challenge/queue/:id").delete(async (req, res) => {
+  try {
+    const deleteFromQueue = await challengeObject.removeChallengeFromQueue(
+      req.params.id,
+    );
+    res.status(200).json(deleteFromQueue);
+  } catch (error) {
+    console.log(error.toString());
+    res.status(400).json({ error: error.toString() });
+  }
 });
 
 router
