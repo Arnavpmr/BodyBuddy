@@ -368,7 +368,7 @@ footer {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  column-gap: 100px;
+  column-gap: 150px;
 }
 
 .submission-status-pending {
