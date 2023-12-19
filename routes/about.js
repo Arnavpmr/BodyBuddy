@@ -11,6 +11,7 @@ router.route("/").get(async (req, res) => {
     user = null;
   }
   return res.status(200).render("about", {
+    title: "About",
     user: user,
   });
 });
