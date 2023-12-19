@@ -43,7 +43,7 @@ router.route("/").get(async (req, res) => {
   }
 
   try {
-    workouts = await userData.getUserWorkoutData(curUser.userName);
+    workouts = await userData.getUserWorkoutDataDeep(curUser.userName);
   } catch (error) {
     console.log(error.toString());
     console.log("No workout data found");
