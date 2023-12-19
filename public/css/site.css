@@ -62,6 +62,20 @@ body {
   background-color: var(--dark-grey);
 }
 
+#loggedin_about_screen_div {
+  position: absolute;
+  top: 8%;
+  left: 23%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  font-size: 20px;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 50%;
+}
+
 #about_screen_div {
   position: absolute;
   top: 40%;
@@ -159,12 +173,19 @@ h3 {
 #profileForm input[type="email"],
 #profileForm input[type="password"],
 #profileForm textarea,
-#profileForm input[type="number"] {
+#profileForm input[type="number"],
+#profileForm select {
   width: 90%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid var(--light-grey);
   border-radius: 5px;
+}
+
+#profileForm select:disabled {
+  background-color: #efefef4d;
+  color: var(--dark-grey);
+  opacity: 1;
 }
 
 #profileForm textarea {
