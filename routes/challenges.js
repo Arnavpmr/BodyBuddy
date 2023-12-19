@@ -132,7 +132,10 @@ router.post(
 
       return res.redirect("/challenges");
     } catch (e) {
-      return res.status(400).render("error", { error: e.toString() });
+      return res.status(400).render("error", {
+        error: e.toString(),
+        title: "Error",
+      });
     }
   },
 );
