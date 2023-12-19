@@ -84,8 +84,6 @@ router.route("/").get(async (req, res) => {
     }
   }
 
-  console.log(submissions);
-
   return res.status(200).render("challenges", {
     title: "Challenges",
     user: curUser,
