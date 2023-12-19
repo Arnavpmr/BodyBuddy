@@ -21,14 +21,14 @@ router.route("/").get(async (req, res) => {
   for (let i = 0; i < workoutList.length; i++) {
     const element = workoutList[i];
     const id = element._id.toString();
-    if (element.isPreset || userWorkouts.includes(id)) {
+    const userCreated = userWorkouts.includes(id);
+    if (element.isPreset || userCreated) {
       const w_data = await workouts.getWorkoutAllDataById(id);
       w_data["string"] = JSON.stringify(element);
+      w_data["userCreated"] = userCreated;
       retLst.push(w_data);
     }
   }
-
-  console.log(retLst);
 
   return res.status(200).render("workouts", {
     title: "Workouts",
