@@ -151,8 +151,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
   function populateAvatars() {
     const avatars = [
       "../public/res/avatars/defaultAvatar.jpeg",
-      "../public/res/avatars/Screenshot 2023-12-17 at 4.17.47 PM.png",
-      "../public/res/avatars/Screenshot 2023-12-17 at 4.17.54 PM.png",
+      "../public/res/avatars/Screenshot 2023-12-18 at 8.50.45 PM.png",
+      "../public/res/avatars/Screenshot 2023-12-18 at 8.51.00 PM.png",
+      "../public/res/avatars/Screenshot 2023-12-18 at 8.51.08 PM.png",
+      "../public/res/avatars/Screenshot 2023-12-18 at 8.51.16 PM.png",
+      "../public/res/avatars/Screenshot 2023-12-18 at 8.51.26 PM.png",
+      "../public/res/avatars/Screenshot 2023-12-18 at 8.52.01 PM.png",
+      "../public/res/avatars/Screenshot 2023-12-18 at 8.52.15 PM.png",
     ];
 
     avatarList.innerHTML = "";
