@@ -1,5 +1,5 @@
 <!-- Challenge Widget -->
-<div class='widget'>
+<div class='widget' style="color: var(--light-text)">
     <div style='display: table-cell;padding-left: 5rem;'>
         <h1 class='challenge-component-title'>Current Challenge</h1>
         {{#with currentChallenge}}
@@ -119,23 +119,42 @@
         {{#if (stringEquals user.role 'admin')}}
             <div class='submission-admin-review'>
                 <h1 class='challenge-component-title'>Review Submissions</h1>
-                <ol class='submissions-list'>
-                    <li>
-                        <div class='submission-list-item'>
-                            <span>Username</span>
-                            <span>Time</span>
-                            <span>Expand</span>
-                        </div>
-                    </li>
+                <ol class='submissions-list' id="submissions_box">
+                    <div class='submission-list-item'>
+                                User 
+                                <span style="font-style: italic;">username</span>
+                                 Submitted at 
+                                <span style="font-style: italic;">time</span>
+                                <button class="submission-button">Expand</button>
+                                <div class="expanded" style="display: none;">
+                                    <br>
+                                    {{#each images}}
+                                        <a href="{{link}}">Image {{@index}}</a>
+                                    {{/each}}
+                                    <button class="approve_button">Approve</button><button class="deny_button">Deny</button>
+                                </div>
+                            </div>
                     {{#each submissions}}
-                        <li>
-                            <div class='submission-list-item'>
-                                <span>{{userName}}</span>
-                                <span>{{dateTo24HRFormat time}}</span>
-                                <button>Expand</button>
+                   <li>
+                    <div class='submission-list-item'>
+                                User 
+                                <span style="font-style: italic;">{{userName}}</span>
+                                 Submitted at 
+                                <span style="font-style: italic;">{{dateTo24HRFormat time}}</span>
+                                <button class="submission-button">Expand</button>
+                                <div class="expanded" style="display: none;">
+                                    <br>
+                                    {{#each images}}
+                                        <a href="{{link}}">Image {{@index}}</a>
+                                    {{/each}}
+                                    <button class="approve_button">Approve</button><button class="deny_button">Deny</button>
+                                </div>
                             </div>
                         </li>
                     {{/each}}
+                    {{#unless submissions}}
+                        None!
+                    {{/unless}}
                 </ol>
             </div>
         {{/if}}
