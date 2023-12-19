@@ -98,7 +98,7 @@
                                     type='file'
                                     accept='image/png, image/jpeg, image/jpg'
                                     name='submissionInput'
-                                    placeholder='Your Submission Here'
+                                    {{! placeholder='Your Submission Here' }}
                                 />
                                 <button type='submit'>Submit</button>
                             </form>
@@ -120,7 +120,7 @@
                                 type='file'
                                 accept='image/png, image/jpeg, image/jpg'
                                 name='submissionInput'
-                                placeholder='Your Submission Here'
+                                {{! placeholder='Your Submission Here' }}
                             />
                             <button type='submit'>Submit</button>
                         </form>
@@ -161,7 +161,7 @@
                         </li>
                     {{/each}}
                     {{#unless submissions}}
-                        None!
+                        <li>None!</li>
                     {{/unless}}
                 </ol>
             </div>
@@ -172,26 +172,29 @@
             <div class='challenges-queue-item'>
                 <h1 class='challenge-component-title'>Challenges in Queue</h1>
                 <ul class='challenges-list'>
-                    <li class='challenges-list-item'>
-                        <span>Title</span>
-                        <span>Reward</span>
-                        <span>Delete</span>
-                    </li>
                     {{#each challengesQueue}}
-                        <div class='delete_block' aria-label='{{_id}}'>
-                            <li class='challenges-list-item'>
+                        <li class='challenges-list-item'>
+                            <div class='delete_block'>
+                                <span
+                                    style='display: none;visibility: hidden;'
+                                    class='data'
+                                >{{_id}}</span>
                                 <span>{{title}}</span>
                                 <span>{{reward}}</span>
                                 <button class='challenge-delete'>Delete</button>
-                            </li>
-                        </div>
+                            </div>
+                        </li>
                     {{/each}}
                 </ul>
             </div>
             <div class='challenges-queue-form'>
                 <h1 class='challenge-component-title'>Create Challenge</h1>
 
-                <form action='/challenges/challenge' id='submitChallenge'>
+                <form
+                    action='/challenges/challenge/queue/create'
+                    id='submitChallenge'
+                    method='POST'
+                >
 
                     <label for='titleInput'>
                         Input a title
@@ -225,10 +228,10 @@
                     </label>
                     <br />
                     <label for='exerciseInput'>
-                        Input an exercise
-                        <select>
+                        Input a workout
+                        <select id='exerciseInput'>
                             {{#each workouts}}
-                                <option value='{{name}}'>{{name}}</option>
+                                <option value='{{_id}}'>{{name}}</option>
                             {{/each}}
                         </select>
                     </label>
@@ -237,6 +240,7 @@
                         <button type='submit' id='submitButton'>Submit</button>
                     </label>
                 </form>
+                <p id='createErrorList' style='color: red;'></p>
             </div>
         </div>
     {{/if}}

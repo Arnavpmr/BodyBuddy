@@ -144,7 +144,10 @@ router.post(
 
       return res.redirect("/challenges");
     } catch (e) {
-      return res.status(400).json({ error: e.toString() });
+      return res.status(400).render("error", {
+        error: e.toString(),
+        title: "Error",
+      });
     }
   },
 );
@@ -247,6 +250,31 @@ router.route("/challenge/queue/:id").delete(async (req, res) => {
       req.params.id,
     );
     res.status(200).json(deleteFromQueue);
+  } catch (error) {
+    console.log(error.toString());
+    res.status(400).json({ error: error.toString() });
+  }
+});
+
+router.route("/challenge/queue/create").post(async (req, res) => {
+  try {
+    const body = req.body;
+    if (!body) throw "Request body is invalid";
+    const w_data = await workoutData.getWorkoutAllDataById(body.id);
+
+    const name = helper.inputValidator(body.name, "body.name");
+    const desc = helper.inputValidator(body.description, "body.description");
+    const rew = Number(helper.inputValidator(body.reward, "body.reward"));
+    if (isNaN(rew) || !Number.isInteger(rew))
+      throw "body.reward should be an integer number";
+
+    const return_data = await challengeData.createChallenge(
+      w_data.exercises,
+      name,
+      rew,
+      desc,
+    );
+    res.status(200).json(return_data);
   } catch (error) {
     console.log(error.toString());
     res.status(400).json({ error: error.toString() });

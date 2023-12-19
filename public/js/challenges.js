@@ -61,7 +61,7 @@
     document.getElementsByClassName("delete_block"),
   );
   deleteBlocks.map((div) => {
-    const id = div.ariaLabel;
+    const id = Array.from(div.getElementsByClassName("data"))[0].innerHTML;
     const delete_button = Array.from(
       div.getElementsByClassName("challenge-delete"),
     )[0];
@@ -74,5 +74,48 @@
         window.location.replace("/challenges");
       });
     });
+  });
+
+  const addError = $("#createErrorList");
+
+  const addChallenge = $("#submitChallenge");
+  addChallenge.on("submit", (e) => {
+    addError.html("");
+    addError.css("display", "none");
+
+    const target = e.currentTarget;
+    const nameInput = target[0].value.trim();
+
+    if (nameInput.length < 8) {
+      addError.html("Name must have a length of at least 8 characters");
+      addError.css("display", "");
+    }
+    const desc = target[1].value.trim();
+    if (desc.length < 15) {
+      addError.html("Description must have a length of at least 15 characters");
+      addError.css("display", "");
+    }
+    const reward = target[2].valueAsNumber;
+    const select = target[3];
+    const found_id = select.options[select.selectedIndex].value;
+
+    e.preventDefault();
+    if (addError.css("display") === "none") {
+      //Make request
+      const body = {
+        name: nameInput,
+        description: desc,
+        reward: reward,
+        id: found_id,
+      };
+      $.ajax({
+        url: "/challenges/challenge/queue/create",
+        method: "POST",
+        data: body,
+      }).then((res) => {
+        console.log("Challenge created!");
+        window.location.replace("/challenges");
+      });
+    }
   });
 })(window.jQuery);

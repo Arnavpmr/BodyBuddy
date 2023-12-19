@@ -123,7 +123,9 @@ router.get("/:userName", async (req, res) => {
     const user = await userDataFunctions.getUserByUsername(validatedUserName);
 
     if (!user) {
-      return res.status(404).render("error", { error: "User not found." });
+      return res
+        .status(404)
+        .render("error", { error: "User not found.", title: "Error" });
     }
 
     const workouts =
@@ -148,6 +150,7 @@ router.get("/:userName", async (req, res) => {
       isPrivate = true;
     }
     return res.status(200).render("profile", {
+      title: "Profile",
       profile: user,
       isMe,
       isPrivate,
@@ -157,11 +160,14 @@ router.get("/:userName", async (req, res) => {
     });
   } catch (error) {
     if (error && error.message && error.message.includes("not valid")) {
-      return res.status(400).render("error", { error: "Invalid username." });
+      return res
+        .status(400)
+        .render("error", { error: "Invalid username.", title: "Error" });
     }
 
-    return res.status(500).render("error", {
-      error: "An error occurred while fetching the profile.",
+    return res.status(400).render("error", {
+      error: "Invalid username.",
+      title: "Error",
     });
   }
 });
