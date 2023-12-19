@@ -31,7 +31,7 @@
         {{#each workouts}}
             <div
                 class='favoriteWorkoutElement'
-                style='width: 25%;color: var(--light-text);padding: 1rem;display: "";'
+                style='width: 25%;color: var(--light-text);padding: 1rem;display: block;'
                 aria-label='{{name}}'
             >
                 <span hidden class="data" style="visibility:hidden;display: none;">{{string}}</span>
@@ -40,6 +40,11 @@
                     <div
                         style='display: table-cell;text-align: right;width: 100%;'
                     >
+                        <button
+                            class='about_button view'
+                            style='font-size: 16px;'
+                            value="{{string}}"
+                        >Expand</button>
                         {{#if isPreset}}
                         <button
                             class='about_button'
@@ -55,6 +60,25 @@
                             >Delete</button>
                         {{/if}}
                     </div>
+                </div>
+                <div class="expanded" style="display: none;">
+                    <h4 class="workout_expanded">Exercsises</h4>
+                    {{#each exercises}}
+                    <hr>
+                        <h5 style="font-weight: bold;font-size: 12pt">{{name}}</h5>
+                        <p>{{sets}} sets of {{reps}} reps</p>
+                        <p>{{instructions}}</p>
+                        <p>
+                            Equipment: 
+                            <span style="font-style: italic;">{{equipment}}</span>
+                        </p>
+                        <p>
+                            Target Muscles: 
+                            <span style="font-style: italic;">{{targetMuscles}}</span>
+                        </p>
+                        <p>{{description}}</p>
+                    {{/each}}
+
                 </div>
             </div>
         {{/each}}

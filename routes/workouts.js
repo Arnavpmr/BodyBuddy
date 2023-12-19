@@ -7,7 +7,9 @@ import { xssSafe } from "../helpers.js";
 const router = Router();
 
 router.route("/").get(async (req, res) => {
-  const userWorkouts = await users.getUserWorkouts(req.session.user.userName);
+  const user = xssSafe(req.session.user);
+
+  const userWorkouts = await users.getUserWorkouts(user.userName);
   const workoutList = (await workouts.getAllWorkouts()).map((el) => {
     return {
       ...el,
@@ -18,13 +20,16 @@ router.route("/").get(async (req, res) => {
   const retLst = [];
   for (let i = 0; i < workoutList.length; i++) {
     const element = workoutList[i];
-    if (element.isPreset || userWorkouts.includes(element._id)) {
-      element["string"] = JSON.stringify(element);
-      retLst.push(element);
+    const id = element._id.toString();
+    if (element.isPreset || userWorkouts.includes(id)) {
+      const w_data = await workouts.getWorkoutAllDataById(id);
+      w_data["string"] = JSON.stringify(element);
+      retLst.push(w_data);
     }
   }
 
-  let user = xssSafe(req.session.user);
+  console.log(retLst);
+
   return res.status(200).render("workouts", {
     title: "Workouts",
     userData: req.session.user,
