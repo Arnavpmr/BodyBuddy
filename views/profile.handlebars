@@ -7,7 +7,7 @@
   <div id="userSearch">
     <div class="searchContainer">
       <form id="searchForm">
-        <input type="text" id="searchInput" placeholder="Search for users..." />
+        <input type="text" id="searchInput" placeholder="Search By Username" />
         <button type="submit">Search</button>
       </form>
       <div id="searchResults" class="dropdown-content"></div>
@@ -20,10 +20,18 @@
       <input type="text" name="lastName" value="{{profile.lastName}}" id="lastNameInput" disabled />
       <input type="text" name="userName" value="{{profile.userName}}" id="userNameInput" disabled />
       <input type="email" name="emailAddress" value="{{profile.emailAddress}}" id="emailAddressInput" disabled />
-      <input type="password" name="password" value="{{profile.password}}" id="passwordInput" disabled />
+      <input type="password" name="password" placeholder="Password" id="passwordInput" disabled />
       <textarea name="description" id="descriptionInput" disabled>{{profile.aboutMe.description}}</textarea>
-      <input type="text" name="unitMeasure" value="{{profile.unitMeasure}}" id="unitMeasureInput" disabled />
+      <textarea name="bodyMeasurements" placeholder="Body Measurement Notes" id="measurementsInput" disabled>{{profile.bodyMeasurements}}</textarea>
       <input type="number" name="age" value="{{profile.aboutMe.age}}" id="ageInput" disabled />
+      <select name="unitMeasure" id="unitMeasureInput" disabled>
+  <option value="lb" {{#if (stringEquals profile.unitMeasure 'lb')}}selected{{/if}}>Imperial Units</option>
+  <option value="kg" {{#if (stringEquals profile.unitMeasure 'kg')}}selected{{/if}}>Metric Units</option>
+</select>
+<select id="private" name="private" disabled>
+    <option value="false" {{#unless profile.private}}selected{{/unless}}>Public Account</option>
+    <option value="true" {{#if profile.private}}selected{{/if}}>Private Account</option>
+</select>
     </form>
     <button type="submit" id="saveChangesButton" hidden>Save Changes</button>
     <button id="editProfileButton">Edit Profile</button>
@@ -62,26 +70,60 @@
         <p>No incoming friend requests.</p>
       {{/unless}}
     </div>
-    
+    <h2>User Workouts</h2>
+    {{#if workouts}}
+      <ul>
+        {{#each workouts}}
+          <li>
+            <p>{{this.name}}: {{this.type}}</p>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No workouts to display.</p>
+    {{/if}}
   {{else}}
+    {{#if isPrivate}}
+
+        <button class="sendFriendRequestBtn" data-username="{{profile.userName}}">Send Friend Request</button>
+        <div id="friendRequestStatus" class="friend-request-status"></div>
+
+      </div>
+    {{else}}
     <div class="otherUserProfile">
-      <div class="profileFirstName">
-        First Name:
-        {{profile.firstName}}
-      </div>
-      <div class="profileAboutMe">
-        About Me:
-        {{profile.aboutMe.description}}
-      </div>
-      <div class="profileAge">
-        Age:
-        {{profile.aboutMe.age}}
-      </div>
-
       <button class="sendFriendRequestBtn" data-username="{{profile.userName}}">Send Friend Request</button>
-      <div id="friendRequestStatus" class="friend-request-status"></div>
+        <div id="friendRequestStatus" class="friend-request-status"></div>
+        <div class="profileFirstName">
+          First Name:
+          {{profile.firstName}}
+        </div>
+        <div class="profileAboutMe">
+          About Me:
+          {{profile.aboutMe.description}}
+        </div>
+        <div class="profileAge">
+          Age:
+          {{profile.aboutMe.age}}
+        </div>
+        <div class="profileBodyMeasurements">
+          Body Measurements:
+          {{profile.bodyMeasurements}}
+        </div>
+        <h2>User Workouts</h2>
+    {{#if workouts}}
+      <ul>
+        {{#each workouts}}
+          <li>
+            <p>{{this.name}}: {{this.type}}</p>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No workouts to display.</p>
+    {{/if}}
+        </div>
+    {{/if}}
 
-    </div>
   {{/if}}
 </div>
 

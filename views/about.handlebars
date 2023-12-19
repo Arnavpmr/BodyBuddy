@@ -6,20 +6,49 @@
         height='85%'
         style='overflow-x: hidden;'
     />
-    <div id='about_screen_div'>
-        <h1
-            style='text-align: center;color: var(--dark-grey);font-size: 36px;'
-        >Join the BodyBuddy Family!</h1>
-        <hr style='width: 80%; border: .1rem solid var(--dark-grey);' />
-        <div id='about_button_div'>
-            <a id='login_link_button' class='about_button' href='/login'>Login
-                Here</a>
-            <a
-                id='register_link_button'
-                class='about_button'
-                href='/register'
-            >Register Here</a>
+        {{#if user}}
+        <div id='loggedin_about_screen_div'>
+                <h1
+                    style='text-align: center;color: var(--dark-grey);font-size: 36px;'
+                >Welcome {{{user.userName}}}</h1>
+                <hr style='width: 80%; border: .1rem solid var(--dark-grey);' />
         </div>
-    </div>
+        <div id='healthfitness_div'>
+            <h2>Health and Fitness information bulletin:</h2>
+            <ol>
+                <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3273886/">Stretching Techniques</a></li>
+                <li><a href="https://www.nhlbi.nih.gov/health/educational/lose_wt/BMI/bmicalc.htm">Body mass index(BMI) calculator</a></li>
+                <li><a href="https://www.samhsa.gov/mental-health">Mental Health</a></li>
+                <li><a href="https://www.healthline.com/nutrition/25-best-diet-tips">Dieting tips</a></li>
+              
+
+            </ol>
+        </div>
+                   
+        {{else}}
+        <div id='about_screen_div'>
+            
+            <p style="text-align: center">
+
+                Welcome to BodyBuddy, a fitness revolution designed to redefine your wellness journey and elevate the way you approach personal fitness goals. We've created an environment where users can engage in community challenges, fostering shared motivation that propels individuals toward remarkable progress. BodyBuddy is more than just an app; it is a companion that inspires, guides, and supports. Join us on this journey, and let BodyBuddy be your trusted ally in the pursuit of your fitness aspirations.
+
+                Join us in this fitness revolution as we redefine what's possible in the world of fitness. Embrace the BodyBuddy experience and discover the transformative impact of personalized workouts and a supportive community on your fitness journey. Together, let's elevate the way we pursue and achieve our fitness aspirations.
+            </p>
+            <h1
+                style='text-align: center;color: var(--dark-grey);font-size: 36px;'
+            >Join the BodyBuddy Family!</h1>
+            <hr style='width: 80%; border: .1rem solid var(--dark-grey);' />
+            <div id='about_button_div'>
+
+                <a id='login_link_button' class='about_button' href='/login'>Login
+                    Here</a>
+                <a
+                    id='register_link_button'
+                    class='about_button'
+                    href='/register'
+                >Register Here</a>
+            </div>
+        </div>
+        {{/if}}
 
 </div>

@@ -21,14 +21,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const username = window.location.pathname.split("/").pop();
 
   const fields = profileForm
-    ? profileForm.querySelectorAll("input, textarea")
+    ? profileForm.querySelectorAll("input, textarea, select")
     : null;
 
   if (editButton && fields) {
     editButton.addEventListener("click", () => {
       fields.forEach((field) => (field.disabled = false));
       saveButton.hidden = false;
-      avatarSelection.style.display = "block";
+      //   avatarSelection.style.display = "block";
     });
   } else {
     console.error("Edit button or profile form fields not found!");
@@ -86,8 +86,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const searchInput = document.getElementById("searchInput");
   const searchResults = document.getElementById("searchResults");
 
-  searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+  const performSearch = () => {
     const query = searchInput.value.trim();
 
     if (query) {
@@ -95,24 +94,48 @@ document.addEventListener("DOMContentLoaded", (event) => {
         .then((response) => response.json())
         .then((data) => {
           searchResults.innerHTML = "";
-          data.forEach((userName) => {
-            const userElement = document.createElement("div");
-            userElement.innerHTML = `<a href="/user/${userName}">${userName}</a>`;
-            searchResults.appendChild(userElement);
-          });
           if (data.length > 0) {
+            data.forEach((userName) => {
+              const link = document.createElement("a");
+              link.href = `/user/${userName}`;
+              link.textContent = userName;
+              searchResults.appendChild(link);
+            });
+            searchResults.style.display = "block";
+          } else {
+            searchResults.innerHTML = "<div>No users found.</div>";
             searchResults.style.display = "block";
           }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  };
+
+  searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    performSearch();
+  });
+
+  searchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      performSearch();
     }
   });
 
-  window.onclick = function (event) {
+  window.addEventListener("click", (event) => {
     if (!event.target.matches("#searchInput")) {
       searchResults.style.display = "none";
     }
-  };
+  });
+
+  searchResults.addEventListener("click", (event) => {
+    if (event.target.tagName === "A") {
+      window.location.href = event.target.href;
+    }
+  });
   const sendRequestBtn = document.querySelector(".sendFriendRequestBtn");
   if (sendRequestBtn) {
     sendRequestBtn.addEventListener("click", function () {
@@ -128,8 +151,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
   function populateAvatars() {
     const avatars = [
       "../public/res/avatars/defaultAvatar.jpeg",
-      "../public/res/avatars/Screenshot 2023-12-17 at 4.17.47 PM.png",
-      "../public/res/avatars/Screenshot 2023-12-17 at 4.17.54 PM.png",
+      "../public/res/avatars/avatar1.png",
+      "../public/res/avatars/avatar2.png",
+      "../public/res/avatars/avatar3.png",
+      "../public/res/avatars/avatar4.png",
+      "../public/res/avatars/avatar5.png",
+      "../public/res/avatars/avatar6.png",
+      "../public/res/avatars/avatar7.png",
     ];
 
     avatarList.innerHTML = "";
@@ -158,12 +186,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
       })
       .then((data) => {
         console.log("Profile picture updated:", data);
-        // Update the displayed profile picture
         const currentProfilePic = document.getElementById("currentProfilePic");
         if (currentProfilePic) {
           currentProfilePic.src = avatarUrl;
         }
-        // Optionally, hide the avatar selection div
         avatarSelection.style.display = "none";
       })
       .catch((error) => {

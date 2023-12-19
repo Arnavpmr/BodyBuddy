@@ -2,6 +2,7 @@ import helper from "../helpers.js";
 import { workouts, exercises, users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import userDataFunctions from "./user.js";
+import exerciseDataFunctions from "./exercises.js";
 
 let workoutDataFunctions = {
   async createWorkout(
@@ -69,6 +70,22 @@ let workoutDataFunctions = {
     return allWorkouts;
   },
 
+  async getWorkoutAllDataById(workoutId) {
+    const w_data = await this.getWorkoutById(workoutId);
+    const exerciseList = [];
+    for (let i = 0; i < w_data.exercises.length; i++) {
+      const exercise = w_data.exercises[i];
+      const ex_temp_data = await exerciseDataFunctions.getExerciseById(
+        exercise.id,
+      );
+      exerciseList.push({
+        ...exercise,
+        ...ex_temp_data,
+      });
+    }
+    w_data.exercises = exerciseList;
+    return w_data;
+  },
   async getWorkoutsByType(workoutType) {
     workoutType = helper.inputValidator(workoutType, "Type");
     const workoutCollections = await workouts();

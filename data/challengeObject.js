@@ -1,4 +1,5 @@
 import { challengeQueue } from "../config/mongoCollections.js";
+import { challengeData, userData } from "./index.js";
 import helper from "../helpers.js";
 import storageFirebase from "../firebase.js";
 
@@ -14,13 +15,11 @@ let challengeObjectFunctions = {
     let queue = [];
     let pastChallenges = [];
     let submissions = [];
-    let globalLeaderBoard = [];
     let staticObject = {
       current: current,
       queue: queue,
       pastChallenges: pastChallenges,
       submissions: submissions,
-      leaderboard: globalLeaderBoard,
     };
 
     const queueCollection = await challengeQueue();
@@ -50,8 +49,9 @@ let challengeObjectFunctions = {
   },
 
   async removeChallengeFromQueue(id) {
+    id = helper.idValidator(id);
     const queueCollection = await challengeQueue();
-    let challengesObject = await queueCollection.find({}).toArray()[0];
+    let challengesObject = (await queueCollection.find({}).toArray())[0];
 
     const newQueue = challengesObject.queue.filter(
       (challengeId) => challengeId !== id,
@@ -61,7 +61,7 @@ let challengeObjectFunctions = {
       throw "Challenge not found in queue";
 
     const resDB = await queueCollection.updateOne(
-      { _id: challengesObject[0]._id },
+      { _id: challengesObject._id },
       { $set: { queue: newQueue } },
       { returnDocument: "after" },
     );
@@ -89,6 +89,7 @@ let challengeObjectFunctions = {
           pastChallenges: challengesObject.pastChallenges,
           current: challengesObject.current,
           queue: challengesObject.queue,
+          submission: [],
         },
       },
       { returnDocument: "after" },
@@ -110,6 +111,7 @@ let challengeObjectFunctions = {
       userName: userName,
       images: images,
       status: "pending",
+      time: new Date(),
     };
 
     await queueCollection.updateOne(
@@ -168,6 +170,9 @@ let challengeObjectFunctions = {
       const queueCollection = await challengeQueue();
       const challengesObject = (await queueCollection.find({}).toArray())[0];
 
+      if (res.status !== "denied")
+        throw "Submission must be denied for user to resubmit";
+
       const newSubmissions = [];
       for (
         let index = 0;
@@ -203,6 +208,34 @@ let challengeObjectFunctions = {
       if (strErr !== "Submission not found for user") throw strErr;
       else return false;
     }
+  },
+
+  async getCurrentChallengeRankByUser(userName) {
+    await userData.getUserByUsername(userName);
+
+    const queueCollection = await challengeQueue();
+    const challengesObject = (await queueCollection.find({}).toArray())[0];
+
+    const curChallenge = await challengeData.getChallengeById(
+      challengesObject.current,
+    );
+
+    if (!curChallenge) throw "Current challenge not found";
+
+    const leaderboard = curChallenge.leaderboard;
+    const foundIndex = leaderboard.findIndex(
+      (entry) => entry.userName === userName,
+    );
+
+    if (foundIndex === -1) throw "User has not participated in challenge";
+
+    const leaderboardInfo = leaderboard[foundIndex];
+
+    return {
+      rank: foundIndex + 1,
+      userName: leaderboardInfo.userName,
+      time: leaderboardInfo.time,
+    };
   },
 
   toggleUpdate(status) {
