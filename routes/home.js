@@ -43,6 +43,8 @@ router.route("/").get(async (req, res) => {
 
   curChallenge.exercises = newExercises;
 
+  // currentRank is a leaderboard object {time, rank, userName}
+
   return res.status(200).render("home", {
     title: "Home",
     userData: curUser,

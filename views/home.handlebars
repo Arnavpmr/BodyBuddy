@@ -40,6 +40,27 @@
                                                 }}</span>
                                         </div>
                                     {{/each}}
+                                    {{#if
+                                        (greaterThanLeaderboardMax currentRank)
+                                    }}
+                                        <h3
+                                            class='challenge-component-title'
+                                        >Your current Rank</h3>
+                                        <br />
+                                        <div class='leaderboard-item-flex'>
+                                            <span>{{currentRank.rank}})
+                                            </span>
+                                            <a
+                                                href='/user/{{userData.userName}}'
+                                            >
+                                                <span
+                                                >{{userData.userName}}</span>
+                                            </a>
+                                            <span>{{dateTo24HRFormat
+                                                    currentRank.time
+                                                }}</span>
+                                        </div>
+                                    {{/if}}
                                 </div>
                             </div>
                         </div>

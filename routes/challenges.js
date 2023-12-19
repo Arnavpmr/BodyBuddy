@@ -1,10 +1,15 @@
 import { challengeQueue } from "../config/mongoCollections.js";
-import { challengeObject, challengeData, userData } from "../data/index.js";
+import {
+  challengeObject,
+  challengeData,
+  userData,
+  exerciseData,
+} from "../data/index.js";
 import { Router } from "express";
 import helper from "../helpers.js";
 import multer from "multer";
-import storageFirebase from "../firebase.js";
 import { xssSafe } from "../helpers.js";
+
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
@@ -26,19 +31,68 @@ const upload = multer({
 const router = Router();
 
 router.route("/").get(async (req, res) => {
-  const queueCollection = await challengeQueue();
-  const challengesObject = (await queueCollection.find({}).toArray())[0];
+  let queueCollection = undefined;
+  let challengesObject = undefined;
 
-  const curChallenge = await challengeData.getChallengeById(
-    challengesObject.current,
-  );
-  const globalLeaderboard = challengesObject.leaderboard;
-  const curUser = await userData.getUserByUsername(req.session.user.userName);
+  let curChallenge = undefined;
+  let curUser = undefined;
+  let curRank = undefined;
+  let submission = undefined;
+
+  let submissions = undefined;
+
+  try {
+    queueCollection = await challengeQueue();
+    challengesObject = (await queueCollection.find({}).toArray())[0];
+    curUser = await userData.getUserByUsername(
+      xssSafe(req.session.user.userName),
+    );
+
+    try {
+      submission = await challengeObject.getSubmissionByUserName(
+        curUser.userName,
+      );
+      curRank = await challengeObject.getCurrentChallengeRankByUser(
+        curUser.userName,
+      );
+    } catch (e) {
+      submission = null;
+    }
+
+    curChallenge = await challengeData.getChallengeById(
+      challengesObject.current,
+    );
+    curChallenge.exercises = await Promise.all(
+      curChallenge.exercises.map(async (exercise) => {
+        const fullExercise = await exerciseData.getExerciseById(exercise.id);
+        return {
+          exercise: fullExercise,
+          sets: exercise.sets,
+          reps: exercise.reps,
+        };
+      }),
+    );
+  } catch (e) {
+    return res.status(500).json({ error: e });
+  }
+
+  if (curUser.role === "admin") {
+    try {
+      submissions = challengesObject.submissions;
+    } catch (e) {
+      return res.status(500).json({ error: e });
+    }
+  }
+
+  console.log(submissions);
 
   return res.status(200).render("challenges", {
-    curChallenge: challengesObject.current,
-    pastChallenges: challengeQueue.pastChallenges,
-    user: xssSafe(req.session.user),
+    title: "Challenges",
+    user: curUser,
+    submission: submission,
+    submissions: submissions,
+    currentChallenge: curChallenge,
+    curRank: curRank,
   });
 });
 
