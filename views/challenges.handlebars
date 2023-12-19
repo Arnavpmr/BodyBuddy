@@ -120,24 +120,6 @@
             <div class='submission-admin-review'>
                 <h1 class='challenge-component-title'>Review Submissions</h1>
                 <ol class='submissions-list' id='submissions_box'>
-                    <div class='submission-list-item'>
-                        User
-                        <span style='font-style: italic;'>username</span>
-                        Submitted at
-                        <span style='font-style: italic;'>time</span>
-                        <button class='submission-button'>Expand</button>
-                        <div class='expanded' style='display: none;'>
-                            <br />
-                            {{#each images}}
-                                <a href='{{link}}'>Image {{@index}}</a>
-                            {{/each}}
-                            <button
-                                class='approve_button'
-                            >Approve</button><button
-                                class='deny_button'
-                            >Deny</button>
-                        </div>
-                    </div>
                     {{#each submissions}}
                         <li>
                             <div class='submission-list-item'>
@@ -184,7 +166,7 @@
                         <span>Delete</span>
                     </li>
                     {{#each challengesQueue}}
-                        <div class={{_id}}>
+                        <div class="delete_block" aria-label="{{_id}}">
                             <li class='challenges-list-item'>
                                 <span>{{title}}</span>
                                 <span>{{reward}}</span>

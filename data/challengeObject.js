@@ -49,8 +49,9 @@ let challengeObjectFunctions = {
   },
 
   async removeChallengeFromQueue(id) {
+    id = helper.idValidator(id);
     const queueCollection = await challengeQueue();
-    let challengesObject = await queueCollection.find({}).toArray()[0];
+    let challengesObject = (await queueCollection.find({}).toArray())[0];
 
     const newQueue = challengesObject.queue.filter(
       (challengeId) => challengeId !== id,
@@ -60,7 +61,7 @@ let challengeObjectFunctions = {
       throw "Challenge not found in queue";
 
     const resDB = await queueCollection.updateOne(
-      { _id: challengesObject[0]._id },
+      { _id: challengesObject._id },
       { $set: { queue: newQueue } },
       { returnDocument: "after" },
     );
