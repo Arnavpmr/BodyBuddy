@@ -331,6 +331,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Pull-Ups"], sets: 3, reps: 8 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Leg Day Power",
@@ -343,6 +346,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Leg Press"], sets: 3, reps: 15 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Athlete's Core",
@@ -353,6 +359,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Leg Raises"], sets: 3, reps: 15 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Advanced Bodyweight Mastery",
@@ -364,6 +373,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Pull-Ups"], sets: 2, reps: 5 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Chest and Shoulders Sculpt",
@@ -376,6 +388,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Dumbbell Shoulder Press"], sets: 4, reps: 8 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Total Body Burn",
@@ -388,6 +403,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Bicycle Crunches"], sets: 3, reps: 20 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Arm Blaster",
@@ -399,6 +417,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Muscle Up"], sets: 4, reps: 5 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Back and Biceps Blitz",
@@ -411,6 +432,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Hammer Curls"], sets: 3, reps: 10 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Leg Day Burnout",
@@ -422,6 +446,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Squats"], sets: 3, reps: 15 },
     ],
     isPreset: true,
+    weightGoal: "100 kg",
+    difficulty: 6,
+    restTime: 240,
   },
   {
     name: "Core Crusher",
@@ -433,6 +460,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Push-Up"], sets: 6, reps: 15 },
     ],
     isPreset: true,
+    weightGoal: "20 kg",
+    difficulty: 5,
+    restTime: 60,
   },
   {
     name: "Strength and Stability",
@@ -445,6 +475,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Push-Up"], sets: 4, reps: 12 },
     ],
     isPreset: true,
+    weightGoal: "150 lb",
+    difficulty: 3,
+    restTime: 120,
   },
   {
     name: "Functional Fitness Circuit",
@@ -458,6 +491,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Lat Pulldown"], sets: 3, reps: 12 },
     ],
     isPreset: true,
+    weightGoal: "60 lb",
+    difficulty: 7,
+    restTime: 17,
   },
   {
     name: "Upper Body Burnout",
@@ -469,6 +505,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Push-Up"], sets: 6, reps: 12 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Dynamic Leg Day",
@@ -480,6 +519,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Leg Raises"], sets: 3, reps: 10 },
     ],
     isPreset: true,
+    weightGoal: "60 lb",
+    difficulty: 1,
+    restTime: 45,
   },
   {
     name: "Upper Body Strength Builder",
@@ -493,6 +535,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Lat Pulldown"], sets: 4, reps: 10 },
     ],
     isPreset: true,
+    weightGoal: "4 kg",
+    difficulty: 4,
+    restTime: 30,
   },
 ];
 

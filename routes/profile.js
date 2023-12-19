@@ -184,6 +184,7 @@ router.patch("/:userName", async (req, res) => {
         "userName",
       );
       updatedUserData.userName = xssSafe(updatedData.userName);
+      updatedUserData.userName = updatedUserData.userName.toLowerCase();
     }
     if (updatedData.userName && updatedData.userName !== user.userName) {
       userOrPasswordChanged = true;
@@ -193,6 +194,9 @@ router.patch("/:userName", async (req, res) => {
         updatedData.emailAddress,
       );
       updatedUserData.emailAddress = xssSafe(updatedData.emailAddress);
+    }
+    if (updatedData.password === "") {
+      updatedData.password = user.password;
     }
     if (updatedData.password) {
       updatedUserData.password = helper.passwordValidator(updatedData.password);
@@ -216,6 +220,17 @@ router.patch("/:userName", async (req, res) => {
         if (isNaN(updatedUserData.age) || updatedUserData.age < 0) {
           throw new Error("Age must be a (+) number");
         }
+      }
+    }
+
+    if (updatedData.unitMeasure) {
+      updatedUserData.unitMeasure = xssSafe(updatedData.unitMeasure);
+      updatedUserData.unitMeasure = updatedUserData.unitMeasure.trim();
+      if (
+        updatedUserData.unitMeasure !== "lb" &&
+        updatedUserData.unitMeasure !== "kg"
+      ) {
+        throw new Error("Unit of measurement can only be lb or kg");
       }
     }
 

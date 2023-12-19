@@ -7,7 +7,9 @@ import { xssSafe } from "../helpers.js";
 const router = Router();
 
 router.route("/").get(async (req, res) => {
-  const userWorkouts = await users.getUserWorkouts(req.session.user.userName);
+  const user = xssSafe(req.session.user);
+
+  const userWorkouts = await users.getUserWorkouts(user.userName);
   const workoutList = (await workouts.getAllWorkouts()).map((el) => {
     return {
       ...el,
@@ -18,13 +20,16 @@ router.route("/").get(async (req, res) => {
   const retLst = [];
   for (let i = 0; i < workoutList.length; i++) {
     const element = workoutList[i];
-    if (element.isPreset || userWorkouts.includes(element._id)) {
-      element["string"] = JSON.stringify(element);
-      retLst.push(element);
+    const id = element._id.toString();
+    if (element.isPreset || userWorkouts.includes(id)) {
+      const w_data = await workouts.getWorkoutAllDataById(id);
+      w_data["string"] = JSON.stringify(element);
+      retLst.push(w_data);
     }
   }
 
-  let user = xssSafe(req.session.user);
+  console.log(retLst);
+
   return res.status(200).render("workouts", {
     title: "Workouts",
     userData: req.session.user,
@@ -35,23 +40,53 @@ router.route("/").get(async (req, res) => {
 
 router.route("/workout").post(async (req, res) => {
   const username = xssSafe(req.session.user.userName);
-  let { name, workoutTypes, notes, exercises } = req.body;
+  let {
+    name,
+    workoutTypes,
+    notes,
+    exercises,
+    weightGoal,
+    difficulty,
+    restTime,
+  } = req.body;
   name = xssSafe(name);
   workoutTypes = xssSafe(workoutTypes);
   notes = xssSafe(notes);
   exercises = xssSafe(exercises);
+  weightGoal = xssSafe(weightGoal);
+  difficulty = xssSafe(difficulty);
+  restTime = xssSafe(restTime);
+  const user = await users.getUserByUsername(username);
+  const unitMeasure = user.unitMeasure;
 
   let newWorkout = null;
   let newWorkoutDB = null;
 
   try {
-    newWorkout = helper.workoutValidator(name, workoutTypes, notes, exercises);
+    newWorkout = helper.workoutValidator(
+      name,
+      workoutTypes,
+      notes,
+      exercises,
+      unitMeasure,
+      weightGoal,
+      difficulty,
+      restTime,
+    );
   } catch (e) {
     console.log(e.toString());
     return res.status(400).json({ error: e });
   }
 
-  const { newName, newWorkoutTypes, newNotes, newExercises } = newWorkout;
+  const {
+    newName,
+    newWorkoutTypes,
+    newNotes,
+    newExercises,
+    newWeightGoal,
+    newDifficulty,
+    newRestTime,
+  } = newWorkout;
 
   try {
     newWorkoutDB = await workouts.createWorkout(
@@ -60,6 +95,9 @@ router.route("/workout").post(async (req, res) => {
       newNotes,
       newExercises,
       false,
+      newWeightGoal,
+      newDifficulty,
+      newRestTime,
     );
     const added = await users.addWorkoutToUser(
       username,
@@ -75,12 +113,25 @@ router.route("/workout").post(async (req, res) => {
 router
   .route("/workout/:workoutId")
   .put(async (req, res) => {
-    const { name, workoutTypes, notes, exercises } = req.body;
+    const {
+      name,
+      workoutTypes,
+      notes,
+      exercises,
+      weightGoal,
+      difficulty,
+      restTime,
+    } = req.body;
 
     name = xssSafe(name);
     workoutTypes = xssSafe(workoutTypes);
     notes = xssSafe(notes);
     exercises = xssSafe(exercises);
+    weightGoal = xssSafe(weightGoal);
+    difficulty = xssSafe(difficulty);
+    restTime = xssSafe(restTime);
+    const user = await users.getUserByUsername(username);
+    const unitMeasure = user.unitMeasure;
 
     let workoutId = null;
     let newWorkout = null;
@@ -93,12 +144,24 @@ router
         workoutTypes,
         notes,
         exercises,
+        unitMeasure,
+        weightGoal,
+        difficulty,
+        restTime,
       );
     } catch (e) {
       return res.status(400).json({ error: e });
     }
 
-    const { newName, newWorkoutTypes, newNotes, newExercises } = newWorkout;
+    const {
+      newName,
+      newWorkoutTypes,
+      newNotes,
+      newExercises,
+      newWeightGoal,
+      newDifficulty,
+      newRestTime,
+    } = newWorkout;
 
     try {
       newWorkoutDB = await workouts.updateWorkout(
@@ -107,6 +170,9 @@ router
         newWorkoutTypes,
         newNotes,
         newExercises,
+        newWeightGoal,
+        newDifficulty,
+        newRestTime,
       );
 
       return res.status(200).json(newWorkoutDB);
@@ -117,6 +183,7 @@ router
   .delete(async (req, res) => {
     let workoutId = null;
     let workout = null;
+    const username = xssSafe(req.session.user.userName);
 
     try {
       workoutId = helper.idValidator(req.params.workoutId);
@@ -125,7 +192,7 @@ router
     }
     workoutId = xssSafe(workoutId);
     try {
-      workout = await workouts.removeWorkout(workoutId);
+      workout = await workouts.removeWorkout(workoutId, username);
     } catch (e) {
       return res.status(500).json({ error: e });
     }

@@ -22,6 +22,7 @@
       <input type="email" name="emailAddress" value="{{profile.emailAddress}}" id="emailAddressInput" disabled />
       <input type="password" name="password" value="{{profile.password}}" id="passwordInput" disabled />
       <textarea name="description" id="descriptionInput" disabled>{{profile.aboutMe.description}}</textarea>
+      <input type="text" name="unitMeasure" value="{{profile.unitMeasure}}" id="unitMeasureInput" disabled />
       <input type="number" name="age" value="{{profile.aboutMe.age}}" id="ageInput" disabled />
     </form>
     <button type="submit" id="saveChangesButton" hidden>Save Changes</button>
@@ -61,6 +62,7 @@
         <p>No incoming friend requests.</p>
       {{/unless}}
     </div>
+    
   {{else}}
     <div class="otherUserProfile">
       <div class="profileFirstName">
