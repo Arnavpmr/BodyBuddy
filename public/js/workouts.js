@@ -341,7 +341,7 @@
                   </label><br>
                   <label for="${sets_b}">
                   Number of Sets
-                  <input type="number" name="${sets_b}" id="${sets_b}" min="1" required><br>
+                  <input type="number" name="${sets_b}" id="${sets_b}" min="1" required></label><br>
                   <label for="confirm_b_${i}">Confirm your submission<input type="submit" value="Confirm" id="confirm_b_${i}" id="confirm_b_${i}"></label>
                 </div>
                 </div>
