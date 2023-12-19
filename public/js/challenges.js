@@ -23,6 +23,7 @@
       },
       (res) => {
         console.log("Submission approved!");
+        window.location.replace("/challenges");
       },
     );
   }
@@ -53,6 +54,25 @@
         expDiv.style.display = "none";
         target.innerHTML = "Expand";
       }
+    });
+  });
+
+  const deleteBlocks = Array.from(
+    document.getElementsByClassName("delete_block"),
+  );
+  deleteBlocks.map((div) => {
+    const id = div.ariaLabel;
+    const delete_button = Array.from(
+      div.getElementsByClassName("challenge-delete"),
+    )[0];
+    delete_button.addEventListener("click", () => {
+      $.ajax({
+        url: `/challenges/challenge/queue/${id}`,
+        method: "DELETE",
+      }).then((res) => {
+        console.log("challenge Deleted!");
+        window.location.replace("/challenges");
+      });
     });
   });
 })(window.jQuery);

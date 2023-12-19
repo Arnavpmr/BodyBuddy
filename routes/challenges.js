@@ -224,6 +224,18 @@ router.route("/challenge").post(async (req, res) => {
   return res.status(200).json(newChallengeDB);
 });
 
+router.route("/challenge/queue/:id").delete(async (req, res) => {
+  try {
+    const deleteFromQueue = await challengeObject.removeChallengeFromQueue(
+      req.params.id,
+    );
+    res.status(200).json(deleteFromQueue);
+  } catch (error) {
+    console.log(error.toString());
+    res.status(400).json({ error: error.toString() });
+  }
+});
+
 router
   .route("/challenge/:challengeId")
   .put(async (req, res) => {
