@@ -40,6 +40,27 @@
                                                 }}</span>
                                         </div>
                                     {{/each}}
+                                    {{#if
+                                        (greaterThanLeaderboardMax currentRank)
+                                    }}
+                                        <h3
+                                            class='challenge-component-title'
+                                        >Your current Rank</h3>
+                                        <br />
+                                        <div class='leaderboard-item-flex'>
+                                            <span>{{currentRank.rank}})
+                                            </span>
+                                            <a
+                                                href='/user/{{userData.userName}}'
+                                            >
+                                                <span
+                                                >{{userData.userName}}</span>
+                                            </a>
+                                            <span>{{dateTo24HRFormat
+                                                    currentRank.time
+                                                }}</span>
+                                        </div>
+                                    {{/if}}
                                 </div>
                             </div>
                         </div>
@@ -61,25 +82,52 @@
                 <div class='widget' style='text-align: center;'>
                     <h2>Quick Access to Some of Your Workouts</h2>
                     {{#each workouts}}
-                        <div class='favoriteWorkoutElement center' style="padding-bottom: 1rem;">
-                            <span style='display: table-cell;'><h3
-                                    style='display: inline-block;color: var(--light-text)'
-                                >{{name}}</h3><br>
-                                <span><span style="font-weight: bold;">Workout Type:</span> <span style="font-style:italic;">{{type}}</span></span>
-                            </span>
-                            <div style='display: table-cell;text-align: right;'>
-                                <button
-                                    class='about_button'
-                                    style='font-size: 16px;white-space: pre-wrap;'
-                                    onclick='window.location.replace("/workouts")'
-                                >Run Again</button>
+                        <div class='favoriteWorkoutElement center' style="padding-bottom: 1rem;display: block;">
+                            <div style="display: table;width: 100%;">
+                                    <span style='display: table-cell;'><h3
+                                            style='display: inline-block;color: var(--light-text)'
+                                        >{{name}}</h3><br>
+                                        <span><span style="font-weight: bold;">Workout Type:</span> <span style="font-style:italic;">{{type}}</span></span>
+                                    </span>
+                                    <div style='display: table-cell;text-align: right;'>
+                                        <button
+                                            class='about_button'
+                                            style='font-size: 16px;white-space: pre-wrap;'
+                                            aria-label="expand_button"
+                                        >Expand</button>
+                                    </div>
+                                </div>
+                            <div class="expanded" style="display: none;">
+
+                                <h4 class="workout_expanded">Exercsises</h4>
+                                {{#each exercises}}
+                                <hr>
+                                    <h5 style="font-weight: bold;font-size: 12pt">{{name}}</h5>
+
+                                    <p>{{sets}} sets of {{reps}} reps</p>
+
+                                    <p>{{instructions}}</p>
+
+                                    <p>
+                                        Equipment: 
+                                        <span style="font-style: italic;">{{equipment}}</span>
+                                    </p>
+
+                                    <p>
+                                        Target Muscles: 
+                                        <span style="font-style: italic;">{{targetMuscles}}</span>
+                                    </p>
+
+                                    <p>{{description}}</p>
+                                {{/each}}
+
                             </div>
-                        </div>
+                            </div>
                         <span style="margin: .25rem;"></span>
                     {{/each}}
                 </div>
             </td>
         </tr>
     </table>
-    More stuff can go down here idk yet
 </div>
+<script src="./public/js/home.js"></script>

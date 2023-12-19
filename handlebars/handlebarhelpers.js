@@ -17,3 +17,11 @@ export const dateTo24HRFormat = (date) => {
 export const incrementIndex = (value) => {
   return parseInt(value) + 1;
 };
+
+export const greaterThanLeaderboardMax = (value) => {
+  return parseInt(value) > 100;
+};
+
+export const stringEquals = (arg1, arg2) => {
+  return arg1 === arg2;
+};

@@ -108,6 +108,32 @@
         });
       });
     });
+
+    const workoutHotbar = Array.from(
+      document.getElementsByClassName("favoriteWorkoutElement"),
+    );
+    console.log(workoutHotbar);
+
+    workoutHotbar.map((div) => {
+      console.log(div);
+      const expandDiv = Array.from(div.getElementsByClassName("expanded"))[0];
+      const expandButton = Array.from(
+        div.getElementsByClassName("about_button view"),
+      )[0];
+
+      expandButton.addEventListener("click", (e) => {
+        console.log(e.currentTarget);
+        if (e.currentTarget.innerHTML === "Expand") {
+          //Show list
+          expandDiv.style.display = "";
+          e.currentTarget.innerHTML = "Hide";
+        } else {
+          //Hide list
+          expandDiv.style.display = "none";
+          e.currentTarget.innerHTML = "Expand";
+        }
+      });
+    });
   }
 
   const clearButton = $("#clear_filter");
@@ -278,6 +304,10 @@
 
         const reps_b = `add_reps_${i}`;
         const sets_b = `add_sets_${i}`;
+        // const weight_b = `weight_${i}`;
+        // const dif_b = `difficulty_${i}`;
+        // const rest_b = `rest_time_${i}`;
+
         const rep_form = `ex_form_${i}`;
 
         //I don't want to talk about it
@@ -352,6 +382,9 @@
             ...el,
             reps: target[2].valueAsNumber,
             sets: target[3].valueAsNumber,
+            // weightGoal: target[4].valueAsNumber,
+            // difficulty: target[5].valueAsNumber,
+            // restTime: target[6].valueAsNumber,
           };
 
           temp["id"] = temp._id;

@@ -259,6 +259,28 @@ router.patch("/:userName", async (req, res) => {
       }
     }
 
+    if (updatedData.unitMeasure) {
+      updatedUserData.unitMeasure = xssSafe(updatedData.unitMeasure);
+      updatedUserData.unitMeasure = updatedUserData.unitMeasure.trim();
+      if (
+        updatedUserData.unitMeasure !== "lb" &&
+        updatedUserData.unitMeasure !== "kg"
+      ) {
+        throw new Error("Unit of measurement can only be lb or kg");
+      }
+    }
+
+    if (updatedData.unitMeasure) {
+      updatedUserData.unitMeasure = xssSafe(updatedData.unitMeasure);
+      updatedUserData.unitMeasure = updatedUserData.unitMeasure.trim();
+      if (
+        updatedUserData.unitMeasure !== "lb" &&
+        updatedUserData.unitMeasure !== "kg"
+      ) {
+        throw new Error("Unit of measurement can only be lb or kg");
+      }
+    }
+
     if (updatedData.userName !== user.userName) {
       const existingUser = await userDataFunctions.checkUserByUsername(
         updatedUserData.userName,

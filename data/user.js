@@ -3,6 +3,7 @@ import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import workoutDataFunctions from "./workouts.js";
+import exerciseDataFunctions from "./exercises.js";
 
 let userDataFunctions = {
   async createUser(
@@ -14,6 +15,7 @@ let userDataFunctions = {
     description,
     age,
     role = "user",
+    unitMeasure = "lb",
   ) {
     let validatedInput = undefined;
     let friendsList = [];
@@ -34,6 +36,7 @@ let userDataFunctions = {
         incomingRequests,
         outgoingRequests,
         role,
+        unitMeasure,
       );
     } catch (e) {
       throw e;
@@ -210,6 +213,17 @@ let userDataFunctions = {
       }
     }
 
+    if (updatedFields.unitMeasure !== undefined) {
+      if (
+        typeof updatedFields.unitMeasure === "string" &&
+        (updatedFields.unitMeasure === "lb" ||
+          updatedFields.unitMeasure === "kg")
+      ) {
+        fieldsToUpdate.unitMeasure = updatedFields.unitMeasure;
+      } else {
+        throw "Unit of measurement is invalid";
+      }
+    }
     const updatedUser = await userCollections.findOneAndUpdate(
       { userName: currentUserName },
       { $set: fieldsToUpdate },
@@ -256,6 +270,32 @@ let userDataFunctions = {
     return res;
   },
 
+  async getUserWorkoutDataDeep(username) {
+    const workData = await this.getUserWorkoutData(username);
+    const result = [];
+    for (let i = 0; i < workData.length; i++) {
+      const workout = workData[i];
+      const newExercises = [];
+      for (let j = 0; j < workout.exercises.length; j++) {
+        const exercise_basic = workout.exercises[j];
+        const exerciseData = await exerciseDataFunctions.getExerciseById(
+          exercise_basic.id,
+        );
+        newExercises.push({
+          ...exerciseData,
+          sets: exercise_basic.sets,
+          reps: exercise_basic.reps,
+        });
+      }
+      result.push({
+        ...workout,
+        exercises: newExercises,
+      });
+    }
+
+    return result;
+  },
+
   async loginUser(userName, password) {
     let validatedInput = undefined;
 
@@ -290,9 +330,10 @@ let userDataFunctions = {
           age: user.aboutMe.age,
         },
         role: user.role,
+        unitMeasure: user.unitMeasure,
       };
     } else {
-      throw "Either the Username or password is invalid";
+      throw "Either the username or password is invalid";
     }
 
     return userObj;
