@@ -196,6 +196,53 @@
             </div>
             <div class='challenges-queue-form'>
                 <h1 class='challenge-component-title'>Create Challenge</h1>
+
+                <form action='/challenges/challenge' id='submitChallenge'>
+
+                    <label for='titleInput'>
+                        Input a title
+                        <input
+                            type='text'
+                            name='titleInput'
+                            id='titleInput'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='descriptionInput'>
+                        Input a description
+                        <input
+                            type='text'
+                            name='descriptionInput'
+                            id='descriptionInput'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='rewardInput'>
+                        Input a reward
+                        <input
+                            type='number'
+                            name='rewardInput'
+                            id='rewardInput'
+                            min='1'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='exerciseInput'>
+                        Input an exercise
+                        <select>
+                            {{#each workouts}}
+                                <option value='{{name}}'>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </label>
+                    <br />
+                    <label for='submitButton'>
+                        <button type='submit' id='submitButton'>Submit</button>
+                    </label>
+                </form>
             </div>
         </div>
     {{/if}}

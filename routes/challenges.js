@@ -4,6 +4,7 @@ import {
   challengeData,
   userData,
   exerciseData,
+  workoutData,
 } from "../data/index.js";
 import { Router } from "express";
 import helper from "../helpers.js";
@@ -41,6 +42,7 @@ router.route("/").get(async (req, res) => {
 
   let submissions = undefined;
   let challengesQueue = undefined;
+  let workouts = undefined;
 
   try {
     queueCollection = await challengeQueue();
@@ -87,6 +89,8 @@ router.route("/").get(async (req, res) => {
           return newChallenge;
         }),
       );
+
+      workouts = await workoutData.getAllWorkouts();
     } catch (e) {
       return res.status(500).json({ error: e });
     }
@@ -97,6 +101,7 @@ router.route("/").get(async (req, res) => {
     user: curUser,
     submission: submission,
     submissions: submissions,
+    workouts: workouts,
     challengesQueue: challengesQueue,
     currentChallenge: curChallenge,
     curRank: curRank,
