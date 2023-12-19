@@ -170,7 +170,7 @@ let challengeObjectFunctions = {
       const queueCollection = await challengeQueue();
       const challengesObject = (await queueCollection.find({}).toArray())[0];
 
-      if (res.status !== "denied")
+      if (res.status === "pending")
         throw "Submission must be denied for user to resubmit";
 
       const newSubmissions = [];

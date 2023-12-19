@@ -154,7 +154,7 @@ let challengeDataFunctions = {
 
     if (foundEntry) throw "User already exists on leaderboard";
 
-    await challengeCollections.updateOne(
+    const pushToLeaderboard = await challengeCollections.updateOne(
       {
         _id: new ObjectId(challengesObject.current),
       },

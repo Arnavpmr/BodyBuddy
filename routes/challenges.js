@@ -199,7 +199,10 @@ router
 
     try {
       resDB = await challengeObject.updateSubmissionByUser(userName, status);
+      await challengeData.pushToCurrentLeaderboard(userName);
+      await challengeObject.removeSubmissionIfPresent(userName);
     } catch (e) {
+      console.log(e.toString());
       return res.status(500).json({ error: e });
     }
 
