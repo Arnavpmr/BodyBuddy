@@ -148,6 +148,7 @@ router.get("/:userName", async (req, res) => {
       isPrivate = true;
     }
     return res.status(200).render("profile", {
+      title: "Profile",
       profile: user,
       isMe,
       isPrivate,
