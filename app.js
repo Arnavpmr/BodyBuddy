@@ -9,6 +9,15 @@ import { registerHandlebarHelpers } from "./handlebars/index.js";
 
 const app = express();
 
+// GLOBAL ERROR HANDLING
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught exception:", error);
+});
+
 app.use("/public", express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
