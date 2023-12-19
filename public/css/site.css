@@ -429,3 +429,7 @@ footer {
 .dropdown-check-list.visible .items {
   display: block;
 }
+
+.workout_expanded {
+  text-decoration: underline;
+}

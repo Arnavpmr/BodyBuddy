@@ -3,6 +3,7 @@ import { users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import workoutDataFunctions from "./workouts.js";
+import exerciseDataFunctions from "./exercises.js";
 
 let userDataFunctions = {
   async createUser(
@@ -246,6 +247,32 @@ let userDataFunctions = {
     }
 
     return res;
+  },
+
+  async getUserWorkoutDataDeep(username) {
+    const workData = await this.getUserWorkoutData(username);
+    const result = [];
+    for (let i = 0; i < workData.length; i++) {
+      const workout = workData[i];
+      const newExercises = [];
+      for (let j = 0; j < workout.exercises.length; j++) {
+        const exercise_basic = workout.exercises[j];
+        const exerciseData = await exerciseDataFunctions.getExerciseById(
+          exercise_basic.id,
+        );
+        newExercises.push({
+          ...exerciseData,
+          sets: exercise_basic.sets,
+          reps: exercise_basic.reps,
+        });
+      }
+      result.push({
+        ...workout,
+        exercises: newExercises,
+      });
+    }
+
+    return result;
   },
 
   async loginUser(userName, password) {
