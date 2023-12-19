@@ -330,6 +330,26 @@ footer {
   justify-content: space-around;
 }
 
+.challenge-component-full-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.challenges-list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.challenges-list-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  column-gap: 100px;
+}
+
 .submission-status-pending {
   color: yellow;
 }

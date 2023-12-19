@@ -132,7 +132,7 @@
                             <div class='submission-list-item'>
                                 <span>{{userName}}</span>
                                 <span>{{dateTo24HRFormat time}}</span>
-                                <button>Expand</button>
+                                <button class='expand-btn'>Expand</button>
                             </div>
                         </li>
                     {{/each}}
@@ -140,6 +140,32 @@
             </div>
         {{/if}}
     </div>
+    {{#if (stringEquals user.role 'admin')}}
+        <div class='challenge-component-full-bottom'>
+            <div class='challenges-queue-item'>
+                <h1 class='challenge-component-title'>Challenges in Queue</h1>
+                <ul class='challenges-list'>
+                    <li class='challenges-list-item'>
+                        <span>Title</span>
+                        <span>Reward</span>
+                        <span>Delete</span>
+                    </li>
+                    {{#each challengesQueue}}
+                        <div class={{_id}}>
+                            <li class='challenges-list-item'>
+                                <span>{{title}}</span>
+                                <span>{{reward}}</span>
+                                <button class='challenge-delete'>Delete</button>
+                            </li>
+                        </div>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class='challenges-queue-form'>
+                <h1 class='challenge-component-title'>Create Challenge</h1>
+            </div>
+        </div>
+    {{/if}}
 </div>
 
 <script

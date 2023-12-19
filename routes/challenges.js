@@ -40,6 +40,7 @@ router.route("/").get(async (req, res) => {
   let submission = undefined;
 
   let submissions = undefined;
+  let challengesQueue = undefined;
 
   try {
     queueCollection = await challengeQueue();
@@ -79,18 +80,27 @@ router.route("/").get(async (req, res) => {
   if (curUser.role === "admin") {
     try {
       submissions = challengesObject.submissions;
+
+      challengesQueue = await Promise.all(
+        challengesObject.queue.map(async (id) => {
+          const newChallenge = await challengeData.getChallengeById(id);
+          return newChallenge;
+        }),
+      );
     } catch (e) {
       return res.status(500).json({ error: e });
     }
   }
 
   console.log(submissions);
+  console.log(challengesQueue);
 
   return res.status(200).render("challenges", {
     title: "Challenges",
     user: curUser,
     submission: submission,
     submissions: submissions,
+    challengesQueue: challengesQueue,
     currentChallenge: curChallenge,
     curRank: curRank,
   });
