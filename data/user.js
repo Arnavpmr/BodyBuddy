@@ -61,6 +61,8 @@ let userDataFunctions = {
       password: hash,
       profilePicture: defaultProfilePicture,
       workouts: [],
+      bodyMeasurements: "",
+      private: false,
     };
 
     const entry = await userCollections.insertOne(newUser);
@@ -177,10 +179,20 @@ let userDataFunctions = {
     if (updatedFields.password !== undefined) {
       fieldsToUpdate.password = updatedFields.password;
     }
-    if (updatedFields.description !== undefined) {
-      if (!fieldsToUpdate.aboutMe) fieldsToUpdate.aboutMe = {};
+    if (!fieldsToUpdate.aboutMe) fieldsToUpdate.aboutMe = {};
+
+    if (updatedFields.description === undefined) {
+      fieldsToUpdate.aboutMe.description = "";
+    } else {
       fieldsToUpdate.aboutMe.description = updatedFields.description.trim();
     }
+
+    if (updatedFields.bodyMeasurements === undefined) {
+      fieldsToUpdate.bodyMeasurements = "";
+    } else {
+      fieldsToUpdate.bodyMeasurements = updatedFields.bodyMeasurements.trim();
+    }
+
     if (updatedFields.age !== undefined) {
       if (typeof updatedFields.age === "number" && updatedFields.age > 0) {
         if (!fieldsToUpdate.aboutMe) fieldsToUpdate.aboutMe = {};
@@ -189,6 +201,15 @@ let userDataFunctions = {
         throw "Age is invalid";
       }
     }
+
+    if (updatedFields.private !== undefined) {
+      if (typeof updatedFields.private === "boolean") {
+        fieldsToUpdate.private = updatedFields.private;
+      } else {
+        throw "Private is invalid";
+      }
+    }
+
     const updatedUser = await userCollections.findOneAndUpdate(
       { userName: currentUserName },
       { $set: fieldsToUpdate },

@@ -126,8 +126,12 @@ router.get("/:userName", async (req, res) => {
       return res.status(404).render("error", { error: "User not found." });
     }
 
+    const workouts =
+      await userDataFunctions.getUserWorkoutData(validatedUserName);
+
     let isMe = false;
     let friendRequests = [];
+    let isPrivate = false;
 
     if (req.session && req.session.user) {
       isMe = req.session.user.userName === validatedUserName;
@@ -136,11 +140,20 @@ router.get("/:userName", async (req, res) => {
       }
     }
 
+    if (
+      user.private === true &&
+      !isMe &&
+      !user.friends.friendsList.includes(req.session.user.userName)
+    ) {
+      isPrivate = true;
+    }
     return res.status(200).render("profile", {
       profile: user,
       isMe,
+      isPrivate,
       friendRequests,
       user: req.session.user,
+      workouts: workouts,
     });
   } catch (error) {
     if (error && error.message && error.message.includes("not valid")) {
@@ -213,13 +226,36 @@ router.patch("/:userName", async (req, res) => {
       updatedUserData.description = updatedData.description.trim();
       updatedUserData.description = xssSafe(updatedUserData.description);
     }
+
+    if (updatedData.bodyMeasurements) {
+      updatedUserData.bodyMeasurements = updatedData.bodyMeasurements.trim();
+      updatedUserData.bodyMeasurements = xssSafe(
+        updatedUserData.bodyMeasurements,
+      );
+    }
+
     if (updatedData.age) {
       updatedUserData.age = xssSafe(updatedData.age);
       if (updatedData.age.length !== 0) {
         updatedUserData.age = parseInt(updatedData.age);
-        if (isNaN(updatedUserData.age) || updatedUserData.age < 0) {
-          throw new Error("Age must be a (+) number");
+        if (
+          isNaN(updatedUserData.age) ||
+          updatedUserData.age < 0 ||
+          updatedUserData.age > 100
+        ) {
+          throw new Error("Age must be between 0 and 100");
         }
+      }
+    }
+
+    if (updatedData.private) {
+      updatedUserData.private = xssSafe(updatedData.private);
+      if (updatedData.private === "true") {
+        updatedUserData.private = true;
+      } else if (updatedData.private === "false") {
+        updatedUserData.private = false;
+      } else {
+        throw new Error("Private must be true or false");
       }
     }
 
