@@ -335,7 +335,7 @@ footer {
 }
 
 .submission-admin-review {
-  display: flex;
+  display: block;
   flex-direction: column;
   flex-grow: 1;
 }
@@ -346,7 +346,7 @@ footer {
 }
 
 .submission-list-item {
-  display: flex;
+  display: block;
   flex-direction: row;
   justify-content: space-around;
 }
