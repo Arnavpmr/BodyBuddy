@@ -115,7 +115,6 @@
     console.log(workoutHotbar);
 
     workoutHotbar.map((div) => {
-      console.log(div);
       const expandDiv = Array.from(div.getElementsByClassName("expanded"))[0];
       const expandButton = Array.from(
         div.getElementsByClassName("about_button view"),

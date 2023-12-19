@@ -16,7 +16,7 @@ const seedUsers = [
       description: "I am a dude looking to workout and take over the world!",
       age: 52,
     },
-    role: "owner",
+    role: "admin",
   },
   {
     firstName: "Daniel",

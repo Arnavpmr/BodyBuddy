@@ -92,9 +92,6 @@ router.route("/").get(async (req, res) => {
     }
   }
 
-  console.log(submissions);
-  console.log(challengesQueue);
-
   return res.status(200).render("challenges", {
     title: "Challenges",
     user: curUser,
@@ -166,7 +163,7 @@ router
     return res.status(200).json(resDB);
   })
   .post(async (req, res) => {
-    const status = xssSafe(req.body);
+    const status = xssSafe(req.body.status);
 
     let userName = null;
     let resDB = null;
@@ -175,7 +172,7 @@ router
       if (status !== "approved" && status !== "denied")
         throw "Status is invalid";
 
-      userName = helper.idValidator(xssSafe(req.params.userName));
+      userName = helper.inputValidator(xssSafe(req.params.userName));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -186,7 +183,7 @@ router
       return res.status(500).json({ error: e });
     }
 
-    return resDB;
+    return res.status(200).json(resDB);
   });
 
 router.route("/challenge").post(async (req, res) => {
