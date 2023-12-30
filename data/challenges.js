@@ -51,11 +51,11 @@ let challengeDataFunctions = {
     id = helper.idValidator(id, "challengeId");
 
     const challengeCollections = await challenges();
-    let challenge = challengeCollections.findOne({
+    let challenge = await challengeCollections.findOne({
       _id: new ObjectId(id),
     });
 
-    challenge._id = challenge.id.toString();
+    challenge._id = challenge._id.toString();
     return challenge;
   },
 
@@ -131,32 +131,28 @@ let challengeDataFunctions = {
     return updatedChallenge;
   },
 
-  async pushToCurrentLeaderboards(userName) {
+  async pushToCurrentLeaderboard(userName) {
     await userData.getUserByUsername(userName);
 
     const challengeCollections = await challenges();
     const queueCollection = await challengeQueue();
     const challengesObject = (await queueCollection.find({}).toArray())[0];
 
-    const baseReward = 25;
-    let extraReward = 0;
-
     const curChallenge = await challengeCollections.findOne({
       _id: new ObjectId(challengesObject.current),
     });
 
+    const submission = await challengeObject.getSubmissionByUserName(userName);
+
+    if (submission.status !== "approved")
+      throw "Submission needs approval by admin";
+
     if (!curChallenge) throw "Current challenge not found";
 
-    const localLeaderboard = curChallenge.leaderboard;
-    const foundEntry = localLeaderboard.find(
-      (entry) => entry.userName === userName,
-    );
+    const leaderboard = curChallenge.leaderboard;
+    const foundEntry = leaderboard.find((entry) => entry.userName === userName);
 
     if (foundEntry) throw "User already exists on leaderboard";
-
-    const length = localLeaderboard.length;
-
-    if (length < 100) extraReward = 100 - length;
 
     const pushToLeaderboard = await challengeCollections.updateOne(
       {
@@ -165,7 +161,7 @@ let challengeDataFunctions = {
       {
         $push: {
           leaderboard: {
-            $each: [{ userName: userName, time: new Date() }],
+            $each: [{ userName: userName, time: submission.time }],
             $sort: { time: 1 },
           },
         },
@@ -175,47 +171,7 @@ let challengeDataFunctions = {
     if (pushToLeaderboard.nMatched === 0 || pushToLeaderboard.nModified === 0)
       throw "There was an issue adding user to leaderboard";
 
-    const globalLeaderBoard = challengesObject.leaderboard;
-
-    const foundGlobalEntry = globalLeaderBoard.find(
-      (entry) => entry.userName === userName,
-    );
-
-    if (foundGlobalEntry) {
-      const totalReward = foundGlobalEntry.points + baseReward + extraReward;
-
-      const resDB = await queueCollection.updateOne(
-        {
-          "leaderboard.userName": userName,
-        },
-        {
-          $set: { "leaderboard.$.points": totalReward },
-        },
-      );
-
-      return resDB;
-    }
-
-    const resDB = await queueCollection.updateOne(
-      {
-        _id: challengesObject._id,
-      },
-      {
-        $push: {
-          leaderboard: {
-            $each: [
-              {
-                userName: userName,
-                points: baseReward + extraReward,
-              },
-            ],
-            $sort: { points: -1 },
-          },
-        },
-      },
-    );
-
-    return resDB;
+    return { updated: true };
   },
 
   async uploadSubmissionImages(userName, imageList) {

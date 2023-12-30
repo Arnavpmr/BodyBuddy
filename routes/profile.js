@@ -2,8 +2,16 @@ import { Router } from "express";
 import userDataFunctions from "../data/user.js";
 import helper from "../helpers.js";
 import bcrypt from "bcrypt";
-
+import { xssSafe } from "../helpers.js";
 const router = Router();
+
+router.get("/", async (req, res) => {
+  const userName = req.session.user.userName;
+  if (!userName) {
+    return res.status(401).json({ error: "User must be logged in." });
+  }
+  res.redirect(`/user/${userName}`);
+});
 
 router.get("/users", async (req, res) => {
   let prefix = req.query.prefix.trim();
@@ -57,8 +65,11 @@ router.get("/friendrequests", async (req, res) => {
 });
 
 router.post("/resolverequest", async (req, res) => {
-  const { decision, userName } = req.body;
+  let { decision, userName } = req.body;
   const currentUser = req.session.user.userName;
+
+  decision = xssSafe(decision);
+  userName = xssSafe(userName);
 
   if (!currentUser) {
     return res.status(401).json({ error: "User must be logged in." });
@@ -84,8 +95,10 @@ router.post("/resolverequest", async (req, res) => {
 });
 
 router.post("/createrequest", async (req, res) => {
-  const targetUserName = req.body.targetUserName;
+  let targetUserName = req.body.targetUserName;
   const currentUserName = req.session.user.userName;
+
+  targetUserName = xssSafe(targetUserName);
 
   if (!currentUserName) {
     return res.status(401).json({ error: "User must be logged in." });
@@ -110,11 +123,17 @@ router.get("/:userName", async (req, res) => {
     const user = await userDataFunctions.getUserByUsername(validatedUserName);
 
     if (!user) {
-      return res.status(404).render("error", { error: "User not found." });
+      return res
+        .status(404)
+        .render("error", { error: "User not found.", title: "Error" });
     }
+
+    const workouts =
+      await userDataFunctions.getUserWorkoutData(validatedUserName);
 
     let isMe = false;
     let friendRequests = [];
+    let isPrivate = false;
 
     if (req.session && req.session.user) {
       isMe = req.session.user.userName === validatedUserName;
@@ -123,16 +142,32 @@ router.get("/:userName", async (req, res) => {
       }
     }
 
-    return res
-      .status(200)
-      .render("profile", { profile: user, isMe, friendRequests });
+    if (
+      user.private === true &&
+      !isMe &&
+      !user.friends.friendsList.includes(req.session.user.userName)
+    ) {
+      isPrivate = true;
+    }
+    return res.status(200).render("profile", {
+      title: "Profile",
+      profile: user,
+      isMe,
+      isPrivate,
+      friendRequests,
+      user: req.session.user,
+      workouts: workouts,
+    });
   } catch (error) {
     if (error && error.message && error.message.includes("not valid")) {
-      return res.status(400).render("error", { error: "Invalid username." });
+      return res
+        .status(400)
+        .render("error", { error: "Invalid username.", title: "Error" });
     }
 
-    return res.status(500).render("error", {
-      error: "An error occurred while fetching the profile.",
+    return res.status(400).render("error", {
+      error: "Invalid username.",
+      title: "Error",
     });
   }
 });
@@ -148,30 +183,44 @@ router.patch("/:userName", async (req, res) => {
 
     let updatedUserData = {};
     let userOrPasswordChanged = false;
-    if (updatedData.firstName)
+    if (updatedData.firstName) {
       updatedUserData.firstName = helper.inputValidator(
         updatedData.firstName,
         "firstName",
       );
-    if (updatedData.lastName)
+      updatedUserData.firstName = xssSafe(updatedData.firstName);
+    }
+    if (updatedData.lastName) {
       updatedUserData.lastName = helper.inputValidator(
         updatedData.lastName,
         "lastName",
       );
-    if (updatedData.userName)
+      updatedUserData.lastName = xssSafe(updatedData.lastName);
+    }
+    if (updatedData.userName) {
       updatedUserData.userName = helper.inputValidator(
         updatedData.userName,
         "userName",
       );
+      updatedUserData.userName = xssSafe(updatedData.userName);
+      updatedUserData.userName = updatedUserData.userName.toLowerCase();
+    }
     if (updatedData.userName && updatedData.userName !== user.userName) {
       userOrPasswordChanged = true;
     }
-    if (updatedData.emailAddress)
+    if (updatedData.emailAddress) {
       updatedUserData.emailAddress = helper.emailValidator(
         updatedData.emailAddress,
       );
-    if (updatedData.password)
+      updatedUserData.emailAddress = xssSafe(updatedData.emailAddress);
+    }
+    if (updatedData.password === "") {
+      updatedData.password = user.password;
+    }
+    if (updatedData.password) {
       updatedUserData.password = helper.passwordValidator(updatedData.password);
+      updatedUserData.password = xssSafe(updatedData.password);
+    }
     if (user.password !== updatedUserData.password) {
       updatedUserData.password = await bcrypt.hash(
         updatedUserData.password,
@@ -179,12 +228,63 @@ router.patch("/:userName", async (req, res) => {
       );
       userOrPasswordChanged = true;
     }
-    if (updatedData.description)
+    if (updatedData.description) {
       updatedUserData.description = updatedData.description.trim();
-    if (updatedData.age !== undefined) {
-      const age = parseInt(updatedData.age, 10);
-      if (age > 0) updatedUserData.age = age;
-      else throw new Error("Age is invalid");
+      updatedUserData.description = xssSafe(updatedUserData.description);
+    }
+
+    if (updatedData.bodyMeasurements) {
+      updatedUserData.bodyMeasurements = updatedData.bodyMeasurements.trim();
+      updatedUserData.bodyMeasurements = xssSafe(
+        updatedUserData.bodyMeasurements,
+      );
+    }
+
+    if (updatedData.age) {
+      updatedUserData.age = xssSafe(updatedData.age);
+      if (updatedData.age.length !== 0) {
+        updatedUserData.age = parseInt(updatedData.age);
+        if (
+          isNaN(updatedUserData.age) ||
+          updatedUserData.age < 0 ||
+          updatedUserData.age > 100
+        ) {
+          throw new Error("Age must be between 0 and 100");
+        }
+      }
+    }
+
+    if (updatedData.private) {
+      updatedUserData.private = xssSafe(updatedData.private);
+      if (updatedData.private === "true") {
+        updatedUserData.private = true;
+      } else if (updatedData.private === "false") {
+        updatedUserData.private = false;
+      } else {
+        throw new Error("Private must be true or false");
+      }
+    }
+
+    if (updatedData.unitMeasure) {
+      updatedUserData.unitMeasure = xssSafe(updatedData.unitMeasure);
+      updatedUserData.unitMeasure = updatedUserData.unitMeasure.trim();
+      if (
+        updatedUserData.unitMeasure !== "lb" &&
+        updatedUserData.unitMeasure !== "kg"
+      ) {
+        throw new Error("Unit of measurement can only be lb or kg");
+      }
+    }
+
+    if (updatedData.unitMeasure) {
+      updatedUserData.unitMeasure = xssSafe(updatedData.unitMeasure);
+      updatedUserData.unitMeasure = updatedUserData.unitMeasure.trim();
+      if (
+        updatedUserData.unitMeasure !== "lb" &&
+        updatedUserData.unitMeasure !== "kg"
+      ) {
+        throw new Error("Unit of measurement can only be lb or kg");
+      }
     }
 
     if (updatedData.userName !== user.userName) {
@@ -222,6 +322,7 @@ router.patch("/:userName", async (req, res) => {
 
     return res.status(200).json({ message: "Profile updated successfully" });
   } catch (error) {
+    console.error("Error updating profile:", error);
     const statusCode =
       error.message === "User not found" || error.message === "Update failed"
         ? 404
@@ -232,7 +333,8 @@ router.patch("/:userName", async (req, res) => {
 
 router.patch("/:userName/updateProfilePicture", async (req, res) => {
   const userName = req.session.user.userName;
-  const { profilePicture: newProfilePictureUrl } = req.body;
+  let { profilePicture: newProfilePictureUrl } = req.body;
+  newProfilePictureUrl = xssSafe(newProfilePictureUrl);
 
   try {
     helper.inputValidator(userName, "userName");

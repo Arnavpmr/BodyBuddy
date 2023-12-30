@@ -1,40 +1,153 @@
-<div id="home_container">
-    <table style="width: 100%;">
-        <tr style="border: none;">
-            <td style="width: 65%;">
+<div id='home_container'>
+    <table style='width: 100%;'>
+        <tr style='border: none;'>
+            <td style='width: 65%;'>
                 <!-- Challenge Widget -->
-                <div class="widget">
-                    <div style="display: table;">
-                        <!-- Leaderboard -->
-                        <div style="display: table-cell;">
-                            {{#each dailyLeaderboard}}
-                                <div class="favoriteWorkoutElement center" style="width: 100%;">
-                                    <h3>{{@Index}}</h3><span style="display: table-cell;">{{name}} <span>Last Accomplished: {{lastDone}}</span> <br> <span>Points: {{points}}</span></span>
-                                </div>
+                <div class='widget'>
+                    <div style='display: table-cell;padding-left: 5rem;'>
+                        <h1 class='challenge-component-title'>Current Challenge</h1>
+                        {{#with currentChallenge}}
+                            <h2 class='challenge-component-title'>{{title}}</h2>
+                            <p class='challenge-information'>{{description}}</p>
+                            <p class='challenge-information'>The reward for this
+                                challenge is
+                                {{reward}}
+                                points (more points can be earned through
+                                ranking high on the leaderboard).</p>
+                            <h2 class='challenge-component-title'>List of
+                                Exercises to Complete</h2>
+                        {{/with}}
+                        <ol class='workouts-list'>
+                            {{#each curChallengeWorkouts}}
+                                <li class='workouts-list-item'>
+                                    <p>{{exercise.name}}
+                                        with
+                                        {{sets}}
+                                        sets of
+                                        {{reps}}
+                                        reps</p>
+                                </li>
                             {{/each}}
-                        </div>
-                        <div style="display: table-cell;padding-left: 5rem;">
-                            <h2>Challenge Details</h2>
-                            Get details from backend...
+                        </ol>
+                    </div>
+                    <div class='challenge-component-bottom'>
+                        <!-- Leaderboard -->
+                        <div class='leaderboard-flex-item'>
+                            <h1 class='challenge-component-title'>💪 Leaderboard
+                                💪</h1>
+                            <div style='display: table;'>
+                                <div style='display: table-cell;'>
+                                    <div class='leaderboard-item-flex'>
+                                        <span>Rank</span>
+                                        <span>Username</span>
+                                        <span>Time</span>
+                                    </div>
+                                    {{#each currentChallenge.leaderboard}}
+                                        <div class='leaderboard-item-flex'>
+                                            <span>{{incrementIndex @index}}
+                                            </span>
+                                            <a href='/user/{{userName}}'>
+                                                <span>{{userName}}</span>
+                                            </a>
+                                            <span>{{dateTo24HRFormat
+                                                    time
+                                                }}</span>
+                                        </div>
+                                    {{/each}}
+                                    {{#if
+                                        (greaterThanLeaderboardMax currentRank)
+                                    }}
+                                        <h3
+                                            class='challenge-component-title'
+                                        >Your current Rank</h3>
+                                        <br />
+                                        <div class='leaderboard-item-flex'>
+                                            <span>{{currentRank.rank}}
+                                            </span>
+                                            <a
+                                                href='/user/{{userData.userName}}'
+                                            >
+                                                <span
+                                                >{{userData.userName}}</span>
+                                            </a>
+                                            <span>{{dateTo24HRFormat
+                                                    currentRank.time
+                                                }}</span>
+                                        </div>
+                                    {{/if}}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </td>
             <td>
                 <!-- 5 Favorite Workout Widget -->
-                <div class="widget" style="text-align: center;">
-                    <h2>Your Favorite Workouts</h2>
-                    {{#each favoriteWorkouts}}
-                        <div class="favoriteWorkoutElement center">
-                            <span style="display: table-cell;"><h3 style="display: inline-block;">{{name}}</h3> <span>Last Accomplished: {{lastDone}}</span></span>
-                            <div style="display: table-cell;text-align: right;">
-                                <button class="about_button" style="font-size: 16px;white-space: pre-wrap;" onclick="location.href={{workoutURL}}">Run Again</button>
+                <div class='widget' style='text-align: center;'>
+                    <h2>Quick Access to Some of Your Workouts</h2>
+                    {{#each workouts}}
+                        <div
+                            class='favoriteWorkoutElement center'
+                            style='padding-bottom: 1rem;display: block;'
+                        >
+                            <div style='display: table;width: 100%;'>
+                                <span style='display: table-cell;'><h3
+                                        style='display: inline-block;color: var(--light-text)'
+                                    >{{name}}</h3><br />
+                                    <span><span
+                                            style='font-weight: bold;'
+                                        >Workout Type:</span>
+                                        <span
+                                            style='font-style:italic;'
+                                        >{{type}}</span></span>
+                                </span>
+                                <div
+                                    style='display: table-cell;text-align: right;'
+                                >
+                                    <button
+                                        class='about_button'
+                                        style='font-size: 16px;white-space: pre-wrap;'
+                                        aria-label='expand_button'
+                                    >Expand</button>
+                                </div>
+                            </div>
+                            <div class='expanded' style='display: none;'>
+
+                                <h4 class='workout_expanded'>Exercises</h4>
+                                {{#each exercises}}
+                                    <hr />
+                                    <h5
+                                        style='font-weight: bold;font-size: 12pt'
+                                    >{{name}}</h5>
+
+                                    <p>{{sets}} sets of {{reps}} reps</p>
+
+                                    <p>{{instructions}}</p>
+
+                                    <p>
+                                        Equipment:
+                                        <span
+                                            style='font-style: italic;'
+                                        >{{equipment}}</span>
+                                    </p>
+
+                                    <p>
+                                        Target Muscles:
+                                        <span
+                                            style='font-style: italic;'
+                                        >{{targetMuscles}}</span>
+                                    </p>
+
+                                    <p>{{description}}</p>
+                                {{/each}}
+
                             </div>
                         </div>
+                        <span style='margin: .25rem;'></span>
                     {{/each}}
                 </div>
             </td>
         </tr>
     </table>
-    More stuff can go down here idk yet
 </div>
+<script src='./public/js/home.js'></script>

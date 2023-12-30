@@ -16,7 +16,7 @@ const seedUsers = [
       description: "I am a dude looking to workout and take over the world!",
       age: 52,
     },
-    role: "owner",
+    role: "admin",
   },
   {
     firstName: "Daniel",
@@ -285,6 +285,18 @@ const seedExercises = [
     image:
       "https://firebasestorage.googleapis.com/v0/b/bodybuddy-2bcc5.appspot.com/o/res%2Fexercises%2Fmuscleup.jpg?alt=media&token=d0dfde9c-0402-4017-bddd-3e04bb7f0884",
   },
+  {
+    name: "Lateral Lunges",
+    targetMuscles: ["Adductors"],
+    description:
+      "Lunge with them length to strength them adductors! Yes this image is correct, I couldn't find a good one for lunges.",
+    instructions:
+      "I put my right hand in\nI put my right hand out\nIn out, in out\nShake it all about. ",
+    equipment: ["Spirit", "Legs"],
+    difficulty: "Beginner",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/bodybuddy-2bcc5.appspot.com/o/res%2Fexercises%2Fmuscleup.jpg?alt=media&token=d0dfde9c-0402-4017-bddd-3e04bb7f0884",
+  },
 ];
 
 const exerciseIdMap = {};
@@ -311,6 +323,7 @@ const seedWorkouts = [
   {
     name: "Upper Body Blast",
     types: ["Strength", "Upper Body"],
+    workoutType: ["Anerobic", "Strength"],
     notes: "A high-intensity workout to sculpt your upper body.",
     exercises: [
       { id: exerciseIdMap["Push-Up"], sets: 3, reps: 12 },
@@ -318,6 +331,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Pull-Ups"], sets: 3, reps: 8 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Leg Day Power",
@@ -330,6 +346,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Leg Press"], sets: 3, reps: 15 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Athlete's Core",
@@ -340,6 +359,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Leg Raises"], sets: 3, reps: 15 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Advanced Bodyweight Mastery",
@@ -351,6 +373,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Pull-Ups"], sets: 2, reps: 5 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Chest and Shoulders Sculpt",
@@ -363,6 +388,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Dumbbell Shoulder Press"], sets: 4, reps: 8 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Total Body Burn",
@@ -375,6 +403,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Bicycle Crunches"], sets: 3, reps: 20 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Arm Blaster",
@@ -386,6 +417,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Muscle Up"], sets: 4, reps: 5 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Back and Biceps Blitz",
@@ -398,6 +432,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Hammer Curls"], sets: 3, reps: 10 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Leg Day Burnout",
@@ -409,6 +446,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Squats"], sets: 3, reps: 15 },
     ],
     isPreset: true,
+    weightGoal: "100 kg",
+    difficulty: 6,
+    restTime: 240,
   },
   {
     name: "Core Crusher",
@@ -420,6 +460,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Push-Up"], sets: 6, reps: 15 },
     ],
     isPreset: true,
+    weightGoal: "20 kg",
+    difficulty: 5,
+    restTime: 60,
   },
   {
     name: "Strength and Stability",
@@ -432,6 +475,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Push-Up"], sets: 4, reps: 12 },
     ],
     isPreset: true,
+    weightGoal: "150 lb",
+    difficulty: 3,
+    restTime: 120,
   },
   {
     name: "Functional Fitness Circuit",
@@ -445,6 +491,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Lat Pulldown"], sets: 3, reps: 12 },
     ],
     isPreset: true,
+    weightGoal: "60 lb",
+    difficulty: 7,
+    restTime: 17,
   },
   {
     name: "Upper Body Burnout",
@@ -456,6 +505,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Push-Up"], sets: 6, reps: 12 },
     ],
     isPreset: true,
+    weightGoal: "14 kg",
+    difficulty: 9,
+    restTime: 17,
   },
   {
     name: "Dynamic Leg Day",
@@ -467,6 +519,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Leg Raises"], sets: 3, reps: 10 },
     ],
     isPreset: true,
+    weightGoal: "60 lb",
+    difficulty: 1,
+    restTime: 45,
   },
   {
     name: "Upper Body Strength Builder",
@@ -480,6 +535,9 @@ const seedWorkouts = [
       { id: exerciseIdMap["Lat Pulldown"], sets: 4, reps: 10 },
     ],
     isPreset: true,
+    weightGoal: "4 kg",
+    difficulty: 4,
+    restTime: 30,
   },
 ];
 
@@ -643,21 +701,26 @@ for (const challenge of seedChallenges) {
   }
 }
 
-for (const users of seedUsers) {
+for (let i = 0; i < 6; i++) {
+  await challengeObject.updateCurrent();
+}
+
+for (const user of seedUsers) {
   try {
     const created = await userData.createUser(
-      users.firstName,
-      users.lastName,
-      users.userName,
-      users.emailAddress,
-      users.password,
-      users.aboutMe.description,
-      users.aboutMe.age,
-      users.role,
+      user.firstName,
+      user.lastName,
+      user.userName,
+      user.emailAddress,
+      user.password,
+      user.aboutMe.description,
+      user.aboutMe.age,
+      user.role,
     );
   } catch (e) {
     console.log(e);
   }
 }
 
+console.log("Seed file complete!");
 await closeConnection();

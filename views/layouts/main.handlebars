@@ -7,28 +7,27 @@
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         <title>{{title}}</title>
         <link rel='stylesheet' href='/public/css/site.css' />
+        <link rel="icon" href="../../public/res/temp_logo.png">
     </head>
     <body>
         <header class='navbar'>
+            <a href="/home">
             <img
-                src='./public/res/temp_logo.png'
+                src='../../public/res/temp_logo.png'
                 alt='Body Buddy Logo'
                 id='navbar_logo'
-            />
+            /></a>
             <div id='navbar_item_list'>
-                {{#if isLoggedIn}}
-                    <a href='/' class='navbar_items'>Home</a>
                     <a href='/about' class='navbar_items'>About</a>
-                    <a href='/exercises' class='navbar_items'>Exercises</a>
+                    <a href='/home' class='navbar_items'>Home</a>
                     <a href='/workouts' class='navbar_items'>Workouts</a>
                     <a href='/challenges' class='navbar_items'>Challenges</a>
-                    <a href='/profile' class='navbar_items'>My Profile</a>
-                {{/if}}
+                    <a href='/user' class='navbar_items'>My Profile</a>
+                    {{#if user}}
+                    <a href='/logout' class='navbar_items'>Logout</a>
+                    {{/if}}
             </div>
         </header>
         {{{body}}}
-        <footer>
-            This is a footer! For footer things
-        </footer>
     </body>
 </html>

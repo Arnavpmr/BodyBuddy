@@ -1,47 +1,254 @@
-<div class='challenge-dashboard' style='padding: 2rem;'>
-    <div class='challenge-top-widgets' style='padding: 2rem;'>
-        <div class='current-challenge-widget' style='padding: 2rem;'>
-            <h2>Current Challenge</h2>
-            {{#with currentChallenge}}
-                <p>{{exercises}}</p>
-                <p>Reward (points): {{reward}}</p>
-                <p>Time limit (sec): {{timeLimit}}</p>
-                <p>Deadline: {{deadline}}</p>
-            {{/with}}
+<!-- Challenge Widget -->
+<div class='widget' style='color: var(--light-text)'>
+    <div style='display: table-cell;padding-left: 5rem;'>
+        <h1 class='challenge-component-title'>Current Challenge</h1>
+        {{#with currentChallenge}}
+            <h2 class='challenge-component-title'>{{title}}</h2>
+            <p class='challenge-information'>{{description}}</p>
+            <p class='challenge-information'>The reward for this challenge is
+                {{reward}}
+                points (more points can be earned through ranking high on the
+                leaderboard).</p>
+        {{/with}}
+        <ol class='workouts-list'>
+            {{#each curChallengeWorkouts}}
+                <li class='workouts-list-item'>
+                    <p>{{exercise.name}}
+                        with
+                        {{sets}}
+                        sets of
+                        {{reps}}
+                        reps</p>
+                </li>
+            {{/each}}
+        </ol>
+    </div>
+    <div class='challenge-component-bottom'>
+        <!-- Leaderboard -->
+        <div class='leaderboard-flex-item'>
+            <h1 class='challenge-component-title'>💪 Leaderboard 💪</h1>
+            <div style='display: table;'>
+                <div class='leaderboard-inner-container'>
+                    <div class='leaderboard-item-flex'>
+                        <span>Rank</span>
+                        <span>Username</span>
+                        <span>Time</span>
+                    </div>
+                    {{#each currentChallenge.leaderboard}}
+                        <div class='leaderboard-item-flex'>
+                            <span>{{incrementIndex @index}})
+                            </span>
+                            <a href='/user/{{userName}}'>
+                                <span>{{userName}}</span>
+                            </a>
+                            <span>{{dateTo24HRFormat time}}</span>
+                        </div>
+                    {{/each}}
+                    {{#if curRank}}
+                        {{#if (greaterThanLeaderboardMax curRank.rank)}}
+                            <h3 class='challenge-component-title'>Your Rank</h3>
+                            <div class='leaderboard-item-flex'>
+                                <span>{{curRank.rank}})</span>
+                                <a href='/user/{{user.userName}}'>
+                                    <span>{{user.userName}}</span>
+                                </a>
+                                <span>{{dateTo24HRFormat curRank.time}}</span>
+                            </div>
+                        {{/if}}
+                    {{/if}}
+                </div>
+            </div>
         </div>
-        <div class='leaderboard-widget' style='padding: 2rem;'>
-            <h2>Leaderboard</h2>
-            <ul>
-                {{#each leaderboard}}
-                    <li>{{@index}} - {{dateToString time}} - {{username}}</li>
-                {{/each}}
-            </ul>
-        </div>
-        <div class='submission-widget' style='padding: 2rem;'>
-            {{#unless userSubmission}}
-                <h2>Submit to Challenge</h2>
-                <form action='/submit' method='POST'>
-                    <input
-                        type='text'
-                        name='submissionInput'
-                        placeholder='Your Submission Here'
-                    />
-                    <button type='submit'>Submit</button>
+        {{#if (stringEquals user.role 'user')}}
+            <!-- Submission Component -->
+            <div class='submission-flex-item'>
+                <h1>Challenge Submission</h1>
+                {{#if submission}}
+                    <h2
+                        class='submission-status-{{submission.status}}'
+                    >Submission Status:
+                        {{submission.status}}</h2>
+                    <h3>Here are the pictures you submitted</h3>
+                    <div class='submission-images-container'>
+                        <ul class='submission-images-list'>
+                            {{#each submission.images}}
+                                <li>
+                                    <img
+                                        src={{link}}
+                                        class='submission-image'
+                                    />
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                    {{#if (stringEquals submission.status 'denied')}}
+                        <div class='submission-widget'>
+                            <h2>Submit Pictures for Challenge</h2>
+                            <p>Images should provide sufficient and legitimate
+                                proof that all aspects of the challenge were
+                                completed!</p>
+                            <form
+                                method='POST'
+                                enctype='multipart/form-data'
+                                id='imageUpload'
+                                action='/challenges/submit'
+                            >
+                                <input
+                                    multiple
+                                    type='file'
+                                    accept='image/png, image/jpeg, image/jpg'
+                                    name='submissionInput'
+                                    {{! placeholder='Your Submission Here' }}
+                                />
+                                <button type='submit'>Submit</button>
+                            </form>
+                        </div>
+                    {{/if}}
+                {{else}}
+                    <div class='submission-widget'>
+                        <h2>Submit Pictures for Challenge</h2>
+                        <p>Images should provide sufficient and legitimate proof
+                            that all aspects of the challenge were completed!</p>
+                        <form
+                            method='POST'
+                            enctype='multipart/form-data'
+                            id='imageUpload'
+                            action='/challenges/submit'
+                        >
+                            <input
+                                multiple
+                                type='file'
+                                accept='image/png, image/jpeg, image/jpg'
+                                name='submissionInput'
+                                {{! placeholder='Your Submission Here' }}
+                            />
+                            <button type='submit'>Submit</button>
+                        </form>
+                    </div>
+                {{/if}}
+            </div>
+        {{/if}}
+        {{#if (stringEquals user.role 'admin')}}
+            <div class='submission-admin-review'>
+                <h1 class='challenge-component-title'>Review Submissions</h1>
+                <ol class='submissions-list' id='submissions_box'>
+                    {{#each submissions}}
+                        <li>
+                            <div class='submission-list-item'>
+                                User
+                                <span
+                                    style='font-style: italic;'
+                                >{{userName}}</span>
+                                Submitted at
+                                <span
+                                    style='font-style: italic;'
+                                >{{dateTo24HRFormat time}}</span>
+                                <button
+                                    class='submission-button'
+                                >Expand</button>
+                                <div class='expanded' style='display: none;'>
+                                    {{#each images}}
+                                        <a href='{{link}}'>Image {{@index}}</a><br>
+                                    {{/each}}
+                                    <br>
+                                    <button
+                                        class='approve_button'
+                                    >Approve</button><button
+                                        class='deny_button'
+                                    >Deny</button>
+                                </div>
+                            </div>
+                        </li>
+                    {{/each}}
+                    {{#unless submissions}}
+                        <li>None!</li>
+                    {{/unless}}
+                </ol>
+            </div>
+        {{/if}}
+    </div>
+    {{#if (stringEquals user.role 'admin')}}
+        <div class='challenge-component-full-bottom'>
+            <div class='challenges-queue-item'>
+                <h1 class='challenge-component-title'>Challenges in Queue</h1>
+                <ul class='challenges-list'>
+                    {{#each challengesQueue}}
+                        <li class='challenges-list-item'>
+                            <div class='delete_block'>
+                                <span
+                                    style='display: none;visibility: hidden;'
+                                    class='data'
+                                >{{_id}}</span>
+                                <span>{{title}}</span>
+                                <span>{{reward}}</span>
+                                <button class='challenge-delete'>Delete</button>
+                            </div>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class='challenges-queue-form'>
+                <h1 class='challenge-component-title'>Create Challenge</h1>
+
+                <form
+                    action='/challenges/challenge/queue/create'
+                    id='submitChallenge'
+                    method='POST'
+                >
+
+                    <label for='titleInput'>
+                        Input a title
+                        <input
+                            type='text'
+                            name='titleInput'
+                            id='titleInput'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='descriptionInput'>
+                        Input a description
+                        <input
+                            type='text'
+                            name='descriptionInput'
+                            id='descriptionInput'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='rewardInput'>
+                        Input a reward
+                        <input
+                            type='number'
+                            name='rewardInput'
+                            id='rewardInput'
+                            min='1'
+                            required
+                        />
+                    </label>
+                    <br />
+                    <label for='exerciseInput'>
+                        Input a workout
+                        <select id='exerciseInput'>
+                            {{#each workouts}}
+                                <option value='{{_id}}'>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </label>
+                    <br />
+                    <label for='submitButton'>
+                        <button type='submit' id='submitButton'>Submit</button>
+                    </label>
                 </form>
-            {{else}}
-                <h2>Your Submission</h2>
-                <p>Status: {{userSubmission.status}}</p>
-            {{/unless}}
+                <p id='createErrorList' style='color: red;'></p>
+            </div>
         </div>
-    </div>
-    <div class='bottom-widgets' style='padding: 2rem;'>
-        <div class='global-leaderboard-widget' style='padding: 2rem;'>
-            <h2>Global Leaderboard</h2>
-            <ul>
-                {{#each globalLeaderboard}}
-                    <li>{{@index}} - {{name}}: {{score}}</li>
-                {{/each}}
-            </ul>
-        </div>
-    </div>
+    {{/if}}
 </div>
+
+<script
+    src='https://code.jquery.com/jquery-2.2.4.min.js'
+    integrity='sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44='
+    crossorigin='anonymous'
+></script>
+<script src='./public/js/challenges.js'></script>

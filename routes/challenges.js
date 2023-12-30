@@ -1,10 +1,15 @@
 import { challengeQueue } from "../config/mongoCollections.js";
-import { challengeObject } from "../data/index.js";
-import challenges from "../data/challenges.js";
+import {
+  challengeObject,
+  challengeData,
+  userData,
+  exerciseData,
+  workoutData,
+} from "../data/index.js";
 import { Router } from "express";
 import helper from "../helpers.js";
 import multer from "multer";
-import storageFirebase from "../firebase.js";
+import { xssSafe } from "../helpers.js";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -27,18 +32,96 @@ const upload = multer({
 const router = Router();
 
 router.route("/").get(async (req, res) => {
-  const queueCollection = await challengeQueue();
-  const challengesObject = (await queueCollection.find({}).toArray())[0];
+  let queueCollection = undefined;
+  let challengesObject = undefined;
+
+  let curChallenge = undefined;
+  let curUser = undefined;
+  let curRank = undefined;
+  let submission = undefined;
+
+  let submissions = undefined;
+  let challengesQueue = undefined;
+  let workouts = undefined;
+  let curChallengeWorkouts = undefined;
+
+  try {
+    queueCollection = await challengeQueue();
+    challengesObject = (await queueCollection.find({}).toArray())[0];
+    curUser = await userData.getUserByUsername(
+      xssSafe(req.session.user.userName),
+    );
+
+    try {
+      submission = await challengeObject.getSubmissionByUserName(
+        curUser.userName,
+      );
+      curRank = await challengeObject.getCurrentChallengeRankByUser(
+        curUser.userName,
+      );
+    } catch (e) {
+      submission = null;
+    }
+
+    curChallenge = await challengeData.getChallengeById(
+      challengesObject.current,
+    );
+    curChallengeWorkouts = await Promise.all(
+      curChallenge.exercises.map(async (exercise) => {
+        const fullExercise = await exerciseData.getExerciseById(exercise.id);
+        return {
+          exercise: fullExercise,
+          reps: exercise.reps,
+          sets: exercise.sets,
+        };
+      }),
+    );
+    curChallenge.exercises = await Promise.all(
+      curChallenge.exercises.map(async (exercise) => {
+        const fullExercise = await exerciseData.getExerciseById(exercise.id);
+        return {
+          exercise: fullExercise,
+          sets: exercise.sets,
+          reps: exercise.reps,
+        };
+      }),
+    );
+  } catch (e) {
+    return res.status(500).json({ error: e });
+  }
+
+  if (curUser.role === "admin") {
+    try {
+      submissions = challengesObject.submissions;
+
+      challengesQueue = await Promise.all(
+        challengesObject.queue.map(async (id) => {
+          const newChallenge = await challengeData.getChallengeById(id);
+          return newChallenge;
+        }),
+      );
+
+      workouts = await workoutData.getAllWorkouts();
+    } catch (e) {
+      return res.status(500).json({ error: e });
+    }
+  }
 
   return res.status(200).render("challenges", {
-    curChallenge: challengesObject.current,
-    pastChallenges: challengeQueue.pastChallenges,
-    user: req.session.user,
+    title: "Challenges",
+    user: curUser,
+    submission: submission,
+    submissions: submissions,
+    workouts: workouts,
+    challengesQueue: challengesQueue,
+    currentChallenge: curChallenge,
+    curChallengeWorkouts: curChallengeWorkouts,
+    curRank: curRank,
   });
 });
 
 router.route("/challenge/toggleupdates").post(async (req, res) => {
-  const { status } = req.body;
+  const { status } = xssSafe(req.body);
 
   if (status !== "on" && status !== "off")
     return res.status(400).json({ error: "Status is invalid" });
@@ -49,24 +132,22 @@ router.route("/challenge/toggleupdates").post(async (req, res) => {
 });
 
 router.post(
-  "/challenge/submit",
-  upload.array("user_submission", 10),
+  "/submit",
+  upload.array("submissionInput", 10),
   async (req, res) => {
-    // TODO store the images in firebase and get all the urls and place them in the images field in new object
-    // if everythings good, then check if user made a prev submission and remove all those images from firebase
-    // then check if user made a prev submission and remove it from mongo and prepare to replace it with the new submission
-    // set the status of new submission to "pending" and push it to the db
-
     try {
       const files = req.files;
-      const links = await challenges.uploadSubmissionImages(
-        req.body.username,
+      const links = await challengeData.uploadSubmissionImages(
+        xssSafe(req.session.user.userName),
         files,
       );
 
-      return res.status(200).json({ isUploaded: true });
+      return res.redirect("/challenges");
     } catch (e) {
-      return res.status(400).json({ error: e.toString() });
+      return res.status(400).render("error", {
+        error: e.toString(),
+        title: "Error",
+      });
     }
   },
 );
@@ -85,7 +166,10 @@ router
     let resDB = null;
 
     try {
-      userName = helper.inputValidator(req.params.userName, "userName");
+      userName = helper.inputValidator(
+        xssSafe(req.params.userName),
+        "userName",
+      );
     } catch (e) {
       return res.status(400).json({ error: e });
     }
@@ -99,7 +183,7 @@ router
     return res.status(200).json(resDB);
   })
   .post(async (req, res) => {
-    const status = req.body;
+    const status = xssSafe(req.body.status);
 
     let userName = null;
     let resDB = null;
@@ -108,23 +192,30 @@ router
       if (status !== "approved" && status !== "denied")
         throw "Status is invalid";
 
-      userName = helper.idValidator(req.params.userName);
+      userName = helper.inputValidator(xssSafe(req.params.userName));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
 
     try {
       resDB = await challengeObject.updateSubmissionByUser(userName, status);
+      await challengeData.pushToCurrentLeaderboard(userName);
+      await challengeObject.removeSubmissionIfPresent(userName);
     } catch (e) {
+      console.log(e.toString());
       return res.status(500).json({ error: e });
     }
 
-    return resDB;
+    return res.status(200).json(resDB);
   });
 
 router.route("/challenge").post(async (req, res) => {
-  const { titleInput, descriptionInput, exercisesInput, rewardInput } =
-    req.body;
+  let { titleInput, descriptionInput, exercisesInput, rewardInput } = req.body;
+
+  titleInput = xssSafe(titleInput);
+  descriptionInput = xssSafe(descriptionInput);
+  exercisesInput = xssSafe(exercisesInput);
+  rewardInput = xssSafe(rewardInput);
 
   let newChallenge = null;
   let newChallengeDB = null;
@@ -143,7 +234,7 @@ router.route("/challenge").post(async (req, res) => {
   const { title, description, exercises, reward } = newChallenge;
 
   try {
-    newChallengeDB = await challenges.createChallenge(
+    newChallengeDB = await challengeData.createChallenge(
       exercises,
       title,
       reward,
@@ -156,18 +247,60 @@ router.route("/challenge").post(async (req, res) => {
   return res.status(200).json(newChallengeDB);
 });
 
+router.route("/challenge/queue/:id").delete(async (req, res) => {
+  try {
+    const deleteFromQueue = await challengeObject.removeChallengeFromQueue(
+      req.params.id,
+    );
+    res.status(200).json(deleteFromQueue);
+  } catch (error) {
+    console.log(error.toString());
+    res.status(400).json({ error: error.toString() });
+  }
+});
+
+router.route("/challenge/queue/create").post(async (req, res) => {
+  try {
+    const body = req.body;
+    if (!body) throw "Request body is invalid";
+    const w_data = await workoutData.getWorkoutAllDataById(body.id);
+
+    const name = helper.inputValidator(body.name, "body.name");
+    const desc = helper.inputValidator(body.description, "body.description");
+    const rew = Number(helper.inputValidator(body.reward, "body.reward"));
+    if (isNaN(rew) || !Number.isInteger(rew))
+      throw "body.reward should be an integer number";
+
+    const return_data = await challengeData.createChallenge(
+      w_data.exercises,
+      name,
+      rew,
+      desc,
+    );
+    res.status(200).json(return_data);
+  } catch (error) {
+    console.log(error.toString());
+    res.status(400).json({ error: error.toString() });
+  }
+});
+
 router
   .route("/challenge/:challengeId")
   .put(async (req, res) => {
-    const { titleInput, descriptionInput, exercisesInput, rewardInput } =
+    let { titleInput, descriptionInput, exercisesInput, rewardInput } =
       req.body;
+
+    titleInput = xssSafe(titleInput);
+    descriptionInput = xssSafe(descriptionInput);
+    exercisesInput = xssSafe(exercisesInput);
+    rewardInput = xssSafe(rewardInput);
 
     let challengeId = null;
     let newChallenge = null;
     let newChallengeDB = null;
 
     try {
-      challengeId = helper.idValidator(req.params.challengeId);
+      challengeId = helper.idValidator(xssSafe(req.params.challengeId));
       newChallenge = helper.challengeValidator(
         titleInput,
         descriptionInput,
@@ -181,7 +314,7 @@ router
     const { title, description, exercises, reward } = newChallenge;
 
     try {
-      newChallengeDB = await challenges.updateChallenge(
+      newChallengeDB = await challengeData.updateChallenge(
         challengeId,
         exercises,
         title,
@@ -199,13 +332,13 @@ router
     let challengeDB = null;
 
     try {
-      challengeId = helper.idValidator(req.params.challengeId);
+      challengeId = helper.idValidator(xssSafe(req.params.challengeId));
     } catch (e) {
       return res.status(400).json({ error: e });
     }
 
     try {
-      challengeDB = await challenges.removeChallenge(challengeId);
+      challengeDB = await challengeData.removeChallenge(challengeId);
     } catch (e) {
       return res.status(500).json({ error: e });
     }

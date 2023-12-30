@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import storageFirebase from "./firebase.js";
 import { getDownloadURL } from "firebase-admin/storage";
+import xss from "xss";
 
 let helper = {
   inputValidator(input, inputName) {
@@ -146,6 +147,7 @@ let helper = {
     incomingRequests,
     outgoingRequests,
     role,
+    unitMeasure,
   ) {
     firstName = this.inputValidator(firstName, "firstName");
     lastName = this.inputValidator(lastName, "lastName");
@@ -156,6 +158,8 @@ let helper = {
     description = description.trim();
 
     if (age && age < 0) throw "Age cannot be a negative number";
+    if (unitMeasure && unitMeasure !== "lb" && unitMeasure !== "kg")
+      throw "Invalid unit of measure";
 
     return {
       firstName: firstName,
@@ -170,6 +174,7 @@ let helper = {
         outgoingRequests: outgoingRequests,
       },
       role: role,
+      unitMeasure: unitMeasure,
     };
   },
 
@@ -247,7 +252,7 @@ let helper = {
   exerciseComponentValidator(exercise) {
     const sets = Number(exercise.sets);
     const reps = Number(exercise.reps);
-    const test_id = exercise._id;
+    const test_id = exercise.id;
     if (isNaN(sets) || sets <= 0 || !Number.isInteger(sets))
       throw "Sets is invalid";
 
@@ -263,7 +268,16 @@ let helper = {
     };
   },
 
-  workoutValidator(name, workoutTypes, notes, exercises) {
+  workoutValidator(
+    name,
+    workoutTypes,
+    notes,
+    exercises,
+    unitMeasure,
+    weightGoal,
+    difficulty,
+    restTime,
+  ) {
     const definedWorkoutTypes = [];
 
     name = helper.inputValidator(name, "name");
@@ -289,11 +303,31 @@ let helper = {
       this.exerciseComponentValidator(exercise),
     );
 
+    if (typeof weightGoal === "string") {
+      let weight = parseInt(weightGoal);
+      if (weight < 1) throw "Weight must be greater than zero";
+      if (!unitMeasure) throw "No unit measurement specified";
+      weightGoal = weightGoal + " " + unitMeasure;
+    }
+    if (difficulty) {
+      difficulty = parseInt(difficulty);
+      if (difficulty < 1 || difficulty > 10)
+        throw "Difficulty must be between 1 and 10";
+    }
+    if (restTime) {
+      restTime = parseInt(restTime);
+      if (restTime < 1 || restTime > 300)
+        throw "Rest time must be between 1 and 300 seconds";
+    }
+
     return {
       newName: name,
       newWorkoutTypes: workoutTypes,
       newNotes: notes,
       newExercises: exercises,
+      newWeightGoal: weightGoal,
+      newDifficulty: difficulty,
+      newRestTime: restTime,
     };
   },
 
@@ -338,6 +372,24 @@ let helper = {
     });
     return { link: link, relPath: path };
   },
+};
+
+export const xssSafe = (input) => {
+  //   console.log(
+  //     `DEBUG: xssSafe called with input ${input} and type ${typeof input}`,
+  //   );
+  if (typeof input === "object") {
+    if (Array.isArray(input)) {
+      let parsed = input.map((e) => xssSafe(e));
+      return parsed;
+    } else {
+      let parsed = xss(JSON.stringify(input));
+      return JSON.parse(parsed);
+    }
+  } else {
+    let parsed = xss(input);
+    return parsed;
+  }
 };
 
 export default helper;
